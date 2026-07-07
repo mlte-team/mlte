@@ -131,7 +131,7 @@ class RDBEntryMapper(CatalogEntryMapper):
             catalog_entry, _ = DBReader.get_entry(entry_id, session)
             return catalog_entry
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         with Session(self.storage.engine) as session:
             entries, _ = DBReader.get_entries(session)
             return [entry.header.identifier for entry in entries]

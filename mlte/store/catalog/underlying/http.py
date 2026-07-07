@@ -136,7 +136,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         )
         return CatalogEntry(**response)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         entries = self.list_details()
         return [entry.header.identifier for entry in entries]
 

@@ -99,7 +99,7 @@ class HTTPModelMapper(ModelMapper):
         response = self.storage.get(id=model_id)
         return Model(**response)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         response = self.storage.get()
         return typing.cast(list[str], response)
 
@@ -132,7 +132,7 @@ class HTTPVersionMapper(VersionMapper):
         )
         return Version(**response)
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         response = self.storage.get(groups=_version_group(model_id))
         return typing.cast(list[str], response)
 

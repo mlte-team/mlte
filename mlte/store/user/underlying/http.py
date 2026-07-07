@@ -114,7 +114,7 @@ class HttpUserMapper(UserMapper):
         response = self.storage.get(id=entry_name)
         return User(**response)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         response = self.storage.get()
         return typing.cast(list[str], response)
 
@@ -149,7 +149,7 @@ class HttpGroupMapper(GroupMapper):
         response = self.storage.get(id=group_name)
         return Group(**response)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         response = self.storage.get()
         return typing.cast(list[str], response)
 
@@ -174,7 +174,7 @@ class HttpPermissionMapper(PermissionMapper):
         self.storage = storage
         """The HTTP storage access."""
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         response = self.storage.get()
         return typing.cast(list[str], response)
 

@@ -110,7 +110,7 @@ class InMemoryCustomListEntryMapper(CustomListEntryMapper):
         entry = self.storage.custom_lists[list_name][entry_name]
         return entry
 
-    def list(self, list_name: CustomListName | None = None) -> list[str]:
+    def list_all(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         return [
             entry_name

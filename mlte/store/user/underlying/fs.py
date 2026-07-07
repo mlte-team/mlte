@@ -148,7 +148,7 @@ class FileSystemUserMappper(UserMapper):
 
         return user
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, username: str, context: Any = None) -> User:
@@ -207,7 +207,7 @@ class FileSystemGroupMappper(GroupMapper):
     def read(self, group_name: str, context: Any = None) -> Group:
         return self._read_group(group_name)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, group_name: str, context: Any = None) -> Group:
@@ -262,7 +262,7 @@ class FileSystemPermissionMappper(PermissionMapper):
     def read(self, permission_str: str, context: Any = None) -> Permission:
         return self._read_permission(permission_str)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, permission_str: str, context: Any = None) -> Permission:

@@ -111,7 +111,7 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
     name2 = "new name"
 
     with ManagedUserSession(user_store.session()) as user_store_session:
-        original_users = user_store_session.user_mapper.list()
+        original_users = user_store_session.user_mapper.list_all()
         internal_store = get_internal_store_session(
             user_store_session, store_type
         )
@@ -128,7 +128,7 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
         assert test_user.is_equal_to(read_user)
 
         # Test listing users.
-        users = user_store_session.user_mapper.list()
+        users = user_store_session.user_mapper.list_all()
         assert len(users) == 1 + len(original_users)
 
         # Test editing all user info.
@@ -206,7 +206,7 @@ def test_group(store_type: StoreType, create_test_user_store) -> None:
     )
 
     with ManagedUserSession(store.session()) as user_store:
-        original_groups = user_store.group_mapper.list()
+        original_groups = user_store.group_mapper.list_all()
 
         # Set up needed permissions.
         internal_store = get_internal_store_session(user_store, store_type)
@@ -218,7 +218,7 @@ def test_group(store_type: StoreType, create_test_user_store) -> None:
         assert test_group == read_group
 
         # Test listing groups.
-        groups = user_store.group_mapper.list()
+        groups = user_store.group_mapper.list_all()
         assert len(groups) == 1 + len(original_groups)
 
         # Test editing group.
@@ -246,7 +246,7 @@ def test_permission(store_type: StoreType, create_test_user_store) -> None:
     test_permission1 = get_test_permissions()[0]
 
     with ManagedUserSession(store.session()) as user_store:
-        original_permissions = user_store.permission_mapper.list()
+        original_permissions = user_store.permission_mapper.list_all()
 
         # Test creating a permission.
         user_store.permission_mapper.create(test_permission1)
@@ -256,7 +256,7 @@ def test_permission(store_type: StoreType, create_test_user_store) -> None:
         assert test_permission1 == read_permission
 
         # Test listing permission.
-        groups = user_store.permission_mapper.list()
+        groups = user_store.permission_mapper.list_all()
         assert len(groups) == 1 + len(original_permissions)
 
         # Test deleting a permission.

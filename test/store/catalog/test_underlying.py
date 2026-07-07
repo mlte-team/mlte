@@ -60,7 +60,7 @@ def test_catalog_entry(
     description2 = "short code sample"
 
     with ManagedCatalogSession(store.session()) as catalog_store:
-        original_entries = catalog_store.entry_mapper.list()
+        original_entries = catalog_store.entry_mapper.list_all()
 
         # Test creating an entry.
         catalog_store.entry_mapper.create(test_entry)
@@ -79,7 +79,7 @@ def test_catalog_entry(
             assert test_entry == read_entry
 
         # Test listing entries.
-        entries = catalog_store.entry_mapper.list()
+        entries = catalog_store.entry_mapper.list_all()
         assert len(entries) == 1 + len(original_entries)
 
         # Test editing all entry info.

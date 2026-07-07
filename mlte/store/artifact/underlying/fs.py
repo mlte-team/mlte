@@ -115,7 +115,7 @@ class FileSystemModelMapper(ModelMapper):
             versions=self.version_mapper.list_details(model_id),
         )
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resource_groups()
 
     def delete(self, model_id: str, context: Any = None) -> Model:
@@ -155,7 +155,7 @@ class FileSystemVersionMapper(VersionMapper):
         self._ensure_version_exists(version_id, model_id)
         return Version(identifier=version_id)
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         self._ensure_model_exists(model_id)
         return self.storage.list_resource_groups([model_id])
 
@@ -202,7 +202,7 @@ class FileSystemArtifactMapper(ArtifactMapper):
             **self.storage.read_resource(artifact_id, group_ids)
         )
 
-    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+    def list_all(self, model_and_version: tuple[str, str]) -> list[str]:
         model_id, version_id = model_and_version
         return self._get_artifact_ids(model_id, version_id)
 

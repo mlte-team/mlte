@@ -24,7 +24,7 @@ class UserMapper(ResourceMapper):
     def read(self, user_id: str, context: Any = None) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, user_id: str, context: Any = None) -> User:
@@ -43,7 +43,7 @@ class GroupMapper(ResourceMapper):
     def read(self, group_id: str, context: Any = None) -> Group:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, group_id: str, context: Any = None) -> Group:
@@ -66,7 +66,7 @@ class PermissionMapper(ResourceMapper):
     def read(self, permission: str, context: Any = None) -> Permission:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, permission: str, context: Any = None) -> Permission:

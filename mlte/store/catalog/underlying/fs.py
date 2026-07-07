@@ -126,7 +126,7 @@ class FileSystemCatalogEntryMapper(CatalogEntryMapper):
     def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         return self._read_entry(entry_id)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:

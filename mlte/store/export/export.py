@@ -85,13 +85,13 @@ class ExportSpec:
             artifact_store.session()
         ) as artifact_store_session:
             if self.models == {}:
-                for model_id in artifact_store_session.model_mapper.list():
+                for model_id in artifact_store_session.model_mapper.list_all():
                     self.models[model_id] = []
 
             for model_id in self.models:
                 if self.models[model_id] == []:
                     self.models[model_id] = (
-                        artifact_store_session.version_mapper.list(model_id)
+                        artifact_store_session.version_mapper.list_all(model_id)
                     )
 
     def _setup_custom_lists(
@@ -112,7 +112,7 @@ class ExportSpec:
 
         if self.users == []:
             with ManagedUserSession(user_store.session()) as user_store_session:
-                self.users = user_store_session.user_mapper.list()
+                self.users = user_store_session.user_mapper.list_all()
 
     def _setup_catalogs(
         self,
@@ -208,7 +208,7 @@ def _export_artifacts(
             output_dict[model_id] = {}
             for version_id in export_spec.models[model_id]:
                 output_dict[model_id][version_id] = {}
-                for artifact_id in artifact_store_session.artifact_mapper.list(
+                for artifact_id in artifact_store_session.artifact_mapper.list_all(
                     (model_id, version_id)
                 ):
                     output_dict[model_id][version_id][artifact_id] = (

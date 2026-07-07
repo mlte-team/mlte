@@ -96,7 +96,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         list_name = self._check_valid_custom_list(list_name)
         return self._read_entry(entry_name, list_name)
 
-    def list(self, list_name: CustomListName | None = None) -> list[str]:
+    def list_all(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         return self.storage.list_resources([list_name.value])
 

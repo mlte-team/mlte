@@ -40,7 +40,7 @@ def test_model(store_type: StoreType, create_test_artifact_store) -> None:
 
         _ = artifact_store.model_mapper.read(model_id)
 
-        models = artifact_store.model_mapper.list()
+        models = artifact_store.model_mapper.list_all()
         assert len(models) == 1
 
         artifact_store.model_mapper.delete(model_id)
@@ -59,7 +59,7 @@ def test_model_list(store_type: StoreType, create_test_artifact_store) -> None:
     with ManagedArtifactSession(store.session()) as artifact_store:
         _ = artifact_store.model_mapper.create(Model(identifier=model_id))
 
-        models = artifact_store.model_mapper.list()
+        models = artifact_store.model_mapper.list_all()
         assert len(models) == 1
         assert models[0] == "model0"
 
@@ -81,7 +81,7 @@ def test_version(store_type: StoreType, create_test_artifact_store) -> None:
 
         _ = artifact_store.version_mapper.read(version_id, model_id)
 
-        versions = artifact_store.version_mapper.list(model_id)
+        versions = artifact_store.version_mapper.list_all(model_id)
         assert len(versions) == 1
 
         artifact_store.version_mapper.delete(version_id, model_id)
@@ -152,7 +152,7 @@ def test_version_list(
             Version(identifier=version_id), model_id
         )
 
-        versions = artifact_store.version_mapper.list(model_id)
+        versions = artifact_store.version_mapper.list_all(model_id)
         assert len(versions) == 1
         assert versions[0] == "version0"
 

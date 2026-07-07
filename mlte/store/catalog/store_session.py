@@ -52,7 +52,7 @@ class CatalogEntryMapper(ResourceMapper):
     def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:

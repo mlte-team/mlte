@@ -91,7 +91,7 @@ def list_groups(
     """
     with state_stores.user_store_session() as user_store:
         try:
-            return user_store.group_mapper.list()
+            return user_store.group_mapper.list_all()
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -143,7 +143,7 @@ def list_permissions(
     """
     with state_stores.user_store_session() as user_store:
         try:
-            return user_store.permission_mapper.list()
+            return user_store.permission_mapper.list_all()
         except Exception as e:
             raise_http_internal_error(e)
 

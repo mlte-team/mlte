@@ -91,7 +91,7 @@ def list_models(
     """
     with state_stores.artifact_store_session() as artifact_store:
         try:
-            return artifact_store.model_mapper.list()
+            return artifact_store.model_mapper.list_all()
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
@@ -204,7 +204,7 @@ def list_versions(
     model_id = url_utils.revert_valid_url_part(model_id)
     with state_stores.artifact_store_session() as artifact_store:
         try:
-            return artifact_store.version_mapper.list(model_id)
+            return artifact_store.version_mapper.list_all(model_id)
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."

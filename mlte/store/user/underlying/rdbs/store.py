@@ -163,7 +163,7 @@ class RDBUserMapper(UserMapper):
             user, _ = DBReader.get_user(username, session)
             return user
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         users: list[str] = []
         with Session(self.storage.engine) as session:
             user_orms = session.scalars(select(DBUser))
@@ -244,7 +244,7 @@ class RDBGroupMapper(GroupMapper):
             group, _ = DBReader.get_group(group_name, session)
             return group
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         groups: list[str] = []
         with Session(self.storage.engine) as session:
             group_orms = session.scalars(select(DBGroup))
@@ -322,7 +322,7 @@ class RDBPermissionMapper(PermissionMapper):
             )
             return perm
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         with Session(self.storage.engine) as session:
             permissions, _ = DBReader.get_permissions(session)
             return [permission.to_str() for permission in permissions]

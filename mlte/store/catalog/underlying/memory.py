@@ -131,7 +131,7 @@ class InMemoryCatalogEntryMapper(CatalogEntryMapper):
         entry = self.storage.entries[entry_id]
         return entry
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [username for username in self.storage.entries.keys()]
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:

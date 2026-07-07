@@ -162,7 +162,7 @@ def list_users(
     """
     with state_stores.user_store_session() as user_store:
         try:
-            return user_store.user_mapper.list()
+            return user_store.user_mapper.list_all()
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -178,7 +178,7 @@ def list_users_details(
     with state_stores.user_store_session() as user_store:
         try:
             detailed_users = []
-            usernames = user_store.user_mapper.list()
+            usernames = user_store.user_mapper.list_all()
             for username in usernames:
                 user_details = User(
                     **user_store.user_mapper.read(username).to_json()
@@ -234,7 +234,7 @@ def list_user_models(
                 user = BasicUser(
                     **user_store.user_mapper.read(username).to_json()
                 )
-                all_models = artifact_store.model_mapper.list()
+                all_models = artifact_store.model_mapper.list_all()
                 for model_id in all_models:
                     permission = Permission(
                         resource_type=ResourceType.MODEL,

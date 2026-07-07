@@ -176,7 +176,7 @@ class InMemoryModelMapper(ModelMapper):
             ],
         )
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [model_id for model_id in self.storage.models.keys()]
 
     def delete(self, model_id: str, context: Any = None) -> Model:
@@ -215,7 +215,7 @@ class InMemoryVersionMapper(VersionMapper):
 
         return Version(identifier=version_id)
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
@@ -246,7 +246,7 @@ class InMemoryArtifactMapper(ArtifactMapper):
         model_id, version_id = model_and_version
         return self._get_artifact(model_id, version_id, artifact_id)
 
-    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+    def list_all(self, model_and_version: tuple[str, str]) -> list[str]:
         model_id, version_id = model_and_version
         return [
             artifact_id

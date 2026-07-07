@@ -159,7 +159,7 @@ class InMemoryUserMapper(UserMapper):
 
         return user
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [username for username in self.storage.users.keys()]
 
     def delete(self, username: str, context: Any = None) -> User:
@@ -199,7 +199,7 @@ class InMemoryGroupMapper(GroupMapper):
             raise errors.ErrorNotFound(f"Group {group_name}")
         return self.storage.groups[group_name]
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [group_name for group_name in self.storage.groups.keys()]
 
     def delete(self, group_name: str, context: Any = None) -> Group:
@@ -229,7 +229,7 @@ class InMemoryPermissionMapper(PermissionMapper):
             raise errors.ErrorNotFound(f"Permission {permission_str}")
         return self.storage.permissions[permission_str]
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [
             permission_str for permission_str in self.storage.permissions.keys()
         ]

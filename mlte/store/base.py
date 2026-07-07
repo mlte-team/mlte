@@ -251,7 +251,7 @@ class ResourceMapper(ABC):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     @abstractmethod
-    def list(self, context: Any) -> list[str]:
+    def list_all(self, context: Any) -> list[str]:
         """
         List all resources of this type in the store.
         :param context: Any additional context needed for this resource.
@@ -283,7 +283,7 @@ class ResourceMapper(ABC):
         :param offset: The offset on resources to read
         :return: The read resources
         """
-        entry_ids = self.list(context)
+        entry_ids = self.list_all(context)
         return [self.read(entry_id, context) for entry_id in entry_ids][
             offset : offset + limit
         ]

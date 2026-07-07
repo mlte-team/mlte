@@ -95,7 +95,7 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
         )
         return CustomListEntryModel(**response)
 
-    def list(self, list_name: CustomListName | None = None) -> list[str]:
+    def list_all(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.get(id=list_name)
         list_details = typing.cast(list[dict[str, str]], response)

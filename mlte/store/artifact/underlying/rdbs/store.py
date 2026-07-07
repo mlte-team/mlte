@@ -129,7 +129,7 @@ class RDBSModelMapper(ModelMapper):
             model, _ = DBReader.get_model(model_id, session)
             return model
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         models: list[str] = []
         with Session(self.storage.engine) as session:
             model_orms = session.scalars(select(DBModel))
@@ -178,7 +178,7 @@ class RDBSVersionMapper(VersionMapper):
             version, _ = DBReader.get_version(model_id, version_id, session)
             return version
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         versions: list[str] = []
         with Session(self.storage.engine) as session:
             version_orms = session.scalars(
@@ -238,7 +238,7 @@ class RDBSArtifactMapper(ArtifactMapper):
             session.commit()
             return artifact
 
-    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+    def list_all(self, model_and_version: tuple[str, str]) -> list[str]:
         model_id, version_id = model_and_version
         with Session(self.storage.engine) as session:
             artifacts = DBReader.get_artifacts(model_id, version_id, session)

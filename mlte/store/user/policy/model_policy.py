@@ -13,7 +13,7 @@ def create_model_policies_if_needed(
     Function that checks, for all models, if policies have not been created.
     This is for cases where the model may have been created without the API.
     """
-    models = artifact_store.model_mapper.list()
+    models = artifact_store.model_mapper.list_all()
     for model_id in models:
         policy = Policy(ResourceType.MODEL, model_id)
         if not policy_store.is_stored(policy):
