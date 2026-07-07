@@ -29,12 +29,12 @@ Complete an employee evaluation using this template format for a response:
 
 Employee: {employee_name}
 Date and history:
-Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0)
 - With text justification
 Critical Element: (Same scale as overall rating)
 - Makes drinks (Coffee, Latte, etc)
 - Timeliness (how quick you got your order done)
-- Customer Satisfaction 
+- Customer Satisfaction
 - Store Operations
 - Shows up to work on time
 Comments and Suggestions:
@@ -51,7 +51,7 @@ Employee self evaluation
 Manager comments
 
 {manager_comments}
-        
+
 """,
         ),
     ]
@@ -80,7 +80,7 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
             inplace=True,
         )
 
-    for row_num, row in sample_input_data_df.iterrows():
+    for _, row in sample_input_data_df.iterrows():
         pii_data = {
             "employee_name": row.Employee,  # Name,
             "goals_and_objectives": row.goalsAndObjectives,
