@@ -55,5 +55,5 @@ class LocalObjectSize(Measurement):
 
     # Overriden.
     @classmethod
-    def get_output_type(cls) -> type[Real]:
+    def output(cls) -> type[Real]:
         return Real

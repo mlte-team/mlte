@@ -132,7 +132,7 @@ class NvidiaGPUMemoryUtilization(ProcessMeasurement):
     # Overriden.
 
     @classmethod
-    def get_output_type(cls) -> type[NvidiaGPUMemoryStatistics]:
+    def output(cls) -> type[NvidiaGPUMemoryStatistics]:
         return NvidiaGPUMemoryStatistics
 
 

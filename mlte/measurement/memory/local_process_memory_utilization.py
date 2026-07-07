@@ -96,7 +96,7 @@ class LocalProcessMemoryUtilization(ProcessMeasurement):
 
     # Overriden.
     @classmethod
-    def get_output_type(cls) -> type[MemoryStatistics]:
+    def output(cls) -> type[MemoryStatistics]:
         return MemoryStatistics
 
 

@@ -128,7 +128,7 @@ class NvidiaGPUPowerUtilization(ProcessMeasurement):
 
     # Overriden.
     @classmethod
-    def get_output_type(cls) -> type[NvidiaGPUPowerStatistics]:
+    def output(cls) -> type[NvidiaGPUPowerStatistics]:
         return NvidiaGPUPowerStatistics
 
 

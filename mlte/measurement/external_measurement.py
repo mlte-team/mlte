@@ -96,7 +96,8 @@ class ExternalMeasurement(Measurement):
                 evidence = self.output_evidence_type(result)
         return evidence
 
-    def get_output_type(self) -> type[Evidence]:  # type: ignore
+    # Overriden.
+    def output(self) -> type[Evidence]:  # type: ignore
         """Object method with proper results, similar to the class level get_output_type method, which will always return Opaque for this class."""
         return self.output_evidence_type
 
