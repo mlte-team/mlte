@@ -34,7 +34,7 @@ class ExternalMeasurement(Measurement):
         :param function: The function to be used when evaluating.
         """
         if not issubclass(output_evidence_type, Evidence):
-            raise Exception(
+            raise TypeError(
                 f"Evidence type provided is not a subtype of Evidence: {output_evidence_type}"
             )
         self.output_evidence_type: type = output_evidence_type

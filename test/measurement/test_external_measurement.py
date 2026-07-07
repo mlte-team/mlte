@@ -190,14 +190,14 @@ def test_evaluate_tuple() -> None:
 def test_invalid_result_type() -> None:
     """An external measurement cannot be instantiated with a bad result type."""
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         _ = ExternalMeasurement("dummy", int)  # type: ignore
 
 
 def test_invalid_function() -> None:
     """An external measurement cannot be instantiated with a bad function type."""
 
-    with pytest.raises(Exception):
+    with pytest.raises(AttributeError):
         ExternalMeasurement("dummy", Integer, "not_a_function")  # type: ignore
 
 
@@ -207,8 +207,8 @@ def test_evaluate_invalid_args() -> None:
 
     measurement = ExternalMeasurement("dummy", Integer, _dummy_calculation)
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         _ = measurement.evaluate(x)
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         _ = measurement.evaluate(x, x, x)
