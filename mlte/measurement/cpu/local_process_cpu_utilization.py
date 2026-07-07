@@ -120,4 +120,4 @@ def _get_cpu_usage(pid: int) -> float:
     except FileNotFoundError as e:
         raise RuntimeError(
             f"External program needed to get CPU usage was not found: {e}"
-        )
+        ) from None

@@ -48,15 +48,15 @@ def create_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"Exists: {e}"
-            )
+            ) from None
         except errors.ForbiddenError as e:
             raise HTTPException(
                 status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -91,11 +91,11 @@ def edit_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ForbiddenError as e:
             raise HTTPException(
                 status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -122,7 +122,7 @@ def read_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -153,11 +153,11 @@ def delete_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ForbiddenError as e:
             raise HTTPException(
                 status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -181,7 +181,7 @@ def list_catalog_entries(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -196,7 +196,6 @@ def list_catalogs(
     :return: A collection of catalog ids.
     """
     with state_stores.catalog_stores_session() as catalog_stores:
-        catalog_stores.sessions
         try:
             return [
                 CatalogReply(
@@ -225,7 +224,7 @@ def list_catalog_entries_all_catalogs(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -245,6 +244,6 @@ def search(
         try:
             return catalog_stores.search(query=query)
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
+            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}") from None
         except Exception as e:
             raise_http_internal_error(e)

@@ -41,4 +41,4 @@ class ArtifactQAValidator(CrossValidator):
                         except ErrorNotFound:
                             raise RuntimeError(
                                 f"Artifact quality attribute validation failure. Quality attribute: {requirement.quality} not found. For artifact {new_artifact.header.identifier}."
-                            )
+                            ) from None

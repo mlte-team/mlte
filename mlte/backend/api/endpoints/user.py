@@ -91,7 +91,7 @@ def create_user(
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -121,7 +121,7 @@ def edit_user(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -147,7 +147,7 @@ def read_user(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -207,7 +207,7 @@ def delete_user(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -248,6 +248,6 @@ def list_user_models(
             except errors.ErrorNotFound as e:
                 raise HTTPException(
                     status_code=codes.NOT_FOUND, detail=f"{e} not found."
-                )
+                ) from None
             except Exception as e:
                 raise_http_internal_error(e)

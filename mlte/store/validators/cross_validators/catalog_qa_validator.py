@@ -34,4 +34,4 @@ class CatalogQAValidator(CrossValidator):
                 except ErrorNotFound:
                     raise RuntimeError(
                         f"Catalog entry quality attribute validation failure. Quality attribute: {new_entry.quality_attribute} not found. For catalog entry {new_entry.header.identifier}."
-                    )
+                    ) from None

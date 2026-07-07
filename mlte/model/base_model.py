@@ -24,7 +24,7 @@ class BaseModel(pydantic.BaseModel):
         try:
             _ = json.dumps(json_object)
         except TypeError as e:
-            raise SerializationError(e, str(type(self)))
+            raise SerializationError(e, str(type(self))) from None
 
         return json_object
 

@@ -32,7 +32,7 @@ def create_group(
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -54,7 +54,7 @@ def edit_group(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -76,7 +76,7 @@ def read_group(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -128,7 +128,7 @@ def delete_group(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 

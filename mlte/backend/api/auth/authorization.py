@@ -145,7 +145,7 @@ async def get_authorized_user(
         raise HTTPAuthException(
             error="invalid_token",
             error_decription=f"Could not decode token: {ex}",
-        )
+        ) from None
 
     # Check if user in token exists.
     user = None

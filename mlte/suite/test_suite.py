@@ -73,7 +73,7 @@ class TestSuite(Artifact):
         :return: a dict of Evidences, keyed by test case id, generated as resuts for all the executed measurements, one per test case.
         """
         # Check for invalid input ids.
-        for case_id, args in input.items():
+        for case_id, _ in input.items():
             if case_id not in self.test_cases:
                 raise RuntimeError(
                     f"Test Case id {case_id} received in input does not exist in this suite."

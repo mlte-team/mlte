@@ -28,4 +28,4 @@ class ArtifactUserValidator(CrossValidator):
                 except ErrorNotFound:
                     raise RuntimeError(
                         f"Artifact creator validation failure. User: {new_artifact.header.creator} not found. For artifact {new_artifact.header.identifier}."
-                    )
+                    ) from None

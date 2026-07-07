@@ -135,7 +135,7 @@ def _get_memory_usage_pmap(pid: int) -> int:
     except FileNotFoundError as e:
         raise RuntimeError(
             f"External program needed to get memory usage was not found: {e}"
-        )
+        ) from None
 
 
 def _get_memory_usage_psutil(pid: int) -> tuple[int, bool]:

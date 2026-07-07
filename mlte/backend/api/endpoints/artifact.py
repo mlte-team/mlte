@@ -59,11 +59,11 @@ def write_artifact(
     except errors.ErrorNotFound as e:
         raise HTTPException(
             status_code=codes.NOT_FOUND, detail=f"{e} not found."
-        )
+        ) from None
     except errors.ErrorAlreadyExists as e:
         raise HTTPException(
             status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-        )
+        ) from None
     except Exception as ex:
         raise_http_internal_error(ex)
 
@@ -93,7 +93,7 @@ def read_artifact(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -178,7 +178,7 @@ def delete_artifact(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -215,6 +215,6 @@ def suite_template(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)

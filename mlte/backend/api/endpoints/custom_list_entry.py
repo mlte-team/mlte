@@ -34,11 +34,11 @@ def create_custom_list_entry(
                 entry, CustomListName(custom_list_id)
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
+            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}") from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"Exists: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -63,7 +63,7 @@ def read_custom_list_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -118,7 +118,7 @@ def edit_custom_list_entry(
                 entry, CustomListName(custom_list_id)
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
+            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}") from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -143,7 +143,7 @@ def delete_custom_list_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 

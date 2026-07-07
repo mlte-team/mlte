@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Union
+from typing import Any
 
 import httpx
 import requests
@@ -12,7 +12,7 @@ import mlte._private.url as url_utils
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 
-HttpResponse = Union[requests.Response, httpx.Response]
+HttpResponse = requests.Response | httpx.Response
 """Standard HTTP response, both have same implicit interface."""
 
 

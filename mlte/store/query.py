@@ -63,7 +63,7 @@ class Filterable(BaseModel):
         except Exception:
             raise errors.ErrorNotFound(
                 f"Property '{property_name}' is not part of the model."
-            )
+            ) from None
 
     def get_tags(self, property_name: str) -> list[Any]:
         """Returns the given tags. Tags are a property of type list."""

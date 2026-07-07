@@ -28,7 +28,7 @@ class CatalogUserValidator(CrossValidator):
                 except ErrorNotFound:
                     raise RuntimeError(
                         f"Catalog creator validation failure. Creator user: {new_entry.header.creator} not found. For catalog entry {new_entry.header.identifier}."
-                    )
+                    ) from None
 
             if new_entry.header.updater is not None:
                 try:
@@ -36,4 +36,4 @@ class CatalogUserValidator(CrossValidator):
                 except ErrorNotFound:
                     raise RuntimeError(
                         f"Catalog creator validation failure. Updater user: {new_entry.header.updater} not found. For catalog entry {new_entry.header.identifier}."
-                    )
+                    ) from None

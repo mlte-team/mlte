@@ -36,11 +36,11 @@ def create_model(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -76,7 +76,7 @@ def read_model(
     except errors.ErrorNotFound as e:
         raise HTTPException(
             status_code=codes.NOT_FOUND, detail=f"{e} not found."
-        )
+        ) from None
     except Exception as ex:
         raise_http_internal_error(ex)
 
@@ -95,7 +95,7 @@ def list_models(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -119,12 +119,12 @@ def delete_model(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception:
             raise HTTPException(
                 status_code=codes.INTERNAL_ERROR,
                 detail="Internal server error.",
-            )
+            ) from None
 
     with state_stores.user_store_session() as user_store:
         # Now delete related permissions and groups.
@@ -156,11 +156,11 @@ def create_version(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -186,7 +186,7 @@ def read_version(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -208,7 +208,7 @@ def list_versions(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
 
@@ -234,6 +234,6 @@ def delete_version(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as ex:
             raise_http_internal_error(ex)

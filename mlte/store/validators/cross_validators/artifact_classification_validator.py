@@ -41,4 +41,4 @@ class ArtifactClassificationValidator(CrossValidator):
                         except ErrorNotFound:
                             raise RuntimeError(
                                 f"Artifact classification validation failure. Classification: {dataset.classification} not found. For artifact {new_artifact.header.identifier}."
-                            )
+                            ) from None
