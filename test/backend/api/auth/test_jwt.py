@@ -38,5 +38,5 @@ def test_token_expiration() -> None:
     # Wait more seconds than time delta for token to expire.
     time.sleep(2)
 
-    with pytest.raises(Exception):
+    with pytest.raises(jwt.JWTError):
         jwt.decode_user_token(new_token.encoded_token, test_key)

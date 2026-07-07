@@ -81,7 +81,7 @@ def decode_user_token(encoded_token: str, key: str) -> DecodedToken:
 
         return decoded_token
     except JWTError as ex:
-        raise Exception(f"Error decoding token: {str(ex)}")
+        raise JWTError(f"Error decoding token: {str(ex)}")
 
 
 def check_expired_token(token: DecodedToken) -> bool:
