@@ -13,8 +13,6 @@ from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.catalog.store_session import ManagedCatalogSession
 from mlte.store.custom_list.store import CustomListStore
 from mlte.store.custom_list.store_session import ManagedCustomListSession
-from mlte.store.user.store import UserStore
-from mlte.store.user.store_session import ManagedUserSession
 from mlte.store.import_export.constants import (
     CATALOG_KEY,
     CUSTOM_LISTS_KEY,
@@ -23,6 +21,8 @@ from mlte.store.import_export.constants import (
     MODELS_KEY,
     USERS_KEY,
 )
+from mlte.store.user.store import UserStore
+from mlte.store.user.store_session import ManagedUserSession
 
 
 class ExportSpec:

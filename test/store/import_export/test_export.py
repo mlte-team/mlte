@@ -1,6 +1,7 @@
 """Unit tests for export."""
 
 import json
+import typing
 import zipfile
 from pathlib import Path
 
@@ -12,6 +13,14 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
+from mlte.store.import_export.constants import (
+    CATALOG_KEY,
+    CUSTOM_LISTS_KEY,
+    EXPORT_JSON_FILE,
+    EXPORT_ZIP_FILE,
+    MODELS_KEY,
+    USERS_KEY,
+)
 from mlte.store.import_export.export_store import (
     ExportSpec,
     _export,
@@ -21,18 +30,10 @@ from mlte.store.import_export.export_store import (
     _export_users,
     export_to_file,
 )
-from mlte.store.import_export.constants import (
-    CATALOG_KEY,
-    CUSTOM_LISTS_KEY,
-    EXPORT_JSON_FILE,
-    EXPORT_ZIP_FILE,
-    MODELS_KEY,
-    USERS_KEY,
-)
 from mlte.store.unified_store import UnifiedStore
 from mlte.store.user.policy import user_policy
 from mlte.store.user.store_session import ManagedUserSession
-from mlte.user.model import User
+from mlte.user.model import User, UserWithPassword
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.conftest import create_test_unified_store
 from test.store.import_export.conftest import (
@@ -233,8 +234,11 @@ def test_export_users(
         internal_store = get_internal_store_session(
             user_store_session, store_type
         )
-        test_user = user_policy.set_default_user_policies(
-            test_user, internal_store.policy_store
+        test_user = typing.cast(
+            UserWithPassword,
+            user_policy.set_default_user_policies(
+                test_user, internal_store.policy_store
+            ),
         )
         setup_test_group(user_store_session)
         user_store_session.user_mapper.create(test_user)

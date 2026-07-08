@@ -111,7 +111,9 @@ class FileSystemUserMappper(UserMapper):
         self.policy_store = policy_store
         """Policy store abstraction."""
 
-    def create(self, user: Union[User, UserWithPassword], context: Any = None) -> User:
+    def create(
+        self, user: Union[User, UserWithPassword], context: Any = None
+    ) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
 
         # Assign policies for all users.

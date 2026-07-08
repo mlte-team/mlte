@@ -82,7 +82,7 @@ class UnifiedStore:
             self.user_store,
             self.catalog_stores,
         )
-    
+
     def import_store(self, store_data: dict[str, Any], force: bool = False):
         """Import store data"""
         import_store(
@@ -91,7 +91,7 @@ class UnifiedStore:
             self.custom_list_store,
             self.user_store,
             self.catalog_stores,
-            force
+            force,
         )
 
     @property
