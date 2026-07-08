@@ -33,7 +33,7 @@ class Evidence(Artifact, ABC):
     associate evaluation results with the originating measurement.
     """
 
-    type = ArtifactType.EVIDENCE
+    type_ = ArtifactType.EVIDENCE
     """Class attribute indicating type."""
 
     def __init__(self):

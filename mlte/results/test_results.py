@@ -26,7 +26,7 @@ class TestResults(Artifact):
     TestResults represents a the results for a TestSuite.
     """
 
-    type = ArtifactType.TEST_RESULTS
+    type_ = ArtifactType.TEST_RESULTS
     """Class attribute indicating type."""
 
     def __init__(

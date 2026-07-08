@@ -23,7 +23,7 @@ from mlte.store.artifact.store import ArtifactStore
 class NegotiationCard(Artifact):
     """The negotiation card contains information produced at MLTE negotiation points."""
 
-    type = ArtifactType.NEGOTIATION_CARD
+    type_ = ArtifactType.NEGOTIATION_CARD
     """Class attribute indicating type."""
 
     def __init__(

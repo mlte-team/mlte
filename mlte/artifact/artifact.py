@@ -33,7 +33,7 @@ class Artifact(Serializable, abc.ABC):
     operations with them, namely persistence.
     """
 
-    type: ArtifactType | None = None
+    type_: ArtifactType | None = None
     """By default have no type, but a base Artifact should never be instantiated."""
 
     def __init__(self, identifier: str | None = None) -> None:
@@ -225,13 +225,13 @@ class Artifact(Serializable, abc.ABC):
     @classmethod
     def build_full_id(cls, base: str | None = None) -> str:
         """Builds the full id for this artifact. If base is None, default base is used."""
-        if not cls.type:
+        if not cls.type_:
             raise RuntimeError(
                 "Malformed artifact class, type has not been set."
             )
         if not base:
             base = DEFAULT_ID
-        return Artifact._build_id(cls.type.value, base)
+        return Artifact._build_id(cls.type_.value, base)
 
     @staticmethod
     def _build_id(prefix: str, base: str) -> str:
@@ -243,13 +243,13 @@ class Artifact(Serializable, abc.ABC):
 
     def build_artifact_header(self) -> ArtifactHeaderModel:
         """Generates the common header model for artifacts."""
-        if not self.type:
+        if not self.type_:
             raise RuntimeError(
                 "Malformed artifact class, type has not been set."
             )
         return ArtifactHeaderModel(
             identifier=self.identifier,
-            type=self.type,
+            type=self.type_,
             timestamp=self.timestamp,
             creator=self.creator,
             level=self.level,

@@ -27,7 +27,7 @@ class TestSuite(Artifact):
     measured and validated.
     """
 
-    type = ArtifactType.TEST_SUITE
+    type_ = ArtifactType.TEST_SUITE
     """Class attribute indicating type."""
 
     def __init__(

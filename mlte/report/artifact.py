@@ -23,7 +23,7 @@ from mlte.suite.test_suite import TestSuite
 class Report(Artifact):
     """The report artifact contains the results of MLTE model evaluation."""
 
-    type = ArtifactType.REPORT
+    type_ = ArtifactType.REPORT
     """Class attribute indicating type."""
 
     def __init__(
