@@ -126,7 +126,6 @@ ignore = [
     "B008", # TODO
     "F405",
     "F403",
-    "B018"
 ]
 
 [tool.ruff.lint.isort]
