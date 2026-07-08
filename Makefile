@@ -35,7 +35,12 @@ check-schema:
 # Doc generation.
 .PHONY: docs
 docs:
-	cd docs && uv run mkdocs build --strict
+	cd docs && uv run properdocs build --strict
+
+# Local doc serving.
+.PHONY: docs-serve
+docs-serve:
+	cd docs && uv run properdocs serve
 
 # -----------------------------------------------------------------------------
 # QA

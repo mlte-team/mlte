@@ -262,12 +262,12 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 ## Documentation
 
-We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
+We build documentation with <a href="https://github.com/properdocs/properdocs" target="_blank">`properdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-You can build and serve the documentation with the following command, when run from inside the `docs/` folder:
+You can build and serve the documentation with the following command,:
 
 ```bash
-$ mkdocs serve
+$ make docs-serve
 ```
 
 You can preview the documentation accessing <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a> on your browser.
