@@ -13,8 +13,8 @@ python-venv:
 	uv lock && \
 	uv sync --group dev --group demo --all-extras
 
-.PHONY: venv-redo
-venv-redo: python-venv-remove python-venv
+.PHONY: python-venv-redo
+python-venv-redo: python-venv-remove python-venv
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
