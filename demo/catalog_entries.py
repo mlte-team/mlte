@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import typing
 from pathlib import Path
 from typing import Any
 
@@ -49,7 +50,9 @@ def main():
     current_entry: CatalogEntry | None = None
     if os.path.exists(entry_path):
         with open(entry_path) as entry_file:
-            current_entry = CatalogEntry.from_json(json.load(entry_file))
+            current_entry = typing.cast(
+                CatalogEntry, CatalogEntry.from_json(json.load(entry_file))
+            )
 
     if mode == "check":
         if not current_entry or not compare_entries(new_entry, current_entry):
@@ -66,7 +69,7 @@ def main():
                 json.dump(new_entry.to_json(), entry_file, indent=4)
 
 
-def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict]:
+def read_notebook(notebook_path: Path) -> tuple[NotebookNode, dict[Any, Any]]:
     """
     Read a demo notebook and return the code and the entry data
 

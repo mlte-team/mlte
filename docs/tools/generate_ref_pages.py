@@ -9,7 +9,7 @@ from pathlib import Path
 
 import mkdocs_gen_files
 
-g_nav = mkdocs_gen_files.Nav()
+g_nav = mkdocs_gen_files.nav.Nav()
 
 
 def _repository_root() -> Path:
@@ -34,7 +34,7 @@ for path in sorted(Path(package_root).rglob("*.py")):
     doc_path = path.relative_to(package_root).with_suffix(".md")
     full_doc_path = Path("reference", doc_path)
 
-    g_nav[module_path.parts] = doc_path
+    g_nav[module_path.parts] = str(doc_path)
 
     with mkdocs_gen_files.open(full_doc_path, "w") as fd:
         identifier = ".".join(module_path.parts)

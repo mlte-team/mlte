@@ -9,6 +9,7 @@ from io import StringIO
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from mlte.evidence.external import ExternalEvidence
@@ -18,7 +19,7 @@ from mlte.validation.validator import Validator
 class ConfusionMatrix(ExternalEvidence):
     """A sample extension value type."""
 
-    def __init__(self, matrix: np.ndarray):
+    def __init__(self, matrix: npt.NDArray[np.int_]):
         super().__init__()
 
         self.matrix = matrix

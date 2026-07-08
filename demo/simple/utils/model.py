@@ -1,8 +1,8 @@
 import os
 import pickle
+from typing import Any
 
 import matplotlib.pyplot as plt
-import pandas as pd
 from sklearn import (
     datasets as sk_datasets,
     model_selection as sk_model_selection,
@@ -16,16 +16,15 @@ from demo.simple.session import *
 # ------------------------------------------------------------------------------
 
 
-def _load_data_from_lib() -> tuple[
-    pd.DataFrame, pd.Series, pd.DataFrame, pd.Series
-]:
+def _load_data_from_lib() -> list[Any]:
     """
     Load machine learning dataset.
     :return (X_train, X_test, y_train, y_test)
     """
     iris = sk_datasets.load_iris(as_frame=True)
     X, y = iris.data, iris.target
-    return sk_model_selection.train_test_split(X, y, test_size=0.2)
+    split: list[Any] = sk_model_selection.train_test_split(X, y, test_size=0.2)
+    return split
 
 
 def _load_model(model_path: str):
@@ -64,8 +63,9 @@ def save_training_datasets_to_csv():
 
 def create_model() -> str:
     """Trains and saves model for this demo."""
-    _train_model(MODEL_PATH)
-    return MODEL_PATH
+    path = str(MODEL_PATH)
+    _train_model(path)
+    return path
 
 
 def predict(model_path: str):

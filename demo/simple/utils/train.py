@@ -47,7 +47,7 @@ def parse_arguments() -> tuple[Path, Path]:
     return Path(args.dataset_dir), Path(args.models_dir)
 
 
-def load_dataset(path: Path) -> tuple[pd.DataFrame, pd.Series]:
+def load_dataset(path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Load a training dataset from `path`.
     :param path The path to the training dataset
@@ -66,7 +66,9 @@ def load_dataset(path: Path) -> tuple[pd.DataFrame, pd.Series]:
     return X_train, y_train
 
 
-def train_model(X_train: pd.DataFrame, y_train: pd.Series):
+def train_model(
+    X_train: pd.DataFrame, y_train: pd.DataFrame
+) -> tree.DecisionTreeClassifier:
     """
     Train a model on `X_train` and `y_train`.
     :param X_train The training data

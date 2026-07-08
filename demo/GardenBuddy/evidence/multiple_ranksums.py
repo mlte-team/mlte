@@ -8,6 +8,7 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.validation.validator import Validator
@@ -18,7 +19,7 @@ class MultipleRanksums(ExternalEvidence):
 
     def __init__(
         self,
-        array: np.ndarray,
+        array: npt.NDArray[np.float64],
         num_pops: int = 1,
     ):
         super().__init__()
@@ -70,7 +71,7 @@ class MultipleRanksums(ExternalEvidence):
         """Generates a dict of all cases that didn't go over the threshold."""
         low_cases = {}
 
-        ranksum: dict[str, list]
+        ranksum: dict[str, list[float]]
         for ranksum in self.array:
             id = next(iter(ranksum))
             pval = ranksum[id][1]

@@ -7,6 +7,7 @@ Test JWT functions.
 import time
 from datetime import datetime, timedelta, timezone
 
+import jose
 import pytest
 
 from mlte.backend.api.auth import jwt
@@ -38,5 +39,5 @@ def test_token_expiration() -> None:
     # Wait more seconds than time delta for token to expire.
     time.sleep(2)
 
-    with pytest.raises(jwt.JWTError):
+    with pytest.raises(jose.JWTError):
         jwt.decode_user_token(new_token.encoded_token, test_key)

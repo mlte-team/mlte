@@ -12,7 +12,7 @@ model = "gpt-4o"
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=1.0,
-    max_tokens=2048,
+    max_completion_tokens=2048,
 )
 
 # prompt template
@@ -72,7 +72,7 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
 
     chain = prompt_template | llm
 
-    response_df = []
+    response_list = []
 
     if "EmployeeName" in sample_input_data_df.columns:
         sample_input_data_df.rename(
@@ -95,9 +95,9 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
         pii_data["prompt"] = prompt
         pii_data["model"] = llm
 
-        response_df.append(pii_data)
+        response_list.append(pii_data)
 
-    response_df = pd.DataFrame(response_df)
+    response_df = pd.DataFrame(response_list)
 
     return response_df
 
@@ -105,7 +105,7 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
 def get_overall_rating(response):
     pattern = r"Overall Rating(.+\d.+)\n"
     # pattern = r'\(?(\d+(?:\.\d+)?)\)?'
-    overall_score = 0
+    overall_score = 0.0
     match = re.findall(pattern, response, flags=re.I)
     if len(match) > 0:
         res = re.findall(r"\d", match[0])
