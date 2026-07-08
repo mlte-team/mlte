@@ -18,6 +18,6 @@ COPY Makefile .
 COPY .flake8 .
 
 # Install MLTE package
-RUN uv sync --no-cache
+RUN uv sync --group dev --group demo --all-extras --no-cache
 
 ENTRYPOINT ["make"]

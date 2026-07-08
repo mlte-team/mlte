@@ -7,7 +7,7 @@ RUN mkdir /mnt/store
 
 # Install MLTE.
 WORKDIR /mnt/app/
-RUN uv sync
+RUN uv sync --all-extras --no-cache
 
 # Set the MLTE backend server as the entry point.
 ENTRYPOINT ["uv", "run", "mlte", "backend"]

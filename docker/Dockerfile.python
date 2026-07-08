@@ -21,7 +21,7 @@ RUN pipx ensurepath
 ENV PYTHONUNBUFFERED=1
 
 # Setup uv to handle dependencies.
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 ENV PATH="/root/.local/bin:$PATH"
 
 # Install Python deps.
@@ -29,7 +29,7 @@ WORKDIR /mnt/app
 COPY pyproject.toml /mnt/app
 COPY uv.lock /mnt/app
 COPY README.md /mnt/app
-RUN uv sync --no-install-project --all-extras
+RUN uv sync --no-install-project --all-extras --no-cache
 
 # Copy the rest of the MLTE code.
 # TODO: note that this is also copying all extra nuxt-app frontend code that is not needed.

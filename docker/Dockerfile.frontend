@@ -49,7 +49,7 @@ COPY --from=frontend-build /mnt/app/mlte/frontend/nuxt-app/.output /mnt/app/mlte
 
 # Install MLTE.
 WORKDIR /mnt/app/
-RUN uv sync
+RUN uv sync --all-extras --no-cache
 
 # Set the MLTE frontend server as the entry point.
 ENTRYPOINT ["uv", "run", "mlte", "ui"]
