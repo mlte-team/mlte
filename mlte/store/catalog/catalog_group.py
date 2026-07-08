@@ -111,7 +111,7 @@ class CatalogStoreGroupSession(StoreSession):
     def search(
         self,
         catalog_id: str | None = None,
-        query: Query = Query(),
+        query: Query | None = None,
     ) -> list[CatalogEntry]:
         """
         Read a collection of entries, optionally filtered.
@@ -119,6 +119,7 @@ class CatalogStoreGroupSession(StoreSession):
         :param query: The entry query to apply
         :return: A collection of entries that satisfy the filter
         """
+        query = query if query else Query()
         if catalog_id is not None:
             if catalog_id not in self.sessions:
                 raise ErrorNotFound(

@@ -29,20 +29,20 @@ class NegotiationCard(Artifact):
     def __init__(
         self,
         identifier: str | None = None,
-        system: SystemDescriptor = SystemDescriptor(),
+        system: SystemDescriptor | None = None,
         data: list[DataDescriptor] = [],
-        model: ModelDescriptor = ModelDescriptor(),
+        model: ModelDescriptor | None = None,
         quality_scenarios: list[QASDescriptor] = [],
     ) -> None:
         super().__init__(identifier)
 
-        self.system = system
+        self.system = system if system else SystemDescriptor()
         """A descriptor for the system into which the model is integrated."""
 
         self.data = data
         """A collection of descriptors for relevant datasets."""
 
-        self.model = model
+        self.model = model if model else ModelDescriptor()
         """A descriptor for the model."""
 
         self.quality_scenarios = quality_scenarios

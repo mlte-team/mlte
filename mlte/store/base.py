@@ -211,10 +211,10 @@ class ResourceMapper(ABC):
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
 
-    def __init__(
-        self, *, validators: CompositeValidator = CompositeValidator()
-    ) -> None:
-        self.validators: CompositeValidator = validators
+    def __init__(self, *, validators: CompositeValidator | None = None) -> None:
+        self.validators: CompositeValidator = (
+            validators if validators else CompositeValidator()
+        )
         """A reference to the store validators."""
 
     @abstractmethod
