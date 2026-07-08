@@ -115,7 +115,7 @@ class InMemoryUserMapper(UserMapper):
         self.policy_store = policy_store
         """Policy store abstraection"""
 
-    def create(self, user: UserWithPassword, context: Any = None) -> User:
+    def create(self, user: Union[User, UserWithPassword], context: Any = None) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
 
@@ -123,13 +123,16 @@ class InMemoryUserMapper(UserMapper):
         user = user_policy.set_default_user_policies(user, self.policy_store)
 
         # Create user with hashed passwords.
-        to_store_user = user.to_hashed_user()
+        if isinstance(user, UserWithPassword):
+            hashed_user = user.to_hashed_user()
+        else:
+            hashed_user = user
 
         # Only store group names for consistency.
-        to_store_user.groups = Group.get_group_names(user.groups)
+        hashed_user.groups = Group.get_group_names(user.groups)
 
-        self.storage.users[user.username] = to_store_user
-        return to_store_user
+        self.storage.users[user.username] = hashed_user
+        return hashed_user
 
     def edit(
         self, user: Union[UserWithPassword, BasicUser], context: Any = None

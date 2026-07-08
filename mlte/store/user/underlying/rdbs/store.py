@@ -122,7 +122,7 @@ class RDBUserMapper(UserMapper):
         self.policy_store = policy_store
         """Policy store abstraection"""
 
-    def create(self, user: UserWithPassword, context: Any = None) -> User:
+    def create(self, user: Union[User, UserWithPassword], context: Any = None) -> User:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
@@ -137,7 +137,10 @@ class RDBUserMapper(UserMapper):
                 )
 
                 # Hash password and create a user with hashed passwords to be stored.
-                hashed_user = user.to_hashed_user()
+                if isinstance(user, UserWithPassword):
+                    hashed_user = user.to_hashed_user()
+                else:
+                    hashed_user = user
                 user_orm = self._build_user(hashed_user, session)
                 session.add(user_orm)
                 session.commit()

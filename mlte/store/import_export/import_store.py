@@ -21,7 +21,7 @@ from mlte.store.import_export.constants import (
 )
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
-from mlte.user.model import UserWithPassword
+from mlte.user.model import User
 
 
 def import_store(
@@ -56,7 +56,7 @@ def _store_check(
     user_store: UserStore,
     catalog_stores: CatalogStoreGroup,
 ) -> None:
-    """Check if any of the potential data to be imported is already in the store."""
+    """Check if any of the data to be imported is already in the store."""
     if MODELS_KEY in import_data:
         _artifact_check(import_data[MODELS_KEY], artifact_store)
     if CUSTOM_LISTS_KEY in import_data:
@@ -71,7 +71,7 @@ def _artifact_check(
     artifact_data: dict[str, Any],
     artifact_store: ArtifactStore,
 ) -> None:
-    """"""
+    """Check if any models to be imported are already in the store."""
     with ManagedArtifactSession(
         artifact_store.session()
     ) as artifact_store_session:
@@ -98,12 +98,13 @@ def _custom_list_check(
     custom_list_data: dict[str, Any],
     custom_list_store: CustomListStore,
 ) -> None:
-    """"""
+    """Check if any custom list entries to be imported are already in the store."""
     with ManagedCustomListSession(custom_list_store.session()) as custom_list_store_session:
         for list_name in custom_list_data.keys():
             if list_name not in list(map(str, CustomListName)):
                 raise errors.ErrorNotFound(f"CustomListName {list_name} does not exist.")
-        
+            
+            list_name = CustomListName(list_name)
             entry_id_list = custom_list_store_session.custom_list_entry_mapper.list(list_name)
             for entry in custom_list_data[list_name]:
                 if entry["name"] in entry_id_list:
@@ -114,7 +115,7 @@ def _users_check(
     user_data: dict[str, Any],
     user_store: UserStore
 ) -> None:
-    """"""
+    """Check if any users to be imported are already in the store."""
     with ManagedUserSession(user_store.session()) as user_store_session:
         user_name_list = user_store_session.user_mapper.list()
         for user_name in user_data.keys():
@@ -126,7 +127,7 @@ def _catalogs_check(
     catalogs_data: dict[str, Any],
     catalog_stores: CatalogStoreGroup,
 ) -> None:
-    """"""
+    """Check if any catalog entries to be imported are already in the store."""
     for catalog_name in catalogs_data.keys():
         with ManagedCatalogSession(catalog_stores.catalogs[catalog_name].session()) as catalog_store_session:
             entry_list = catalog_store_session.entry_mapper.list()
@@ -141,7 +142,7 @@ def _import_artifacts(
     artifact_store: ArtifactStore,
     force: bool = False
 ) -> None:
-    """"""
+    """Import artifact data into store."""
     with ManagedArtifactSession(
         artifact_store.session()
     ) as artifact_store_session:
@@ -173,7 +174,7 @@ def _import_custom_lists(
     custom_list_store: CustomListStore,
     force: bool = False
 ) -> None:
-    """"""
+    """Imoprt custom list data into store."""
     with ManagedCustomListSession(custom_list_store.session()) as custom_list_store_session:
         for list_name in custom_list_data.keys():
             list_name = CustomListName(list_name)
@@ -190,16 +191,16 @@ def _import_users(
     user_store: UserStore,
     force: bool = False
 ) -> None:
-    """"""
+    """Import user data into store."""
     with ManagedUserSession(user_store.session()) as user_store_session:
         user_name_list = user_store_session.user_mapper.list()
 
         # how do we go from a "User" that has the hashed password that we are importing, to "UserWithPassword" that expects plain text passowrd?
         for user_name in user_data.keys():
             if user_name not in user_name_list:
-                user_store_session.user_mapper.create(UserWithPassword(**user_data[user_name]))
+                user_store_session.user_mapper.create(User(**user_data[user_name]))
             elif user_name in user_name_list and force:
-                user_store_session.user_mapper.edit(UserWithPassword(**user_data[user_name]))
+                user_store_session.user_mapper.edit(User(**user_data[user_name]))
 
 
 def _import_catalogs(
@@ -207,7 +208,7 @@ def _import_catalogs(
     catalog_stores: CatalogStoreGroup,
     force: bool = False
 ) -> None:
-    """"""
+    """Import catalog data into store."""
     for catalog_name in catalogs_data.keys():
         with ManagedCatalogSession(catalog_stores.catalogs[catalog_name].session()) as catalog_store_session:
             entry_list = catalog_store_session.entry_mapper.list()
