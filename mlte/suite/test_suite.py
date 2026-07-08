@@ -33,7 +33,7 @@ class TestSuite(Artifact):
     def __init__(
         self,
         identifier: str | None = None,
-        test_cases: list[TestCase] = [],
+        test_cases: list[TestCase] | None = None,
     ):
         """
         Initialize a TestSuite instance.
@@ -46,6 +46,7 @@ class TestSuite(Artifact):
         """Indicate that this type of artifact will exist at the model level."""
 
         # Check that no tests cases have the same id.
+        test_cases = test_cases if test_cases else []
         found_ids = []
         for test_case in test_cases:
             if test_case.identifier in found_ids:

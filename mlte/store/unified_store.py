@@ -110,7 +110,7 @@ class UnifiedStore:
 
 def setup_stores(
     stores_uri: StoreURI,
-    catalog_uris: dict[str, StoreURI] = {},
+    catalog_uris: dict[str, StoreURI] | None = None,
 ) -> UnifiedStore:
     """
     Sets up all stores required by MLTE, from the provided URIs.
@@ -132,7 +132,9 @@ def setup_stores(
     _setup_arifact_store(stores_uri, stores)
 
     # Initialize the backing catalog stores instances.
-    _setup_catalog_stores(stores_uri, stores, catalog_uris)
+    _setup_catalog_stores(
+        stores_uri, stores, catalog_uris if catalog_uris else {}
+    )
 
     return stores
 

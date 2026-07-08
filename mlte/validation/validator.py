@@ -10,7 +10,6 @@ from typing import Any
 from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
-from mlte.evidence.artifact import Evidence
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -26,13 +25,13 @@ class Validator(Serializable):
         self,
         *,
         bool_exp: Callable[[Any], bool] | None = None,
-        thresholds: list[str] = [],
+        thresholds: list[str] | None = None,
         success: str | None = None,
         failure: str | None = None,
         default_success: str = "",
         default_failure: str = "",
         info: str | None = None,
-        input_types: list[str] = [],
+        input_types: list[str] | None = None,
         creator: FunctionInfo | None = None,
     ):
         """
@@ -68,13 +67,13 @@ class Validator(Serializable):
             )
 
         self.bool_exp = bool_exp
-        self.thresholds = thresholds.copy()
+        self.thresholds = thresholds.copy() if thresholds else []
         self.success = success
         self.failure = failure
         self.default_success = default_success
         self.default_failure = default_failure
         self.info = info
-        self.input_types = input_types
+        self.input_types = input_types if input_types else []
         self.creator = creator
 
         self.bool_exp_str = (
@@ -87,13 +86,13 @@ class Validator(Serializable):
     @staticmethod
     def build_validator(
         bool_exp: Callable[[Any], bool] | None = None,
-        thresholds: list[Any] = [],
+        thresholds: list[Any] | None = None,
         success: str | None = None,
         failure: str | None = None,
         default_success: str = "",
         default_failure: str = "",
         info: str | None = None,
-        input_types: list[type] = [Evidence],
+        input_types: list[type] | None = None,
     ) -> Validator:
         """
         Creates a Validator using the provided test, extracting context info from the function that called us.
@@ -114,9 +113,12 @@ class Validator(Serializable):
         function_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
+        input_types = input_types if input_types else []
         validator = Validator(
             bool_exp=bool_exp,
-            thresholds=[str(threshold) for threshold in thresholds],
+            thresholds=[str(threshold) for threshold in thresholds]
+            if thresholds
+            else [],
             success=success,
             failure=failure,
             default_success=default_success,

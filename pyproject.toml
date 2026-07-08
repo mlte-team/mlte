@@ -122,7 +122,6 @@ ignore = [
     "E501", # Ignore line-length violations (let the formatter handle it)
     "E731", # Ignore lambda assignment violations (we want to allow lambdas)
     "B024", # Ignore abstract classes with no abstract methods (we want to allow this).
-    "B006", # TODO: re add this and fix these cases.
 ]
 
 [tool.ruff.lint.isort]

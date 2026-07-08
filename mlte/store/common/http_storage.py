@@ -58,13 +58,17 @@ class HttpResourceStorage(Storage):
         self.client.authenticate(f"{self.clean_url}{API_PREFIX}")
 
     def post(
-        self, json: Any, groups: OrderedDict[str, str] = OrderedDict()
+        self, json: Any, groups: OrderedDict[str, str] | None = None
     ) -> Any:
         """Post method, to create resource."""
-        return self.send_command(MethodType.POST, json=json, groups=groups)
+        return self.send_command(
+            MethodType.POST,
+            json=json,
+            groups=groups if groups else OrderedDict(),
+        )
 
     def put(
-        self, json: Any, groups: OrderedDict[str, str] = OrderedDict()
+        self, json: Any, groups: OrderedDict[str, str] | None = None
     ) -> Any:
         """Put method, to update resource."""
         return self.send_command(MethodType.PUT, json=json, groups=groups)
@@ -72,26 +76,31 @@ class HttpResourceStorage(Storage):
     def get(
         self,
         id: str | None = None,
-        groups: OrderedDict[str, str] = OrderedDict(),
-        query_args: dict[str, str] = {},
+        groups: OrderedDict[str, str] | None = None,
+        query_args: dict[str, str] | None = None,
     ) -> Any:
         """Get method, to read resource."""
         return self.send_command(
-            MethodType.GET, id=id, groups=groups, query_args=query_args
+            MethodType.GET,
+            id=id,
+            groups=groups if groups else OrderedDict(),
+            query_args=query_args if query_args else {},
         )
 
     def delete(
-        self, id: str, groups: OrderedDict[str, str] = OrderedDict()
+        self, id: str, groups: OrderedDict[str, str] | None = None
     ) -> Any:
         """Delete method, to remove resource."""
-        return self.send_command(MethodType.DELETE, id=id, groups=groups)
+        return self.send_command(
+            MethodType.DELETE, id=id, groups=groups if groups else OrderedDict()
+        )
 
     def send_command(
         self,
         method: MethodType,
-        groups: OrderedDict[str, str] = OrderedDict(),
+        groups: OrderedDict[str, str] | None = None,
         id: str | None = None,
-        query_args: dict[str, str] = {},
+        query_args: dict[str, str] | None = None,
         json: Any | None = None,
         resource_type: str | None = None,
     ) -> Any:
@@ -112,6 +121,7 @@ class HttpResourceStorage(Storage):
         path_url = ""
 
         # Add groups to path.
+        groups = groups if groups else OrderedDict()
         for group_id, subgroup_name in groups.items():
             path_url += f"/{url_utils.make_valid_url_part(group_id)}/{url_utils.make_valid_url_part(subgroup_name)}"
 
@@ -122,6 +132,7 @@ class HttpResourceStorage(Storage):
         # Add query args.
         query = ""
         link_char = "?"
+        query_args = query_args if query_args else {}
         for arg_name, arg_value in query_args.items():
             query += f"{link_char}{url_utils.make_valid_url_part(arg_name)}={url_utils.make_valid_url_part(arg_value)}"
             link_char = "&"

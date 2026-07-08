@@ -35,7 +35,7 @@ class Report(Artifact):
         test_suite_model: TestSuiteModel | None = None,
         test_results_id: str = TestResults.build_full_id(),
         test_results_model: TestResultsModel | None = None,
-        comments: list[CommentDescriptor] = [],
+        comments: list[CommentDescriptor] | None = None,
     ) -> None:
         """
         Creates a Report.
@@ -83,7 +83,7 @@ class Report(Artifact):
         )
         """A summary of model performance evaluation."""
 
-        self.comments = comments
+        self.comments = comments if comments else []
         """A collection of comments for the report."""
 
     def to_model(self) -> ArtifactModel:

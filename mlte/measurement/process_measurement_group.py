@@ -21,13 +21,14 @@ class ProcessMeasurementGroup:
         self.measurements.append(measurement)
 
     def evaluate(
-        self, command: list[str], inputs: dict[str, list[Any]] = {}
+        self, command: list[str], inputs: dict[str, list[Any]] | None = None
     ) -> dict[str, Evidence]:
         """Start an external process and run multiple process measurements on it."""
         # Start the external process to measure.
         pid = ProcessMeasurement.start_process(command)
 
         # Start up all measurement tools.
+        inputs = inputs if inputs else {}
         for measurement in self.measurements:
             if not measurement.evidence_metadata:
                 raise RuntimeError(

@@ -33,7 +33,7 @@ class TestResults(Artifact):
         self,
         test_suite: TestSuite,
         identifier: str | None = None,
-        results: dict[str, Result] = {},
+        results: dict[str, Result] | None = None,
     ):
         """
         Initialize a TestResults instance.
@@ -47,13 +47,13 @@ class TestResults(Artifact):
         self.test_suite = test_suite
         """The id of the TestSuite that we validated."""
 
-        self.results = results
+        self.results = results if results else {}
         """The validation results for the test_suite, by test case."""
 
         # Check that all tests have results.
         if test_suite:
             for test_case_id, _ in test_suite.test_cases.items():
-                if test_case_id not in results:
+                if test_case_id not in self.results:
                     raise RuntimeError(
                         f"Test Case '{test_case_id}' does not have a result."
                     )
