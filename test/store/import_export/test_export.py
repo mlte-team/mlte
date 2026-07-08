@@ -92,7 +92,7 @@ def test_export_to_file(
 def test_export(
     store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export
 ) -> None:
-    """Tests that all exports happen together properly"""
+    """Tests that all exports happen together properly."""
     stores: UnifiedStore = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
     )
@@ -129,6 +129,7 @@ def test_export_artifacts(
     version_id = "version0"
     artifact_id = "myid"
     artifact_type = ArtifactType.NEGOTIATION_CARD
+    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
     with ManagedArtifactSession(
         stores.artifact_store.session()
@@ -137,8 +138,6 @@ def test_export_artifacts(
         artifact_store_session.version_mapper.create(
             Version(identifier=version_id), model_id
         )
-
-        artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
         written_artifact = (
             artifact_store_session.artifact_mapper.write_artifact(
                 model_id, version_id, artifact

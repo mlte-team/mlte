@@ -20,7 +20,7 @@ from mlte.store.import_export.constants import (
 )
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
-from mlte.user.model import User
+from mlte.user.model import BasicUser, User
 
 
 def import_store(
@@ -171,8 +171,6 @@ def _import_artifacts(
                 artifact_store_session.model_mapper.create(
                     Model(identifier=model_id)
                 )
-            elif model_id in model_id_list and force:
-                pass
 
             version_id_list = artifact_store_session.version_mapper.list(
                 model_id
@@ -182,8 +180,6 @@ def _import_artifacts(
                     artifact_store_session.version_mapper.create(
                         Version(identifier=version_id), model_id
                     )
-                elif version_id in version_id_list and force:
-                    pass
 
                 artifact_id_list = artifact_store_session.artifact_mapper.list(
                     (model_id, version_id)
@@ -251,7 +247,7 @@ def _import_users(
                 )
             elif user_name in user_name_list and force:
                 user_store_session.user_mapper.edit(
-                    User(**user_data[user_name])
+                    BasicUser(**user_data[user_name])
                 )
 
 
