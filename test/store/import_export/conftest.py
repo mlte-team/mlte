@@ -8,7 +8,12 @@ import pytest
 from mlte.store.artifact.store import ArtifactStore
 from mlte.store.catalog.catalog_group import CatalogStoreGroup
 from mlte.store.custom_list.store import CustomListStore
-from mlte.store.import_export.constants import CATALOG_KEY, CUSTOM_LISTS_KEY, MODELS_KEY, USERS_KEY
+from mlte.store.import_export.constants import (
+    CATALOG_KEY,
+    CUSTOM_LISTS_KEY,
+    MODELS_KEY,
+    USERS_KEY,
+)
 from mlte.store.import_export.export_store import ExportSpec, _export
 from mlte.store.user.store import UserStore
 
@@ -16,36 +21,32 @@ ARTIFACT_EXPORT_DATA: dict[str, Any] = {
     "testModel": {
         "0.0.1": {
             "evidence.accuracy across gardens": {
-            "header": {
-                "identifier": "evidence.accuracy across gardens",
-                "type": "evidence",
-                "timestamp": 1770690184,
-                "creator": None,
-                "level": "version"
-            },
-            "body": {
-                "artifact_type": "evidence",
-                "metadata": {
-                    "test_case_id": "accuracy across gardens",
-                    "measurement": {
-                        "measurement_class": "mlte.measurement.external_measurement.ExternalMeasurement",
-                        "output_class": "mlte.evidence.types.array.Array",
-                        "additional_data": {
-                            "function": "__main__.calculate_model_performance_acc"
-                        }
-                    }
+                "header": {
+                    "identifier": "evidence.accuracy across gardens",
+                    "type": "evidence",
+                    "timestamp": 1770690184,
+                    "creator": None,
+                    "level": "version",
                 },
-                "evidence_class": "mlte.evidence.types.array.Array",
-                "value": {
-                    "evidence_type": "array",
-                    "data": [
-                        0.981,
-                        0.948,
-                        0.961
-                    ]
-                }
-            }
-        },
+                "body": {
+                    "artifact_type": "evidence",
+                    "metadata": {
+                        "test_case_id": "accuracy across gardens",
+                        "measurement": {
+                            "measurement_class": "mlte.measurement.external_measurement.ExternalMeasurement",
+                            "output_class": "mlte.evidence.types.array.Array",
+                            "additional_data": {
+                                "function": "__main__.calculate_model_performance_acc"
+                            },
+                        },
+                    },
+                    "evidence_class": "mlte.evidence.types.array.Array",
+                    "value": {
+                        "evidence_type": "array",
+                        "data": [0.981, 0.948, 0.961],
+                    },
+                },
+            },
         }
     }
 }
@@ -66,7 +67,7 @@ USER_EXPORT_DATA: dict[str, Any] = {
         "disabled": False,
         "role": "admin",
         "groups": [],
-        "hashed_password": "$2b$12$SO4mZpM8utStmh5VABacZOVQgfrzI2/aD.pszSuJYf1gypt/oo2tG"
+        "hashed_password": "$2b$12$SO4mZpM8utStmh5VABacZOVQgfrzI2/aD.pszSuJYf1gypt/oo2tG",
     },
 }
 CATALOG_EXPORT_DATA: dict[str, Any] = {
@@ -78,17 +79,14 @@ CATALOG_EXPORT_DATA: dict[str, Any] = {
                 "created": 1763499421,
                 "updater": None,
                 "updated": 1763499421,
-                "catalog_id": "local"
+                "catalog_id": "local",
             },
-            "tags": [
-                "Computer Vision",
-                "Image"
-            ],
+            "tags": ["Computer Vision", "Image"],
             "quality_attribute": "Analyzability",
             "code": "blah",
             "description": "Check that log enteries are produced for all OOD inputs",
             "inputs": "The model log path",
-            "output": "Model logs; if OOD inputs are logged"
+            "output": "Model logs; if OOD inputs are logged",
         }
     ]
 }
@@ -98,6 +96,7 @@ ALL_EXPORT_DATA: dict[str, Any] = {
     USERS_KEY: USER_EXPORT_DATA,
     CATALOG_KEY: CATALOG_EXPORT_DATA,
 }
+
 
 def create_all_export_spec(
     artifact_store: ArtifactStore,
