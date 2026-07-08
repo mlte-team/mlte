@@ -107,7 +107,9 @@ class CustomListEntryMapper(ResourceMapper):
             list_name
         )
         if child_list_name:
-            for child_entry_name in self.list_all(CustomListName(child_list_name)):
+            for child_entry_name in self.list_all(
+                CustomListName(child_list_name)
+            ):
                 child_entry = self.read(child_entry_name, child_list_name)
                 if child_entry.parent == entry_name:
                     self.delete(child_entry_name, child_list_name)

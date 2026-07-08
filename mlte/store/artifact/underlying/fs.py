@@ -104,7 +104,9 @@ class FileSystemModelMapper(ModelMapper):
         try:
             self.storage.create_resource_group(model.identifier)
         except FileExistsError:
-            raise errors.ErrorAlreadyExists(f"Model {model.identifier}") from None
+            raise errors.ErrorAlreadyExists(
+                f"Model {model.identifier}"
+            ) from None
 
         return Model(identifier=model.identifier, versions=[])
 
@@ -147,7 +149,9 @@ class FileSystemVersionMapper(VersionMapper):
         try:
             self.storage.create_resource_group(version.identifier, [model_id])
         except FileExistsError:
-            raise errors.ErrorAlreadyExists(f"Version {version.identifier}") from None
+            raise errors.ErrorAlreadyExists(
+                f"Version {version.identifier}"
+            ) from None
         return Version(identifier=version.identifier)
 
     def read(self, version_id: str, model_id: str) -> Version:

@@ -34,7 +34,9 @@ def create_custom_list_entry(
                 entry, CustomListName(custom_list_id)
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}") from None
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e}"
+            ) from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"Exists: {e}"
@@ -118,7 +120,9 @@ def edit_custom_list_entry(
                 entry, CustomListName(custom_list_id)
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}") from None
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e}"
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 

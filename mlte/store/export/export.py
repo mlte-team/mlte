@@ -208,7 +208,9 @@ def _export_artifacts(
             output_dict[model_id] = {}
             for version_id in export_spec.models[model_id]:
                 output_dict[model_id][version_id] = {}
-                for artifact_id in artifact_store_session.artifact_mapper.list_all(
+                for (
+                    artifact_id
+                ) in artifact_store_session.artifact_mapper.list_all(
                     (model_id, version_id)
                 ):
                     output_dict[model_id][version_id][artifact_id] = (
