@@ -5,8 +5,8 @@ from __future__ import annotations
 import typing
 from typing import Any
 
-import httpx
 from fastapi.testclient import TestClient
+from httpx2 import Response
 
 import mlte.backend.core.app_factory as app_factory
 from mlte.backend.api import codes
@@ -43,33 +43,25 @@ class FastAPITestHttpClient(OAuthHttpClient):
         self.client = client
         """The underlying client."""
 
-    def get(self, url: str, **kwargs) -> httpx.Response:
-        response: httpx.Response = self.client.get(
-            url, headers=self.headers, **kwargs
-        )
-        return response
+    def get(self, url: str, **kwargs) -> Response:
+        return self.client.get(url, headers=self.headers, **kwargs)
 
     def post(
         self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> httpx.Response:
-        response: httpx.Response = self.client.post(
+    ) -> Response:
+        return self.client.post(
             url, headers=self.headers, data=data, json=json, **kwargs
         )
-        return response
 
     def put(
         self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> httpx.Response:
-        response: httpx.Response = self.client.put(
+    ) -> Response:
+        return self.client.put(
             url, headers=self.headers, data=data, json=json, **kwargs
         )
-        return response
 
-    def delete(self, url: str, **kwargs) -> httpx.Response:
-        response: httpx.Response = self.client.delete(
-            url, headers=self.headers, **kwargs
-        )
-        return response
+    def delete(self, url: str, **kwargs) -> Response:
+        return self.client.delete(url, headers=self.headers, **kwargs)
 
 
 # -----------------------------------------------------------------------------

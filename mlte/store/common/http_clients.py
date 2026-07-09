@@ -5,14 +5,14 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 
-import httpx
+import httpx2
 import requests
 
 import mlte._private.url as url_utils
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 
-HttpResponse = requests.Response | httpx.Response
+HttpResponse = requests.Response | httpx2.Response
 """Standard HTTP response, both have same implicit interface."""
 
 
