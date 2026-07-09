@@ -74,10 +74,10 @@ format:
 check-format:
 	uv run ruff format --check .
 
-# Typecheck all source code.
+# Typecheck all source code (except for demo).
 .PHONY: typecheck
 typecheck:
-	uv run mypy .
+	uv run mypy . --exclude "demo/"
 
 # Run unit tests with pytest.
 .PHONY: test
@@ -92,6 +92,11 @@ test:
 .PHONY: demo-clean
 demo-clean:
 	cd demo && bash clean_all_nbs.sh simple GardenBuddy ReviewPro GradientClimber
+
+# Typecheck demo code.
+.PHONY: demo-typecheck
+demo-typecheck:
+	uv run mypy demo/
 
 # Demo Jupyter Notebook tests.
 .PHONY: demo-test
@@ -114,7 +119,7 @@ check-sample-catalog:
 
 # QA for Python bits.
 .PHONY: qa-python
-qa-python: schema lint format typecheck demo-clean docs build-sample-catalog
+qa-python: schema lint format typecheck demo-clean demo-typecheck docs build-sample-catalog
 
 # QA for Python bits, ran within a docker container.
 .PHONY: qa-python-docker
@@ -123,7 +128,7 @@ qa-python-docker:
 
 # Check all QA tasks for Python.
 .PHONY: check-qa-python
-check-qa-python: check-schema check-lint check-format typecheck docs check-sample-catalog
+check-qa-python: check-schema check-lint check-format typecheck demo-typecheck docs check-sample-catalog
 
 # CI for Python bits.
 .PHONY: ci-python
