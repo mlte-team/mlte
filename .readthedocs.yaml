@@ -10,12 +10,5 @@ build:
   tools:
     python: "3.10"
   commands:
+    - uv sync --group docs
     - properdocs build -f docs/properdocs.yml --site-dir $READTHEDOCS_OUTPUT/html
-
-python:
-  install:
-    # Install dependencies with 'doc' dependency group
-    - method: uv
-      command: sync
-      groups:
-        - docs
