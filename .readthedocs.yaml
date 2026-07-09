@@ -9,15 +9,13 @@ build:
   os: ubuntu-24.04
   tools:
     python: "3.10"
-  jobs:
-    post_create_environment:
-      # Install uv
-      # https://docs.astral.sh/uv/getting-started/installation/
-      - curl -LsSf https://astral.sh/uv/install.sh | sh
-    post_install:
-      # Install dependencies with 'dev' dependency group
-      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv sync --group dev    
-  
-# Build documentation in the docs/ directory with mkdocs
-mkdocs:
-  configuration: docs/mkdocs.yml
+  commands:
+    - properdocs build -f docs/properdocs.yml --site-dir $READTHEDOCS_OUTPUT/html
+
+python:
+  install:
+    # Install dependencies with 'doc' dependency group
+    - method: uv
+      command: sync
+      groups:
+        - docs
