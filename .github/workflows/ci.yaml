@@ -97,7 +97,7 @@ jobs:
       - name: Build Docker backend and frontend images
         run: cd docker && bash build.sh
       - name: Build Docker dist build image
-        run: bash build_in_docker.sh
+        run: make build-in-docker
       - name: Build Docker python ops image
         run: docker build -t mlte-python-ops . -f docker/Dockerfile.python_ops
       - name: Build Docker frontend ops image
