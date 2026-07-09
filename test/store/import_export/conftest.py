@@ -133,16 +133,16 @@ def patched_export():
         return CATALOG_EXPORT_DATA
 
     with patch(
-        "mlte.store.import_export.export._export_artifacts",
+        "mlte.store.import_export.export_store._export_artifacts",
         side_effect=_export_artifacts_with_fixtures,
     ), patch(
-        "mlte.store.import_export.export._export_custom_lists",
+        "mlte.store.import_export.export_store._export_custom_lists",
         side_effect=_export_custom_lists_with_fixtures,
     ), patch(
-        "mlte.store.import_export.export._export_users",
+        "mlte.store.import_export.export_store._export_users",
         side_effect=_export_users_with_fixtures,
     ), patch(
-        "mlte.store.import_export.export._export_catalogs",
+        "mlte.store.import_export.export_store._export_catalogs",
         side_effect=_export_catalogs_with_fixtures,
     ):
         yield _export
