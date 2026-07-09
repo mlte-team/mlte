@@ -72,11 +72,23 @@ demo = [
     "gymnasium==1.2.2",
 ]
 dev = [
+    {include-group = "docs"},
+    {include-group = "lint"},
+    {include-group = "type"},
+    {include-group = "test"},
+    {include-group = "tools"},
+]
+docs = [
     "properdocs==1.6.7",
     "mkdocstrings-python==2.0.5",
     "mkdocs-material==9.7.6",
     "mkdocs-gen-files==0.6.1",
     "mkdocs-literate-nav==0.6.3",
+]
+lint = [
+    "ruff==0.15.12",
+]
+type = [
     "mypy==2.2.0",
     "types-requests==2.33.0.20260518",
     "types-PyYAML==6.0.12.20260518",
@@ -87,14 +99,17 @@ dev = [
     "types-psutil==7.2.2.20260518",
     "types-python-jose==3.5.0.20260408",
     "types-tensorflow==2.18.0.20260610",
+]
+test =[
     "pytest==9.1.1",
     "deepdiff==8.6.1",
     "pytest-cov==7.1.0",
-    "jsonschema==4.26.0",
     "nbmake==1.5.5",
+]
+tools = [
+    "jsonschema==4.26.0",
     "bump2version==1.0.1",
     "twine==6.2.0",
-    "ruff==0.15.12"
 ]
 
 [tool.hatch.build]
