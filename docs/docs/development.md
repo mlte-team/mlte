@@ -30,17 +30,17 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
- - `MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
+`MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
 
 ### Python Version Support
 
-Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included. If you want to specify a specific version to use when running commands in yout envinroment, while inside the root repository folder, run:
+Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included. If you want to specify a specific version to use when running commands in yout environment, while inside the root repository folder, run the following command (replacing `3.12` with whatever version you want to test):
 
 ```bash
 $ uv python pin 3.12
 ```
 
-This wikk create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `python --version` to check if it worked.
+This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `uv run python --version` to check if it worked.
 
 
 ### Dev Environment Setup
