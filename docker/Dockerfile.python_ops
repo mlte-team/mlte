@@ -4,7 +4,7 @@ FROM mlte-python
 WORKDIR /mnt/app
 
 # Install dev dependencies
-RUN uv sync --no-project-install --group dev --group demo --all-extras --no-cache
+RUN uv sync --no-install-project --group dev --group demo --all-extras --no-cache
 
 # Install jq for demo QA
 RUN apt-get install -y jq
@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y git
 # Copy in files needed for QA/CI
 COPY .git .git
 COPY Makefile .
-COPY .flake8 .
 
 # Install MLTE package
 RUN uv sync --group dev --group demo --all-extras --no-cache
