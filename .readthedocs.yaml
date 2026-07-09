@@ -15,7 +15,12 @@ build:
       - asdf plugin add uv
       - asdf install uv latest
       - asdf global uv latest    
-  commands:
-  # Install deps and then build docs.
+
+    # 2. Install deps.
+    install:
     - uv sync --group docs
-    - properdocs build -f docs/properdocs.yml --site-dir $READTHEDOCS_OUTPUT/html
+
+    # 3. Build the docs.
+    build:
+      html:
+      - uv run properdocs build -f docs/properdocs.yml --site-dir $READTHEDOCS_OUTPUT/html
