@@ -2566,6 +2566,39 @@ dev = [
     { name = "types-requests" },
     { name = "types-tensorflow" },
 ]
+docs = [
+    { name = "mkdocs-gen-files" },
+    { name = "mkdocs-literate-nav" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings-python" },
+    { name = "properdocs" },
+]
+lint = [
+    { name = "ruff" },
+]
+test = [
+    { name = "deepdiff" },
+    { name = "nbmake" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+tools = [
+    { name = "bump2version" },
+    { name = "jsonschema" },
+    { name = "twine" },
+]
+type = [
+    { name = "mypy" },
+    { name = "types-colorama" },
+    { name = "types-decorator" },
+    { name = "types-jsonschema" },
+    { name = "types-psutil" },
+    { name = "types-pygments" },
+    { name = "types-python-jose" },
+    { name = "types-pyyaml" },
+    { name = "types-requests" },
+    { name = "types-tensorflow" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -2626,6 +2659,37 @@ dev = [
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "ruff", specifier = "==0.15.12" },
     { name = "twine", specifier = "==6.2.0" },
+    { name = "types-colorama", specifier = "==0.4.15.20260508" },
+    { name = "types-decorator", specifier = "==5.2.0.20260519" },
+    { name = "types-jsonschema", specifier = "==4.26.0.20260518" },
+    { name = "types-psutil", specifier = "==7.2.2.20260518" },
+    { name = "types-pygments", specifier = "==2.20.0.20260518" },
+    { name = "types-python-jose", specifier = "==3.5.0.20260408" },
+    { name = "types-pyyaml", specifier = "==6.0.12.20260518" },
+    { name = "types-requests", specifier = "==2.33.0.20260518" },
+    { name = "types-tensorflow", specifier = "==2.18.0.20260610" },
+]
+docs = [
+    { name = "mkdocs-gen-files", specifier = "==0.6.1" },
+    { name = "mkdocs-literate-nav", specifier = "==0.6.3" },
+    { name = "mkdocs-material", specifier = "==9.7.6" },
+    { name = "mkdocstrings-python", specifier = "==2.0.5" },
+    { name = "properdocs", specifier = "==1.6.7" },
+]
+lint = [{ name = "ruff", specifier = "==0.15.12" }]
+test = [
+    { name = "deepdiff", specifier = "==8.6.1" },
+    { name = "nbmake", specifier = "==1.5.5" },
+    { name = "pytest", specifier = "==9.1.1" },
+    { name = "pytest-cov", specifier = "==7.1.0" },
+]
+tools = [
+    { name = "bump2version", specifier = "==1.0.1" },
+    { name = "jsonschema", specifier = "==4.26.0" },
+    { name = "twine", specifier = "==6.2.0" },
+]
+type = [
+    { name = "mypy", specifier = "==2.2.0" },
     { name = "types-colorama", specifier = "==0.4.15.20260508" },
     { name = "types-decorator", specifier = "==5.2.0.20260519" },
     { name = "types-jsonschema", specifier = "==4.26.0.20260518" },
