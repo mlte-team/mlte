@@ -22,7 +22,7 @@ python-venv-redo: python-venv-remove python-venv
 # Clean python cache files/folders, without touching venv.
 .PHONY: python-env-clean
 python-env-clean:
-	rm -r -f .mypy_cache .pytest_cache default_store/
+	rm -r -f .mypy_cache .pytest_cache .ruff_cache default_store/
 
 # -----------------------------------------------------------------------------
 # Schema Generation / Vetting
