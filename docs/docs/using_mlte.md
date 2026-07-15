@@ -7,7 +7,7 @@ This section walks users through how to set up and run the `MLTE` Python package
 `MLTE` can be installed and ran with its frontend with
 
 ```bash
-$ pip install "mlte[frontend]"
+$ pip install "mlte[frontend,backend]"
 $ mlte backend --store-uri fs://store
 $ mlte ui
 ```
@@ -29,10 +29,10 @@ or
 $ conda install mlte
 ```
 
-To use the web UI (frontend/backend functionality), the `frontend` optional dependencies are needed; to use relational database storage, the `rdbs` optional dependencies are needed; and to use the GPU measurements, the `gpu` optional dependencies are needed. To install all optional dependencies:
+To use the web UI (frontend/backend functionality), the `frontend` and `backend` optional dependencies are needed (`backend` can also be installed without the `frontend` to provide a web API to be consumed by other clients); to use relational database storage, the `rdbs` optional dependencies are needed; and to use the GPU measurements, the `gpu` optional dependencies are needed. To install all optional dependencies:
 
 ```bash
-$ pip install "mlte[frontend,rdbs,gpu]"
+$ pip install "mlte[frontend,backend,rdbs,gpu]"
 ```
 
 If you are new to Python and haven't installed it, we recommend starting with <a href="https://www.python.org/about/gettingstarted/" target="_blank">Python for Beginners</a>.

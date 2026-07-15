@@ -38,11 +38,17 @@ rdbs = [
     "SQLAlchemy-Utils >=0.41.2",
     "psycopg2-binary >=2.9.11",
 ]
-frontend = [
+web = [
     "uvicorn >=0.34.0",
     "fastapi >=0.115.6",
-    "python-multipart >=0.0.20",
+]
+backend = [
+    "mlte[web]",
     "python-jose >=3.3.0",
+    "python-multipart >=0.0.20",
+]
+frontend = [
+    "mlte[web]",
 ]
 gpu = ["nvidia-ml-py >= 13.580.82"]
 

@@ -2537,10 +2537,14 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-frontend = [
+backend = [
     { name = "fastapi" },
     { name = "python-jose" },
     { name = "python-multipart" },
+    { name = "uvicorn" },
+]
+frontend = [
+    { name = "fastapi" },
     { name = "uvicorn" },
 ]
 gpu = [
@@ -2550,6 +2554,10 @@ rdbs = [
     { name = "psycopg2-binary" },
     { name = "sqlalchemy" },
     { name = "sqlalchemy-utils" },
+]
+web = [
+    { name = "fastapi" },
+    { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
@@ -2635,9 +2643,11 @@ requires-dist = [
     { name = "bcrypt", specifier = ">=4.3.0" },
     { name = "cryptography", specifier = ">=48.0.0" },
     { name = "dill", specifier = ">=0.3.9" },
-    { name = "fastapi", marker = "extra == 'frontend'", specifier = ">=0.115.6" },
+    { name = "fastapi", marker = "extra == 'web'", specifier = ">=0.115.6" },
     { name = "httpx2", specifier = ">=2.0.0" },
     { name = "json-fix", specifier = ">=1.0.2" },
+    { name = "mlte", extras = ["web"], marker = "extra == 'backend'" },
+    { name = "mlte", extras = ["web"], marker = "extra == 'frontend'" },
     { name = "nvidia-ml-py", marker = "extra == 'gpu'", specifier = ">=13.580.82" },
     { name = "pint", specifier = ">=0.24.4" },
     { name = "pip-system-certs", specifier = ">=4.0" },
@@ -2645,15 +2655,15 @@ requires-dist = [
     { name = "psycopg2-binary", marker = "extra == 'rdbs'", specifier = ">=2.9.11" },
     { name = "pydantic", specifier = ">=2.10.5" },
     { name = "pydantic-settings", specifier = ">=2.7.1" },
-    { name = "python-jose", marker = "extra == 'frontend'", specifier = ">=3.3.0" },
-    { name = "python-multipart", marker = "extra == 'frontend'", specifier = ">=0.0.20" },
+    { name = "python-jose", marker = "extra == 'backend'", specifier = ">=3.3.0" },
+    { name = "python-multipart", marker = "extra == 'backend'", specifier = ">=0.0.20" },
     { name = "requests", specifier = ">=2.32.4" },
     { name = "sqlalchemy", marker = "extra == 'rdbs'", specifier = ">=2.0.37" },
     { name = "sqlalchemy-utils", marker = "extra == 'rdbs'", specifier = ">=0.41.2" },
     { name = "strenum", specifier = ">=0.4.15" },
-    { name = "uvicorn", marker = "extra == 'frontend'", specifier = ">=0.34.0" },
+    { name = "uvicorn", marker = "extra == 'web'", specifier = ">=0.34.0" },
 ]
-provides-extras = ["rdbs", "frontend", "gpu"]
+provides-extras = ["rdbs", "web", "backend", "frontend", "gpu"]
 
 [package.metadata.requires-dev]
 demo = [
