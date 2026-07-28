@@ -33,6 +33,9 @@ def import_store(
 ) -> None:
     """
     Import MLTE store objects from json dict.
+
+    :param import_data: Dict of all the store data to be imported.
+    :param force: Flag to overwrite data currently in the stores.
     """
 
     if not force:
@@ -86,19 +89,6 @@ def _artifact_check(
         for model_id in artifact_data.keys():
             if model_id in model_id_list:
                 raise errors.ErrorAlreadyExists(f"Model {model_id}")
-
-            # This is not really needed, because we don't want to overwrite any model info
-            #   and if we don't want to do that, we just need the model to not be there then
-            #   we can write whatever we want
-            # version_id_list = artifact_store_session.version_mapper.list(model_id)
-            # for version_id in artifact_data[model_id].keys():
-            #     if version_id in version_id_list:
-            #         raise errors.ErrorAlreadyExists(f"Version {version_id} in model {model_id}")
-
-            #     artifact_id_list = artifact_store_session.artifact_mapper.list((model_id, version_id))
-            #     for artifact_id in artifact_data[model_id][version_id].keys():
-            #         if artifact_id in artifact_id_list:
-            #             raise errors.ErrorAlreadyExists(f"Aritfact {artifact_id} in version {version_id} in model {model_id}")
 
 
 def _custom_list_check(
@@ -239,7 +229,6 @@ def _import_users(
     with ManagedUserSession(user_store.session()) as user_store_session:
         user_name_list = user_store_session.user_mapper.list()
 
-        # how do we go from a "User" that has the hashed password that we are importing, to "UserWithPassword" that expects plain text passowrd?
         for user_name in user_data.keys():
             if user_name not in user_name_list:
                 user_store_session.user_mapper.create(

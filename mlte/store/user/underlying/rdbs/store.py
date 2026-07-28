@@ -123,7 +123,7 @@ class RDBUserMapper(UserMapper):
         """Policy store abstraection"""
 
     def create(
-        self, user: Union[User, UserWithPassword], context: Any = None
+        self, user: User | UserWithPassword, context: Any = None
     ) -> User:
         with Session(self.storage.engine) as session:
             try:

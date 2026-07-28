@@ -112,7 +112,7 @@ class FileSystemUserMappper(UserMapper):
         """Policy store abstraction."""
 
     def create(
-        self, user: Union[User, UserWithPassword], context: Any = None
+        self, user: User | UserWithPassword, context: Any = None
     ) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
 

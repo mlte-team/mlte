@@ -12,7 +12,7 @@ class UserMapper(ResourceMapper):
     """An interface for mapping CRUD actions to store users."""
 
     def create(
-        self, new_user: Union[User, UserWithPassword], context: Any = None
+        self, new_user: User | UserWithPassword, context: Any = None
     ) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 

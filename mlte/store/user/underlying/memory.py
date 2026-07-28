@@ -116,7 +116,7 @@ class InMemoryUserMapper(UserMapper):
         """Policy store abstraection"""
 
     def create(
-        self, user: Union[User, UserWithPassword], context: Any = None
+        self, user: User | UserWithPassword, context: Any = None
     ) -> User:
         if user.username in self.storage.users:
             raise errors.ErrorAlreadyExists(f"User {user.username}")
