@@ -111,18 +111,23 @@ class FileSystemUserMappper(UserMapper):
         self.policy_store = policy_store
         """Policy store abstraction."""
 
-    def create(self, user: UserWithPassword, context: Any = None) -> User:
+    def create(
+        self, user: User | UserWithPassword, context: Any = None
+    ) -> User:
         self.storage.ensure_resource_does_not_exist(user.username)
 
         # Assign policies for all users.
         user = user_policy.set_default_user_policies(user, self.policy_store)
 
-        new_user = user.to_hashed_user()
+        if isinstance(user, UserWithPassword):
+            hashed_user = user.to_hashed_user()
+        else:
+            hashed_user = user
 
         # Only store group names for consistency.
-        new_user.groups = Group.get_group_names(new_user.groups)
+        hashed_user.groups = Group.get_group_names(hashed_user.groups)
 
-        return self._write_user(new_user)
+        return self._write_user(hashed_user)
 
     def edit(
         self, user: Union[UserWithPassword, BasicUser], context: Any = None

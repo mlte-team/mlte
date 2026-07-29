@@ -106,7 +106,9 @@ class HttpUserMapper(UserMapper):
         self.storage = storage
         """The HTTP storage access."""
 
-    def create(self, new_user: UserWithPassword, context: Any = None) -> User:
+    def create(
+        self, new_user: User | UserWithPassword, context: Any = None
+    ) -> User:
         response = self.storage.post(json=new_user.to_json())
         return User(**response)
 

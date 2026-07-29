@@ -1,6 +1,7 @@
 """Unit tests for export."""
 
 import json
+import typing
 import zipfile
 from pathlib import Path
 
@@ -12,13 +13,15 @@ from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.store_session import ManagedArtifactSession
 from mlte.store.base import StoreType
 from mlte.store.constants import LOCAL_CATALOG_STORE_ID, SAMPLE_CATALOG_STORE_ID
-from mlte.store.export.export import (
+from mlte.store.import_export.constants import (
     CATALOG_KEY,
     CUSTOM_LISTS_KEY,
     EXPORT_JSON_FILE,
     EXPORT_ZIP_FILE,
     MODELS_KEY,
     USERS_KEY,
+)
+from mlte.store.import_export.export_store import (
     ExportSpec,
     _export,
     _export_artifacts,
@@ -30,10 +33,10 @@ from mlte.store.export.export import (
 from mlte.store.unified_store import UnifiedStore
 from mlte.store.user.policy import user_policy
 from mlte.store.user.store_session import ManagedUserSession
-from mlte.user.model import User
+from mlte.user.model import User, UserWithPassword
 from test.fixture.artifact import ArtifactModelFactory
 from test.store.conftest import create_test_unified_store
-from test.store.export.conftest import (
+from test.store.import_export.conftest import (
     ARTIFACT_EXPORT_DATA,
     CATALOG_EXPORT_DATA,
     CUSTOM_LIST_EXPORT_DATA,
@@ -89,7 +92,7 @@ def test_export_to_file(
 def test_export(
     store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export
 ) -> None:
-    """Tests that all exports happen together properly"""
+    """Tests that all exports happen together properly."""
     stores: UnifiedStore = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
     )
@@ -126,6 +129,7 @@ def test_export_artifacts(
     version_id = "version0"
     artifact_id = "myid"
     artifact_type = ArtifactType.NEGOTIATION_CARD
+    artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
 
     with ManagedArtifactSession(
         stores.artifact_store.session()
@@ -134,8 +138,6 @@ def test_export_artifacts(
         artifact_store_session.version_mapper.create(
             Version(identifier=version_id), model_id
         )
-
-        artifact = ArtifactModelFactory.make(artifact_type, artifact_id)
         written_artifact = (
             artifact_store_session.artifact_mapper.write_artifact(
                 model_id, version_id, artifact
@@ -231,8 +233,11 @@ def test_export_users(
         internal_store = get_internal_store_session(
             user_store_session, store_type
         )
-        test_user = user_policy.set_default_user_policies(
-            test_user, internal_store.policy_store
+        test_user = typing.cast(
+            UserWithPassword,
+            user_policy.set_default_user_policies(
+                test_user, internal_store.policy_store
+            ),
         )
         setup_test_group(user_store_session)
         user_store_session.user_mapper.create(test_user)

@@ -11,7 +11,9 @@ from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 class UserMapper(ResourceMapper):
     """An interface for mapping CRUD actions to store users."""
 
-    def create(self, new_user: UserWithPassword, context: Any = None) -> User:
+    def create(
+        self, new_user: User | UserWithPassword, context: Any = None
+    ) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(
