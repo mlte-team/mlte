@@ -1,0 +1,134 @@
+{
+  "header": {
+    "identifier": "card.classification_evaluation_profile",
+    "type": "card",
+    "timestamp": 1762363735,
+    "creator": "admin",
+    "level": "model"
+  },
+  "body": {
+    "artifact_type": "card",
+    "system": {
+      "goals": [
+        {
+          "description": "Evaluate a defect classification model before release",
+          "metrics": [
+            {
+              "description": "Accuracy, confusion matrix, and imported evaluation summary are available for review",
+              "baseline": ""
+            }
+          ]
+        }
+      ],
+      "problem_type": "Classification",
+      "task": "Classify product inspection images as pass, minor defect, or critical defect",
+      "usage_context": "The model is evaluated before release into the manufacturing inspection workflow",
+      "risks": [
+        "The model may not meet baseline classification accuracy",
+        "The team may not understand which classes are confused",
+        "The evaluation summary may be incomplete for review"
+      ]
+    },
+    "data": [
+      {
+        "description": "Manufacturing inspection validation image dataset",
+        "purpose": "Testing classification evaluation behavior",
+        "source": "Factory inspection validation archive",
+        "classification": "Business Sensitive",
+        "access": "Restricted to quality engineering team",
+        "labeling_method": "Quality engineer inspection labels",
+        "labels": [
+          {
+            "name": "Inspection label",
+            "description": "Pass, minor defect, or critical defect",
+            "percentage": 0.0
+          }
+        ],
+        "fields": [
+          {
+            "name": "inspection image",
+            "description": "Path to product inspection image",
+            "type": "string",
+            "expected_values": "PNG or JPG image file path",
+            "missing_values": "",
+            "special_values": ""
+          },
+          {
+            "name": "inspection label",
+            "description": "Ground-truth inspection class",
+            "type": "string",
+            "expected_values": "pass, minor defect, critical defect",
+            "missing_values": "",
+            "special_values": ""
+          }
+        ],
+        "rights": "",
+        "policies": ""
+      }
+    ],
+    "model": {
+      "development_compute_resources": {
+        "cpu": "4",
+        "gpu": "1",
+        "gpu_memory": "8 GB",
+        "main_memory": "16 GB",
+        "storage": "100 GB"
+      },
+      "deployment_platform": "Factory inspection service",
+      "capability_deployment_mechanism": "The model exposes an API used by the inspection workflow",
+      "model_source": "in-house development",
+      "input_specification": [
+        {
+          "name": "inspection image",
+          "description": "Path to product inspection image",
+          "type": "string",
+          "expected_values": "PNG or JPG image file path"
+        }
+      ],
+      "output_specification": [
+        {
+          "name": "Inspection label",
+          "description": "Predicted inspection class",
+          "type": "string",
+          "expected_values": "pass, minor defect, critical defect"
+        }
+      ],
+      "production_compute_resources": {
+        "cpu": "2",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "2 GB",
+        "storage": "1 GB"
+      }
+    },
+    "system_requirements": [
+      {
+        "identifier": "card.classification_evaluation_profile-qas_001",
+        "quality": "Functional Correctness",
+        "stimulus": "The model receives product inspection images from the validation dataset",
+        "source": "the factory inspection validation workflow",
+        "environment": "offline evaluation",
+        "response": "The model predicts the correct inspection class",
+        "measure": "with an accuracy of at least 90%"
+      },
+      {
+        "identifier": "card.classification_evaluation_profile-qas_002",
+        "quality": "Analyzability",
+        "stimulus": "The model receives product inspection images from the validation dataset",
+        "source": "the factory inspection validation workflow",
+        "environment": "offline evaluation",
+        "response": "The model produces pass, minor defect, and critical defect predictions",
+        "measure": "a confusion matrix is produced so class-level error patterns can be reviewed"
+      },
+      {
+        "identifier": "card.classification_evaluation_profile-qas_003",
+        "quality": "Testability",
+        "stimulus": "The evaluation workflow completes",
+        "source": "the evaluation pipeline",
+        "environment": "offline evaluation",
+        "response": "The evaluation summary can be imported into MLTE evidence",
+        "measure": "the imported JSON evidence includes dataset identifier, model version, evaluation timestamp, and evaluator name"
+      }
+    ]
+  }
+}

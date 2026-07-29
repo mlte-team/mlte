@@ -1,0 +1,126 @@
+{
+  "header": {
+    "identifier": "card.gpu_inference_profile",
+    "type": "card",
+    "timestamp": 1762363735,
+    "creator": "admin",
+    "level": "model"
+  },
+  "body": {
+    "artifact_type": "card",
+    "system": {
+      "goals": [
+        {
+          "description": "Run image segmentation inference efficiently on a GPU workstation",
+          "metrics": [
+            {
+              "description": "GPU memory, GPU power, and CPU utilization stay within inference limits",
+              "baseline": ""
+            }
+          ]
+        }
+      ],
+      "problem_type": "Image Segmentation",
+      "task": "Segment damaged regions in infrastructure inspection images",
+      "usage_context": "The model runs on an NVIDIA GPU workstation used by inspection engineers to process batches of infrastructure images",
+      "risks": [
+        "Inference may exceed available GPU memory",
+        "Inference may draw too much GPU power during batch processing",
+        "CPU usage may interfere with other inspection tools on the workstation"
+      ]
+    },
+    "data": [
+      {
+        "description": "Infrastructure inspection image dataset",
+        "purpose": "Testing GPU inference resource behavior",
+        "source": "Inspection image archive",
+        "classification": "Internal",
+        "access": "Restricted to inspection engineering team",
+        "labeling_method": "Engineer-labeled damaged regions",
+        "labels": [
+          {
+            "name": "Damage mask",
+            "description": "Pixel mask for damaged region",
+            "percentage": 0.0
+          }
+        ],
+        "fields": [
+          {
+            "name": "file name",
+            "description": "Path to inspection image",
+            "type": "string",
+            "expected_values": "PNG or JPG image file path",
+            "missing_values": "",
+            "special_values": ""
+          }
+        ],
+        "rights": "",
+        "policies": ""
+      }
+    ],
+    "model": {
+      "development_compute_resources": {
+        "cpu": "8",
+        "gpu": "1",
+        "gpu_memory": "16 GB",
+        "main_memory": "32 GB",
+        "storage": "200 GB"
+      },
+      "deployment_platform": "NVIDIA GPU workstation",
+      "capability_deployment_mechanism": "The model is called by a local batch inference script",
+      "model_source": "in-house development",
+      "input_specification": [
+        {
+          "name": "file name",
+          "description": "Path to inspection image",
+          "type": "string",
+          "expected_values": "PNG or JPG image file path"
+        }
+      ],
+      "output_specification": [
+        {
+          "name": "Damage mask",
+          "description": "Predicted segmentation mask for damaged region",
+          "type": "image",
+          "expected_values": "binary or multi-class segmentation mask"
+        }
+      ],
+      "production_compute_resources": {
+        "cpu": "4",
+        "gpu": "1",
+        "gpu_memory": "12 GB",
+        "main_memory": "16 GB",
+        "storage": "50 GB"
+      }
+    },
+    "system_requirements": [
+      {
+        "identifier": "card.gpu_inference_profile-qas_001",
+        "quality": "Resource Utilization",
+        "stimulus": "The GPU inference process runs on the inspection workstation",
+        "source": "the batch inference script",
+        "environment": "normal operation",
+        "response": "The inference process uses GPU memory within the available budget",
+        "measure": "the maximum NVIDIA GPU memory utilization is less than 10 GB"
+      },
+      {
+        "identifier": "card.gpu_inference_profile-qas_002",
+        "quality": "Resource Utilization",
+        "stimulus": "The GPU inference process runs on the inspection workstation",
+        "source": "the batch inference script",
+        "environment": "normal operation",
+        "response": "The inference process keeps average GPU power usage within the workstation budget",
+        "measure": "the average NVIDIA GPU power utilization is less than 250 watts"
+      },
+      {
+        "identifier": "card.gpu_inference_profile-qas_003",
+        "quality": "Resource Utilization",
+        "stimulus": "The GPU inference process runs on the inspection workstation",
+        "source": "the batch inference script",
+        "environment": "normal operation",
+        "response": "The local process keeps CPU usage low enough for other workstation tools",
+        "measure": "the maximum local process CPU utilization is less than 60%"
+      }
+    ]
+  }
+}
