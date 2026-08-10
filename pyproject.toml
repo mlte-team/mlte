@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mlte"
-version = "2.6.0"
+version = "2.7.0"
 description = "An infrastructure for machine learning test and evaluation."
 authors = [{ name = "MLTE Engineers" }]
 requires-python = ">=3.10,<3.14"
