@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, cast
+from typing import cast
 
 import mlte.store.error as errors
 from mlte.custom_list.custom_list_names import (
@@ -37,39 +37,39 @@ class CustomListEntryMapper(ResourceMapper):
     def create(
         self,
         new_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def read(
         self,
         entry_name: str,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(
+    def list_all(
         self,
-        list_name: Optional[CustomListName] = None,
-    ) -> List[str]:
+        list_name: CustomListName | None = None,
+    ) -> list[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(
         self,
         updated_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(
         self,
         entry_name: str,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def _check_valid_custom_list(
-        self, list_name: Optional[CustomListName]
+        self, list_name: CustomListName | None
     ) -> CustomListName:
         """Checks if the custom lists exists within the store."""
         if (
@@ -83,10 +83,10 @@ class CustomListEntryMapper(ResourceMapper):
             return list_name
 
     def _ensure_parent_exists(
-        self, parent: Optional[str], list_name: Optional[CustomListName]
+        self, parent: str | None, list_name: CustomListName | None
     ) -> None:
         if list_name in CustomListParentMappings.parent_mappings.keys():
-            if parent not in self.list(
+            if parent not in self.list_all(
                 CustomListName(
                     CustomListParentMappings.parent_mappings[list_name]
                 )
@@ -107,7 +107,9 @@ class CustomListEntryMapper(ResourceMapper):
             list_name
         )
         if child_list_name:
-            for child_entry_name in self.list(CustomListName(child_list_name)):
+            for child_entry_name in self.list_all(
+                CustomListName(child_list_name)
+            ):
                 child_entry = self.read(child_entry_name, child_list_name)
                 if child_entry.parent == entry_name:
                     self.delete(child_entry_name, child_list_name)

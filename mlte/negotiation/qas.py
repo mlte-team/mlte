@@ -1,7 +1,5 @@
 """QAS model and functions to handle Quality Attribute Scenarios."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 QAS_ID_PREFIX = "qas_"
@@ -15,25 +13,25 @@ QAS_ID_PREFIX = "qas_"
 class QASDescriptor(BaseModel):
     """Describes the system-level requirements for the model component. Represents a Quality Attribute Scenario."""
 
-    identifier: Optional[str] = None
+    identifier: str | None = None
     """The unique identifier for the QAS."""
 
     quality: str = ""
     """System property that is being evaluated. Selected from quality attributes custom list."""
 
-    stimulus: Optional[str] = None
+    stimulus: str | None = None
     """The condition that triggers this scenario."""
 
-    source: Optional[str] = None
+    source: str | None = None
     """Where the stimulus comes from."""
 
-    environment: Optional[str] = None
+    environment: str | None = None
     """Set of circumnstances in which the scenario takes place."""
 
-    response: Optional[str] = None
+    response: str | None = None
     """Activity that ocurrs as the result of the stimulus."""
 
-    measure: Optional[str] = None
+    measure: str | None = None
     """Used to determine if the goals of the responses of the scenario have been achieved."""
 
     def __str__(self) -> str:

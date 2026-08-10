@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 import mlte._private.meta as meta
 from mlte._private.reflection import load_class_or_function
@@ -21,9 +22,9 @@ class ExternalMeasurement(Measurement):
 
     def __init__(
         self,
-        test_case_id: Optional[str] = None,
+        test_case_id: str | None = None,
         output_evidence_type: type[Evidence] = Opaque,
-        function: Optional[Callable[..., Any]] = None,
+        function: Callable[..., Any] | None = None,
     ):
         """
         Initialize a new ExternalMeasurement measurement.
@@ -33,13 +34,13 @@ class ExternalMeasurement(Measurement):
         :param function: The function to be used when evaluating.
         """
         if not issubclass(output_evidence_type, Evidence):
-            raise Exception(
+            raise TypeError(
                 f"Evidence type provided is not a subtype of Evidence: {output_evidence_type}"
             )
         self.output_evidence_type: type = output_evidence_type
         """The output Evidence type that calls to evaluate will return."""
 
-        self.function: Optional[Callable[..., Any]] = function
+        self.function: Callable[..., Any] | None = function
         """Store the callable function itself."""
 
         # Call base constructor.
@@ -96,7 +97,8 @@ class ExternalMeasurement(Measurement):
                 evidence = self.output_evidence_type(result)
         return evidence
 
-    def get_output_type(self) -> type[Evidence]:  # type: ignore
+    # Overriden.
+    def output(self) -> type[Evidence]:  # type: ignore
         """Object method with proper results, similar to the class level get_output_type method, which will always return Opaque for this class."""
         return self.output_evidence_type
 

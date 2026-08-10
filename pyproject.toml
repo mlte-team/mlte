@@ -1,45 +1,56 @@
 [build-system]
-requires = ["poetry-core>=1.0.1"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "mlte"
 version = "2.6.0"
 description = "An infrastructure for machine learning test and evaluation."
-authors = [{name = "MLTE Engineers"}]
-readme = "README.md"
+authors = [{ name = "MLTE Engineers" }]
 requires-python = ">=3.10,<3.14"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 dependencies = [
-  "pydantic >= 2.10.5",
-  "pydantic-settings >=2.7.1",
-  "dill >=0.3.9",
-  "psutil >=6.1.1",
-  "StrEnum >=0.4.15",
-  "json-fix >=1.0.2",
-  "astunparse >=1.6.3",
-  "requests >=2.32.3",
-  "httpx >=0.28.1",
-  "bcrypt >=4.2.1",
-  "cryptography >=43.0.3",
-  "pip-system-certs >=4.0.0",
-  "pint >= 0.24.4",
+    "astunparse >=1.6.3",
+    "bcrypt >=4.3.0",
+    "cryptography >=48.0.0",
+    "dill >=0.3.9",
+    "httpx2 >=2.0.0",
+    "json-fix >=1.0.2",
+    "pint >=0.24.4",
+    "pip-system-certs >=4.0",
+    "psutil >=7.0.0",
+    "pydantic >= 2.10.5",
+    "pydantic-settings >=2.7.1",
+    "requests >=2.32.4",
+    "StrEnum >=0.4.15",
 ]
 
 [project.optional-dependencies]
 rdbs = [
-  "SQLAlchemy >=2.0.37",
-  "SQLAlchemy-Utils >=0.41.2",
-  "psycopg2-binary >=2.9.11",
+    "SQLAlchemy >=2.0.37",
+    "SQLAlchemy-Utils >=0.41.2",
+    "psycopg2-binary >=2.9.11",
+]
+web = [
+    "uvicorn >=0.34.0",
+    "fastapi >=0.115.6",
+]
+backend = [
+    "mlte[web]",
+    "python-jose >=3.3.0",
+    "python-multipart >=0.0.20",
 ]
 frontend = [
-  "uvicorn >=0.34.0",
-  "fastapi >=0.115.6",
-  "python-multipart >=0.0.20",
-  "python-jose >=3.3.0",
+    "mlte[web]",
 ]
-gpu = [
-  "nvidia-ml-py >= 13.580.82",
-]
+gpu = ["nvidia-ml-py >= 13.580.82"]
 
 [project.urls]
 repository = "https://github.com/mlte-team/mlte"
@@ -48,83 +59,101 @@ documentation = "https://mlte.readthedocs.io/"
 [project.scripts]
 mlte = "mlte.cli:run"
 
-[tool.poetry]
-requires-poetry = ">=2.0.1"
-packages = [
-  { include = "mlte"}
+[dependency-groups]
+demo = [
+    "numpy==2.2.6",
+    "pandas==2.3.3",
+    "pandas-stubs==2.3.3.251201",
+    "scikit-learn==1.7.2",
+    "matplotlib==3.10.7",
+    "ipykernel==7.1.0",
+    "notebook==7.5.0",
+    "tensorflow==2.20.0",
+    "pickleshare==0.7.5",
+    "torch==2.9.1",
+    "statsmodels==0.14.5",
+    "openai==2.8.1",
+    "langchain==1.1.1",
+    "langchain-openai==1.1.0",
+    "gymnasium==1.2.2",
 ]
-include = [
-  { path = "mlte/frontend/nuxt-app/.output/public/**/*", format = ["sdist", "wheel"] }
+dev = [
+    {include-group = "docs"},
+    {include-group = "lint"},
+    {include-group = "type"},
+    {include-group = "test"},
+    {include-group = "tools"},
 ]
-exclude = [
-  "mlte/frontend/nuxt-app/**/**/*"
+docs = [
+    "properdocs==1.6.7",
+    "mkdocstrings-python==2.0.5",
+    "mkdocs-material==9.7.6",
+    "mkdocs-gen-files==0.6.1",
+    "mkdocs-literate-nav==0.6.3",
+]
+lint = [
+    "ruff==0.15.12",
+]
+type = [
+    "mypy==2.2.0",
+    "types-requests==2.33.0.20260518",
+    "types-PyYAML==6.0.12.20260518",
+    "types-Pygments==2.20.0.20260518",
+    "types-colorama==0.4.15.20260508",
+    "types-decorator==5.2.0.20260519",
+    "types-jsonschema==4.26.0.20260518",
+    "types-psutil==7.2.2.20260518",
+    "types-python-jose==3.5.0.20260408",
+    "types-tensorflow==2.18.0.20260610",
+]
+test =[
+    "pytest==9.1.1",
+    "deepdiff==8.6.1",
+    "pytest-cov==7.1.0",
+    "nbmake==1.5.5",
+]
+tools = [
+    "jsonschema==4.26.0",
+    "bump2version==1.0.1",
+    "twine==6.2.0",
 ]
 
-[tool.poetry.group.demo]
-optional = true
+[tool.hatch.build]
+include = ["mlte"]
+exclude = ["mlte/frontend/nuxt-app/**/**/*"]
+artifacts = ["mlte/frontend/nuxt-app/.output/public/**/*"]
 
-[tool.poetry.group.demo.dependencies]
-numpy = "2.2.6"
-pandas = "2.3.3"
-pandas-stubs = "2.3.3.251201"
-scikit-learn = "1.7.2"
-matplotlib = "3.10.7"
-ipykernel = "7.1.0"
-notebook = "7.5.0"
-tensorflow = "2.20.0"
-pickleshare = "0.7.5"
-torch = "2.9.1"
-statsmodels = "0.14.5"
-openai = "2.8.1"
-langchain = "1.1.1"
-langchain-openai = "1.1.0"
-gymnasium = "1.2.2"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-# Docs
-mkdocs = "1.6.1"
-mkdocstrings-python = "2.0.1"
-mkdocs-material = "9.7.0"
-mkdocs-gen-files = "0.6.0"
-mkdocs-literate-nav = "0.6.2"
-
-# QA
-isort = "7.0.0"
-black = {extras = ["jupyter"], version = "25.11.0"}
-flake8 = "7.3.0"
-mypy = "1.19.0"
-types-requests = "2.32.4.20250913"
-types-PyYAML = "6.0.12.20250915"
-types-Pygments = "2.19.0.20251121"
-types-colorama = "0.4.15.20250801"
-types-decorator = "5.2.0.20251101"
-types-jsonschema = "4.25.1.20251009"
-types-psutil = "7.1.3.20251202"
-types-python-jose = "3.5.0.20250531"
-
-# Testing
-pytest = "9.0.1"
-deepdiff = "8.6.1"
-pytest-cov = "7.0.0"
-jsonschema = "4.25.1"
-nbmake = "1.5.5"
-
-# Building
-bump2version = "1.0.1"
-twine = "6.2.0"
-
-[tool.isort]
-profile="black"
-line_length = 80
-known_first_party=["mlte", "test"]
-
-[tool.black]
+[tool.ruff]
+target-version = "py310"
 line-length = 80
-target-version = ['py38']
-include = '\.pyi?$|\.ipynb$'
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (Flake8 default)
+    "I",   # isort import sorting
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501", # Ignore line-length violations (let the formatter handle it)
+    "E731", # Ignore lambda assignment violations (we want to allow lambdas)
+    "B024", # Ignore abstract classes with no abstract methods (we want to allow this).
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-single-line = false
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"demo/**/*" = ["F403", "F405", "E712"]  # Allow wildcard imports and explicit boolean comparisons in demo.
 
 [tool.mypy]
 mypy_path = "src"
@@ -138,6 +167,10 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 no_implicit_reexport = true
+
+[[tool.mypy.overrides]]
+module = "sklearn.*"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = [

@@ -34,4 +34,4 @@ class CatalogTagValidator(CrossValidator):
                 except ErrorNotFound:
                     raise RuntimeError(
                         f"Catalog entry tag validation failure. Tag: {tag} not found. For catalog entry {new_entry.header.identifier}."
-                    )
+                    ) from None

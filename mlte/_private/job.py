@@ -4,7 +4,6 @@ import subprocess
 import sys
 import threading
 from pathlib import Path
-from typing import List
 
 
 def _get_interpreter_path() -> Path:
@@ -17,7 +16,7 @@ def _get_interpreter_path() -> Path:
     return Path(sys.executable)
 
 
-def spawn_python_job(script_path: str, arguments: List[str]) -> int:
+def spawn_python_job(script_path: str, arguments: list[str]) -> int:
     """
     Spawn the Python job from the given script and arguments, and return its process identifier.
 
@@ -35,7 +34,7 @@ def spawn_python_job(script_path: str, arguments: List[str]) -> int:
     return spawn_job(python_executable, new_arguments)
 
 
-def spawn_job(executable: str, arguments: List[str]) -> int:
+def spawn_job(executable: str, arguments: list[str]) -> int:
     """
     Spawn a process from the given executable and arguments, and return its process identifier.
 

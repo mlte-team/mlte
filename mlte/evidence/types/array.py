@@ -49,7 +49,7 @@ class Array(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Array:
+    def load(cls, identifier: str | None = None) -> Array:
         evidence = super().load(identifier)
         return typing.cast(Array, evidence)
 

@@ -175,9 +175,13 @@ def test_gpu_out_of_range():
 
         mock_import_module.return_value = mocked_pynvml
 
+        # This is needed for the internal NVMLError exception to be raised and not hidden by the mock.
+        pynvml = import_module("pynvml")
+        mocked_pynvml.NVMLError = pynvml.NVMLError
+
         # Now, at this point import_lib is mocked and will return a fake library.
         # So, we should be able to call our test function and check for the handle and get back the mocked library
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             pynvml_utils.get_pynvml_statistic([4], pynvml_dummy_fn)
 
 

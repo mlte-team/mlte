@@ -6,7 +6,7 @@ Test the API for catalog operations.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 
@@ -33,7 +33,7 @@ def create_entry_using_admin(entry: CatalogEntry, api: TestAPI):
 
 
 def get_entry_using_admin(
-    catalog_id: Optional[str], entry_id: str, api: TestAPI
+    catalog_id: str | None, entry_id: str, api: TestAPI
 ) -> dict[str, Any]:
     """Gets an entry using admin."""
     if catalog_id is None:

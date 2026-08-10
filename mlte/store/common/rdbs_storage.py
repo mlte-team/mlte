@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import sqlalchemy
 import sqlalchemy.orm
@@ -20,7 +20,7 @@ class RDBStorage(Storage):
         self,
         uri: StoreURI,
         base_class: DeclarativeBase,
-        init_tables_func: Optional[Callable[[sqlalchemy.Engine], None]] = None,
+        init_tables_func: Callable[[sqlalchemy.Engine], None] | None = None,
         **kwargs,
     ) -> None:
         super().__init__(uri)

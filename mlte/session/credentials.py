@@ -1,7 +1,6 @@
 """Credentials used in a session."""
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -11,4 +10,4 @@ class Credentials:
     """
 
     user: str
-    password: Optional[str]
+    password: str | None

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 import pydantic
 
@@ -24,7 +24,7 @@ class BaseModel(pydantic.BaseModel):
         try:
             _ = json.dumps(json_object)
         except TypeError as e:
-            raise SerializationError(e, str(type(self)))
+            raise SerializationError(e, str(type(self))) from None
 
         return json_object
 
@@ -46,7 +46,7 @@ class BaseModel(pydantic.BaseModel):
         """Deserialize from a json string."""
         return cls.from_json(json.loads(json_str))
 
-    def post_validation_hook(self, data: Optional[Any] = None) -> Any:
+    def post_validation_hook(self, data: Any | None = None) -> Any:
         """Called after validation, lets submodels do any needed post-processing."""
         pass
 

@@ -36,18 +36,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        run: curl -sSL https://install.python-poetry.org | python -
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install dependencies
-        run: poetry install --with dev --all-extras
+        run: uv sync --group dev --all-extras
       - name: Vet schemas
         run: make check-schema
-      - name: Sort imports with isort
-        run: make check-isort
-      - name: Format with black
+      - name: Lint with ruff
+        run: make check-lint
+      - name: Format with ruff
         run: make check-format
-      - name: Lint with flake8
-        run: make lint
       - name: Typecheck with mypy
         run: make typecheck
       - name: Check docs
@@ -70,10 +68,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        run: curl -sSL https://install.python-poetry.org | python -
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Install demo dependencies
-        run: poetry install --with dev,demo --all-extras        
+        run: uv sync --group dev --group demo --all-extras        
+      - name: Typecheck demo with mypy
+        run: make demo-typecheck
       - name: Execute demo tests
         run: make demo-test
       - name: Check catalog entries
@@ -94,5 +94,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Docker Build Action
+      - name: Build Docker backend and frontend images
         run: cd docker && bash build.sh
+      - name: Build Docker dist build image
+        run: make build-in-docker
+      - name: Build Docker python ops image
+        run: docker build -t mlte-python-ops . -f docker/Dockerfile.python_ops
+      - name: Build Docker frontend ops image
+        run: docker build -t mlte-frontend-ops . -f docker/Dockerfile.frontend_ops

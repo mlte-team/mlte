@@ -4,7 +4,7 @@
 # Check mode: Checks that all sample test catalog entries are updated
 
 MODE="$1"
-PYTHON_COMMAND="poetry run python"
+PYTHON_COMMAND="uv run python"
 
 if [ $MODE != "build" ] && [ $MODE != "check" ]; then
     echo "Invalid mode."

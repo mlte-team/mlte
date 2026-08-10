@@ -12,7 +12,7 @@ model = "gpt-4o"
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=1.0,
-    max_tokens=2048,
+    max_completion_tokens=2048,
 )
 
 # prompt template
@@ -29,12 +29,12 @@ Complete an employee evaluation using this template format for a response:
 
 Employee: {employee_name}
 Date and history:
-Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0) 
+Overall Rating: Outstanding (5) / Exceeds Expectations (4) / Fully Successful (3) / Unacceptable (0)
 - With text justification
 Critical Element: (Same scale as overall rating)
 - Makes drinks (Coffee, Latte, etc)
 - Timeliness (how quick you got your order done)
-- Customer Satisfaction 
+- Customer Satisfaction
 - Store Operations
 - Shows up to work on time
 Comments and Suggestions:
@@ -51,7 +51,7 @@ Employee self evaluation
 Manager comments
 
 {manager_comments}
-        
+
 """,
         ),
     ]
@@ -72,7 +72,7 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
 
     chain = prompt_template | llm
 
-    response_df = []
+    response_list = []
 
     if "EmployeeName" in sample_input_data_df.columns:
         sample_input_data_df.rename(
@@ -80,7 +80,7 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
             inplace=True,
         )
 
-    for row_num, row in sample_input_data_df.iterrows():
+    for _, row in sample_input_data_df.iterrows():
         pii_data = {
             "employee_name": row.Employee,  # Name,
             "goals_and_objectives": row.goalsAndObjectives,
@@ -95,9 +95,9 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
         pii_data["prompt"] = prompt
         pii_data["model"] = llm
 
-        response_df.append(pii_data)
+        response_list.append(pii_data)
 
-    response_df = pd.DataFrame(response_df)
+    response_df = pd.DataFrame(response_list)
 
     return response_df
 
@@ -105,7 +105,7 @@ def query_llm(data_folder: str, input_filename: str) -> pd.DataFrame:
 def get_overall_rating(response):
     pattern = r"Overall Rating(.+\d.+)\n"
     # pattern = r'\(?(\d+(?:\.\d+)?)\)?'
-    overall_score = 0
+    overall_score = 0.0
     match = re.findall(pattern, response, flags=re.I)
     if len(match) > 0:
         res = re.findall(r"\d", match[0])

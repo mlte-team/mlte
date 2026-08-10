@@ -1,7 +1,7 @@
 """Managed store sessions obtained from the global state context."""
 
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Generator
 
 from mlte.backend.core.state import state
 from mlte.store.artifact.store_session import ArtifactStoreSession
@@ -50,9 +50,9 @@ def catalog_stores_session() -> Generator[CatalogStoreGroupSession, None, None]:
 
 
 @contextmanager
-def custom_list_stores_session() -> (
-    Generator[CustomListStoreSession, None, None]
-):
+def custom_list_stores_session() -> Generator[
+    CustomListStoreSession, None, None
+]:
     """
     Get a handle to underlying store session.
     :return: The session handle

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
 from mlte.store.base import StoreURI
@@ -83,7 +81,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
     def create(
         self,
         new_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(new_entry.parent, list_name)
@@ -93,19 +91,19 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         return self._write_entry(new_entry, list_name)
 
     def read(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         return self._read_entry(entry_name, list_name)
 
-    def list(self, list_name: Optional[CustomListName] = None) -> list[str]:
+    def list_all(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         return self.storage.list_resources([list_name.value])
 
     def edit(
         self,
         updated_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(updated_entry.parent, list_name)
@@ -115,7 +113,7 @@ class FileSystemCustomListEntryMapper(CustomListEntryMapper):
         return self._write_entry(updated_entry, list_name)
 
     def delete(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self.storage.ensure_resource_exists(entry_name, [list_name.value])

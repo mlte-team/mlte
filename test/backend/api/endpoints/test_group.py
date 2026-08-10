@@ -6,7 +6,7 @@ Test the API for group operations.
 
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any
 
 import pytest
 
@@ -39,7 +39,7 @@ def setup_group_permisisons(test_group: Group, user_store: UserStoreSession):
         user_store.permission_mapper.create(permission)
 
 
-def get_test_permissions() -> List[Permission]:
+def get_test_permissions() -> list[Permission]:
     """Helper to get a group structure."""
     p1 = Permission(
         resource_type=ResourceType.MODEL,

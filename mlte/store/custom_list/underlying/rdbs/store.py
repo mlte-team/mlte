@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import typing
-from typing import Optional
 
 from sqlalchemy.orm import DeclarativeBase, Session
 
@@ -79,7 +78,7 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
     def create(
         self,
         new_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(new_entry.parent, list_name)
@@ -102,13 +101,13 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
                 return new_entry
 
     def read(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         with Session(self.storage.engine) as session:
             entry, _ = DBReader.get_entry(entry_name, session)
             return entry
 
-    def list(self, list_name: Optional[CustomListName] = None) -> list[str]:
+    def list_all(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         with Session(self.storage.engine) as session:
             entries, _ = DBReader.get_list(list_name, session)
@@ -117,7 +116,7 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
     def edit(
         self,
         updated_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         self._ensure_parent_exists(updated_entry.parent, list_name)
@@ -135,7 +134,7 @@ class RDBCustomListEntryMapper(CustomListEntryMapper):
             return stored_entry
 
     def delete(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
 

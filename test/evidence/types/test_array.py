@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
-
 from mlte.context.context import Context
 from mlte.evidence.types.array import Array
 from mlte.measurement.measurement import Measurement
@@ -58,7 +56,7 @@ def test_serde() -> None:
 
 
 def test_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """Array can be saved to and loaded from artifact store."""
     store, ctx = artifact_store_with_context

@@ -1,6 +1,6 @@
 """Model implementation for the TestSuite artifact."""
 
-from typing import Literal, Optional
+from typing import Literal
 
 from mlte.artifact.type import ArtifactType
 from mlte.measurement.model import MeasurementMetadata
@@ -18,13 +18,13 @@ class TestCaseModel(BaseModel):
     qas_list: list[str] = []
     """A list of ids of Quality Attribute Scenarios that this case is addressing."""
 
-    measurement: Optional[MeasurementMetadata] = None
+    measurement: MeasurementMetadata | None = None
     """Measurement to be used with this test case."""
 
-    validator: Optional[ValidatorModel] = None
+    validator: ValidatorModel | None = None
     """Validation to be used for this test case."""
 
-    note: Optional[str] = None
+    note: str | None = None
     """Additional information to go along with this test case."""
 
 

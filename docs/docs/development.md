@@ -4,12 +4,10 @@ This document describes some of the development practices used in `MLTE`.
 
 ## Quick Start
 
-The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library SDMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies.
+The best examples of how to use MLTE are contained with in the [Demos](#demos). If looking to get started on development, these are the best place to start to get a feel for how the tool works. The code within the demos walks through the MLTE library SDMT process. These can be ran after making a virtual environment and installing `MLTE` along with the demo dependencies. Assuming `uv` is installed (see below), env setup can be done with:
 
 ```bash
-$ pyenv install 3.12
-$ pyenv local 3.12
-$ make venv
+$ make python-venv
 ```
 
 The other part of MLTE is the frontend and backend. These are used for visualizing the results of the SDMT process and provide a user-friendly interface to create the [Negotiation Card](negotiation_card.md) . This can be setup manually or by using the `run_environment.sh` script. This will start `MLTE` as 2 docker containers with an empty file system based store. If the script `demo/run_environment.sh` is used instead, the store will be populated with the data in `demo/store`, which will include sample models, versions and [Negotiation Cards](negotiation_card.md) along with any results created by running the demo notebooks. This is volume mounted so any changes made using the frontend will be available locally in that same directory. The frontend will be available at `localhost:8000`.
@@ -30,44 +28,39 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ## Setup
 
-### Python Version Support
-
-Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included.
-
-If you do not have one of these versions installed, or you want to target a specific version that is not your default, `pyenv` can be used to manage multiple Python versions locally. Note that this is optional, and only needed if you have a not-supported default Python version. To set up a specific version of Python with `pyenv`:
-
-- Install `pyenv` as described in this link: https://github.com/pyenv/pyenv
-- Install the desired Python version (in this example, 3.12):
-
-```bash
-$ pyenv install 3.12
-```
-
-- While inside the root repository folder, run this command to set that Python version to be used when executed in that folder:
-
-```bash
-$ pyenv local 3.12
-```
-
-- You can use `python --version` to check if it worked.
-
 ### Requirements
 
- - `MLTE` uses `poetry` (v 2.0.1 or higher) to handle the required runtime and development packages. You can install `poetry` on your system with the instructions available here: https://python-poetry.org/docs/#installation
+`MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
+
+### Python Version Support
+
+Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included. If you want to specify a specific version to use when running commands in yout environment, while inside the root repository folder, run the following command (replacing `3.12` with whatever version you want to test):
+
+```bash
+$ uv python pin 3.12
+```
+
+This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `uv run python --version` to check if it worked.
+
 
 ### Dev Environment Setup
 
-You will need to set up a virtual Python environment where `poetry` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
+You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
-$ make venv
+$ make python-venv
 ```
 
 If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
 
 ```bash
-$ python -m venv .venv
-$ poetry install --with dev --all-extras
+$ uv sync --group dev --all-extras
+```
+
+If you want to also develop for the Frontend, run the following command:
+
+```bash
+$ make frontend-env
 ```
 
 Now you are ready to start working on `MLTE`!
@@ -77,7 +70,7 @@ Now you are ready to start working on `MLTE`!
 There are several demos available in the `demo/` folder, as Jupyter notebooks. To run them, you need to install their dependencies first if you created the environment manually; otherwise they have already been installed for you. To install them manually. run:
 
 ```bash
-$ poetry install --with demo
+$ uv sync --group demo
 ```
 
 You can go to the Jupyter notebooks in the subfolders inside the `demo/` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
@@ -95,7 +88,7 @@ Information relating to creating a new demo can be found [here](new_demo.md).
 
 You can run most project commands (e.g., format sources, lint) in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
-Also, the commands below do not assume that you have your virtual environment enabled. Calling `poetry run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `poetry run` prefix. 
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `uv run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `uv run` prefix. 
 
 To manually activate your environment, run:
 
@@ -233,14 +226,7 @@ $ make typecheck-frontend
 
 Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
 
-To initialize the development environment for the front end, navigate to the subfolder `./mlte/frontend/nuxt-app` and run:
-
-```bash
-$ npm install
-$ npx gulp init
-```
-
-You can also run the following make command:
+To initialize the development environment for the front end, run the following make command:
 
 ```bash
 $ make frontend-env
@@ -264,12 +250,12 @@ We utilize <a href="https://docs.github.com/en/actions" target="_blank">GitHub A
 
 ## Documentation
 
-We build documentation with <a href="https://www.mkdocs.org" target="_blank">`mkdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
+We build documentation with <a href="https://github.com/properdocs/properdocs" target="_blank">`properdocs`</a> and host documentation on <a href="https://readthedocs.org/" target="_blank">ReadTheDocs</a>. A webhook is set up in the `MLTE` repository to trigger an integration effect on ReadTheDocs when certain changes to the repo are made.
 
-You can build and serve the documentation with the following command, when run from inside the `docs/` folder:
+You can build and serve the documentation with the following command,:
 
 ```bash
-$ mkdocs serve
+$ make docs-serve
 ```
 
 You can preview the documentation accessing <a href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a> on your browser.
@@ -317,7 +303,7 @@ $ make build-in-docker
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
 
 ```bash
-$ poetry publish --username __token__ --password <TOKEN>
+$ uv publish --index https://pypi.org --username __token__ --password <TOKEN>
 ```
 
 ## Docker Integration

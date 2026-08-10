@@ -4,9 +4,11 @@ Implementation of MultipleRaknsums value.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.validation.validator import Validator
@@ -17,7 +19,7 @@ class MultipleRanksums(ExternalEvidence):
 
     def __init__(
         self,
-        array: np.ndarray,
+        array: npt.NDArray[np.float64],
         num_pops: int = 1,
     ):
         super().__init__()
@@ -48,8 +50,8 @@ class MultipleRanksums(ExternalEvidence):
         :param threshold: The p-value we want to check against.
         :return: A Validator that checks for this.
         """
-        bool_exp: Callable[[MultipleRanksums], bool] = (
-            lambda value: len(value.get_low_p_values(threshold)) == 0
+        bool_exp: Callable[[MultipleRanksums], bool] = lambda value: (
+            len(value.get_low_p_values(threshold)) == 0
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -69,7 +71,7 @@ class MultipleRanksums(ExternalEvidence):
         """Generates a dict of all cases that didn't go over the threshold."""
         low_cases = {}
 
-        ranksum: dict[str, list]
+        ranksum: dict[str, list[float]]
         for ranksum in self.array:
             id = next(iter(ranksum))
             pval = ranksum[id][1]

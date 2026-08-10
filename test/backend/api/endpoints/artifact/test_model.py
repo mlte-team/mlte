@@ -46,9 +46,10 @@ def create_fake_model_using_admin(test_api: TestAPI) -> None:
 
 def test_health(
     test_api_fixture,
-    api_user: UserWithPassword = user_generator.build_test_user(),
+    api_user: UserWithPassword | None = None,
 ) -> None:
     """The server can initialize."""
+    api_user = api_user if api_user else user_generator.build_test_user()
     test_api: TestAPI = test_api_fixture(api_user)
     test_client = test_api.get_test_client()
     res = test_client.get(f"{settings.API_PREFIX}/healthz")

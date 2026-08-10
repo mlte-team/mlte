@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
-
 import pytest
 
 import mlte.store.error as errors
@@ -34,7 +32,7 @@ def test_round_trip() -> None:
 
 
 def test_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """Negotiation card can be saved to and loaded from artifact store."""
     store, ctx = artifact_store_with_context
@@ -66,7 +64,7 @@ def test_save_parents(create_test_artifact_store) -> None:
 
 
 def test_save_overwrite(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """Save succeeds when old artifact is overwritten."""
     store, ctx = artifact_store_with_context

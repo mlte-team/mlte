@@ -59,14 +59,14 @@ def test_custom_list_name_dict() -> None:
         == CustomListName.QA_CATEGORIES
     )
 
-    with pytest.raises(Exception):
+    with pytest.raises(KeyError):
         test_dict[CustomListName.QA_CATEGORIES] = "value"  # type: ignore
 
-    with pytest.raises(Exception):
+    with pytest.raises(KeyError):
         test_dict["key"] = CustomListName.QA_CATEGORIES  # type: ignore
 
-    with pytest.raises(Exception):
+    with pytest.raises(KeyError):
         test_dict["key"] = "value"  # type: ignore
 
-    with pytest.raises(Exception):
+    with pytest.raises(KeyError):
         test_dict["key"]  # type: ignore

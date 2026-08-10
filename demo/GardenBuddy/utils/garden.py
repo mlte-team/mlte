@@ -144,7 +144,6 @@ def load_taxonomy(data_folder: str) -> pd.DataFrame:
     df_info.fillna({"Genus": "None"}, inplace=True)
     df_info.fillna({"Risk": "None"}, inplace=True)
 
-    df_info
     print(len(df_info), len(df_labels), len(df_dict))
 
     return df_info
@@ -158,5 +157,4 @@ def merge_taxonomy_with_results(
 ) -> pd.DataFrame:
     """Merge results with taxonomy."""
     df_all = df_results.merge(df_info, left_on=left_on, right_on=right_on)
-    df_all
     return df_all

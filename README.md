@@ -18,10 +18,10 @@ The `MLTE` Python package is available on <a href="https://pypi.org/project/mlte
 $ pip install mlte
 ```
 
-To use the web UI (frontend/backend functionality), the `frontend` optional dependencies are needed; to use relational database storage, the `rdbs` optional dependencies are needed; and to use the GPU measurements, the `gpu` optional dependencies are needed. To install all optional dependencies:
+To use the web UI (frontend/backend functionality), the `frontend` and `backend` optional dependencies are needed (`backend` can also be installed without the `frontend` to provide a web API to be consumed by other clients); to use relational database storage, the `rdbs` optional dependencies are needed; and to use the GPU measurements, the `gpu` optional dependencies are needed. To install all optional dependencies:
 
 ```bash
-$ pip install "mlte[frontend,rdbs,gpu]"
+$ pip install "mlte[frontend,backend,rdbs,gpu]"
 ```
 
 ### Using `MLTE` as a Library

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Literal
 
 from mlte.artifact.type import ArtifactType
 from mlte.model.base_model import BaseModel
@@ -16,17 +16,17 @@ from mlte.negotiation import qas
 class MetricDescriptor(BaseModel):
     """A description of a metric that supports a system goal."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """A description of the metric."""
 
-    baseline: Optional[str] = None
+    baseline: str | None = None
     """A description of the metric baseline value."""
 
 
 class GoalDescriptor(BaseModel):
     """A description of a system goal."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """A description of the goal."""
 
     metrics: list[MetricDescriptor] = []
@@ -41,35 +41,35 @@ class GoalDescriptor(BaseModel):
 class ModelResourcesDescriptor(BaseModel):
     """A descriptor for model resource requirements."""
 
-    cpu: Optional[str] = None
+    cpu: str | None = None
     """A description of model CPU requirements."""
 
-    gpu: Optional[str] = None
+    gpu: str | None = None
     """A description of model GPU requirements."""
 
-    gpu_memory: Optional[str] = None
+    gpu_memory: str | None = None
     """A description of model GPU memory requirements."""
 
-    main_memory: Optional[str] = None
+    main_memory: str | None = None
     """A description of model memory (RAM) requirements."""
 
-    storage: Optional[str] = None
+    storage: str | None = None
     """A description of model storage requirements."""
 
 
 class ModelIODescriptor(BaseModel):
     """A description of the model input or output specification."""
 
-    name: Optional[str] = None
+    name: str | None = None
     """A name for the input or output."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """A textual description of the input or output."""
 
-    type: Optional[str] = None
+    type: str | None = None
     """A description of the type of data for this input or output."""
 
-    expected_values: Optional[str] = None
+    expected_values: str | None = None
     """Expected values for this input or output."""
 
 
@@ -81,13 +81,13 @@ class ModelDescriptor(BaseModel):
     )
     """A description of model development resource requirements."""
 
-    deployment_platform: Optional[str] = None
+    deployment_platform: str | None = None
     """A description of the platform used to deploy the model into the system."""
 
-    capability_deployment_mechanism: Optional[str] = None
+    capability_deployment_mechanism: str | None = None
     """A description of how the model capabilities will be made available."""
 
-    model_source: Optional[str] = None
+    model_source: str | None = None
     """A description of where the model came from."""
 
     input_specification: list[ModelIODescriptor] = []
@@ -110,57 +110,57 @@ class ModelDescriptor(BaseModel):
 class LabelDescriptor(BaseModel):
     """Describes a dataset label."""
 
-    name: Optional[str] = None
+    name: str | None = None
     """The name of the label."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """A description of the label."""
 
-    percentage: Optional[float] = None
+    percentage: float | None = None
     """The relative frequency with which the label occurs in the dataset."""
 
 
 class FieldDescriptor(BaseModel):
     """Describes a dataset field."""
 
-    name: Optional[str] = None
+    name: str | None = None
     """The name of the field."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """A description of the field."""
 
-    type: Optional[str] = None
+    type: str | None = None
     """A description of the field type."""
 
-    expected_values: Optional[str] = None
+    expected_values: str | None = None
     """An example of expected values for the field."""
 
-    missing_values: Optional[str] = None
+    missing_values: str | None = None
     """An example of missing values for the field."""
 
-    special_values: Optional[str] = None
+    special_values: str | None = None
     """An example of special values for the field."""
 
 
 class DataDescriptor(BaseModel):
     """Describes a dataset used in model development."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """A description of the dataset."""
 
-    purpose: Optional[str] = None
+    purpose: str | None = None
     """A description of the purpose of the dataset."""
 
-    source: Optional[str] = None
+    source: str | None = None
     """A description of the data source."""
 
     classification: str = ""
     """A description of the data classification level. Selected from classification custom list."""
 
-    access: Optional[str] = None
+    access: str | None = None
     """A description of the manner in which this data is accessed."""
 
-    labeling_method: Optional[str] = None
+    labeling_method: str | None = None
     """A description of how the data was labeled."""
 
     labels: list[LabelDescriptor] = []
@@ -169,10 +169,10 @@ class DataDescriptor(BaseModel):
     fields: list[FieldDescriptor] = []
     """A description of the dataset schema."""
 
-    rights: Optional[str] = None
+    rights: str | None = None
     """A description of the ways in which the data can / cannot be used."""
 
-    policies: Optional[str] = None
+    policies: str | None = None
     """A description of the policies that govern use of this data."""
 
 
@@ -190,10 +190,10 @@ class SystemDescriptor(BaseModel):
     problem_type: str = ""
     """A description of the machine learning problem type. Selected from problem types custom list."""
 
-    task: Optional[str] = None
+    task: str | None = None
     """A description of the machine learning task."""
 
-    usage_context: Optional[str] = None
+    usage_context: str | None = None
     """A description of the usage context."""
 
     risks: list[str] = []

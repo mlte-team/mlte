@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Tuple
 
 from mlte.context.context import Context
 from mlte.evidence.types.image import Image
@@ -40,7 +39,7 @@ def test_from_bytes():
 
 
 def test_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     """Image can be saved to and loaded from artifact store."""
     store, ctx = artifact_store_with_context

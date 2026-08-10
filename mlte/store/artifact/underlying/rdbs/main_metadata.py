@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, ForeignKey, UniqueConstraint, select
 from sqlalchemy.orm import (
@@ -104,37 +104,37 @@ class DBArtifact(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     identifier: Mapped[str]
-    timestamp: Mapped[Optional[int]] = mapped_column(BigInteger)
-    username: Mapped[Optional[str]]
+    timestamp: Mapped[int | None] = mapped_column(BigInteger)
+    username: Mapped[str | None]
     level: Mapped[str]
 
     type_id: Mapped[int] = mapped_column(
         ForeignKey(DBArtifactType.get_id_column())
     )
-    version_id: Mapped[Optional[int]] = mapped_column(
+    version_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBVersion.get_id_column())
     )
-    model_id: Mapped[Optional[int]] = mapped_column(
+    model_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBModel.get_id_column())
     )
 
     type: Mapped[DBArtifactType] = relationship()
-    version: Mapped[Optional[DBVersion]] = relationship()
-    model: Mapped[Optional[DBModel]] = relationship()
+    version: Mapped[DBVersion | None] = relationship()
+    model: Mapped[DBModel | None] = relationship()
 
-    body_negotiation_card: Mapped[Optional[DBNegotiationCard]] = relationship(
+    body_negotiation_card: Mapped[DBNegotiationCard | None] = relationship(
         back_populates="artifact", cascade="all, delete-orphan"
     )
-    body_test_suite: Mapped[Optional[DBTestSuite]] = relationship(
+    body_test_suite: Mapped[DBTestSuite | None] = relationship(
         back_populates="artifact", cascade="all, delete-orphan"
     )
-    body_evidence: Mapped[Optional[DBEvidence]] = relationship(
+    body_evidence: Mapped[DBEvidence | None] = relationship(
         back_populates="artifact", cascade="all, delete-orphan"
     )
-    body_test_results: Mapped[Optional[DBTestResults]] = relationship(
+    body_test_results: Mapped[DBTestResults | None] = relationship(
         back_populates="artifact", cascade="all, delete-orphan"
     )
-    body_report: Mapped[Optional[DBReport]] = relationship(
+    body_report: Mapped[DBReport | None] = relationship(
         back_populates="artifact", cascade="all, delete-orphan"
     )
 

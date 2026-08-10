@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 
@@ -20,8 +20,9 @@ from test.negotiation.test_artifact import get_sample_negotiation_card
 
 
 def get_sample_test_suite(
-    identifier: Optional[str] = None, qas_ids: list[str] = []
+    identifier: str | None = None, qas_ids: list[str] | None = None
 ):
+    qas_ids = qas_ids or []
     test_suite = TestSuite(
         identifier=identifier if identifier else "test_suite",
         test_cases=[
@@ -29,9 +30,7 @@ def get_sample_test_suite(
                 identifier="model size",
                 goal="Check storage consumption",
                 quality_scenarios=qas_ids,
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
                 note="example note",
             ),
@@ -133,9 +132,7 @@ def test_run_measurements():
                 identifier="model size",
                 goal="Check storage consumption",
                 quality_scenarios=["qas3"],
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize(),
             ),
             TestCase(
@@ -195,9 +192,7 @@ def test_run_measurements_invalid_id():
                 identifier="model size",
                 goal="Check storage consumption",
                 quality_scenarios=["qas3"],
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
             ),
         ]

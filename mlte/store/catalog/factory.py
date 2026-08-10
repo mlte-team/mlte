@@ -1,7 +1,5 @@
 """Top-level functions for catalog store creation."""
 
-from typing import Optional
-
 from mlte.store.base import StoreType, StoreURI
 from mlte.store.catalog.store import CatalogStore
 from mlte.store.catalog.underlying.fs import FileSystemCatalogStore
@@ -10,7 +8,7 @@ from mlte.store.catalog.underlying.memory import InMemoryCatalogStore
 
 
 def create_catalog_store(
-    parsed_uri: StoreURI, catalog_id: Optional[str] = None
+    parsed_uri: StoreURI, catalog_id: str | None = None
 ) -> CatalogStore:
     """
     Create a MLTE catalog store instance.

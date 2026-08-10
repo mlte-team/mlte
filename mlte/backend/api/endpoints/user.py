@@ -5,8 +5,6 @@ which automatically removes the hashed password from the model returned.
 
 from __future__ import annotations
 
-from typing import List, Union
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -53,7 +51,7 @@ def read_user_me(
 def list_user_models_me(
     *,
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     Gets a list of models the currently logged-in user is authorized to read.
     :return: The list of model ids
@@ -93,7 +91,7 @@ def create_user(
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"{e} already exists."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -101,7 +99,7 @@ def create_user(
 @router.put("")
 def edit_user(
     *,
-    user: Union[UserWithPassword, BasicUser],
+    user: UserWithPassword | BasicUser,
     current_user: AuthorizedUser,
 ) -> User:
     """
@@ -123,7 +121,7 @@ def edit_user(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -149,7 +147,7 @@ def read_user(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -157,14 +155,14 @@ def read_user(
 @router.get("")
 def list_users(
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     List MLTE users.
     :return: A collection of usernames
     """
     with state_stores.user_store_session() as user_store:
         try:
-            return user_store.user_mapper.list()
+            return user_store.user_mapper.list_all()
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -172,7 +170,7 @@ def list_users(
 @router.get("s/details")
 def list_users_details(
     current_user: AuthorizedUser,
-) -> List[User]:
+) -> list[User]:
     """
     List MLTE users, with details for each user.
     :return: A collection of users with their details.
@@ -180,7 +178,7 @@ def list_users_details(
     with state_stores.user_store_session() as user_store:
         try:
             detailed_users = []
-            usernames = user_store.user_mapper.list()
+            usernames = user_store.user_mapper.list_all()
             for username in usernames:
                 user_details = User(
                     **user_store.user_mapper.read(username).to_json()
@@ -209,7 +207,7 @@ def delete_user(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -219,7 +217,7 @@ def list_user_models(
     *,
     username: str,
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     Gets a list of models a user is authorized to read.
     :param username: The username
@@ -232,11 +230,11 @@ def list_user_models(
         with state_stores.user_store_session() as user_store:
             try:
                 # Get all models, and filter out only the ones the user has read permissions for.
-                user_models: List[str] = []
+                user_models: list[str] = []
                 user = BasicUser(
                     **user_store.user_mapper.read(username).to_json()
                 )
-                all_models = artifact_store.model_mapper.list()
+                all_models = artifact_store.model_mapper.list_all()
                 for model_id in all_models:
                     permission = Permission(
                         resource_type=ResourceType.MODEL,
@@ -250,6 +248,6 @@ def list_user_models(
             except errors.ErrorNotFound as e:
                 raise HTTPException(
                     status_code=codes.NOT_FOUND, detail=f"{e} not found."
-                )
+                ) from None
             except Exception as e:
                 raise_http_internal_error(e)

@@ -2,7 +2,8 @@
 
 import json
 import typing
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.types.opaque import Opaque
@@ -14,7 +15,7 @@ class ImportMeasurement(ExternalMeasurement):
 
     def __init__(
         self,
-        test_case_id: Optional[str] = None,
+        test_case_id: str | None = None,
     ):
         """
         Initialize a new ImportMeasurement measurement.
@@ -24,7 +25,7 @@ class ImportMeasurement(ExternalMeasurement):
         self.output_evidence_type: type = Opaque
         """The output Evidence type that calls to evaluate will return."""
 
-        self.function: Optional[Callable[..., Any]] = _load_json
+        self.function: Callable[..., Any] | None = _load_json
         """Store the callable function itself."""
 
         # Call base constructor.
@@ -38,6 +39,6 @@ class ImportMeasurement(ExternalMeasurement):
 
 def _load_json(import_path: str) -> dict[str, Any]:
     """Loads a JSON into a dict."""
-    with open(import_path, "r", encoding="utf-8") as file:
+    with open(import_path, encoding="utf-8") as file:
         data = typing.cast(dict[str, Any], json.load(file))
         return data

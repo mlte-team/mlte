@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 from mlte._private import url
 from mlte.context.context import Context
@@ -34,13 +33,13 @@ class Session:
 
     def reset(self):
         """Resets all internal state to defaults."""
-        self._context: Optional[Context] = None
+        self._context: Context | None = None
         """The MLTE context for the session."""
 
-        self._stores: Optional[UnifiedStore] = None
+        self._stores: UnifiedStore | None = None
         """All stores in this session."""
 
-        self._credentials: Optional[Credentials] = None
+        self._credentials: Credentials | None = None
         """Current user and password for auditing and connections."""
 
     @property
@@ -76,7 +75,7 @@ class Session:
         return self._stores
 
     @property
-    def credentials(self) -> Optional[Credentials]:
+    def credentials(self) -> Credentials | None:
         if self._credentials is None:
             # If the stores have not been manually set, get URI from environment.
             user = self._get_env_var(self.ENV_CURRENT_USER_VAR)
@@ -116,7 +115,7 @@ class Session:
         """Set the session stores."""
         self._credentials = credentials
 
-    def _get_env_var(self, env_var: str) -> Optional[str]:
+    def _get_env_var(self, env_var: str) -> str | None:
         """Get env var or return none if does not exist."""
         return os.environ.get(env_var, None)
 
@@ -161,7 +160,7 @@ def set_store(store_uri: str):
     g_session._set_stores(store_uri)
 
 
-def set_credentials(user: str, password: Optional[str] = None):
+def set_credentials(user: str, password: str | None = None):
     """
     Set the global MLTE credentials.
     :param user: The user

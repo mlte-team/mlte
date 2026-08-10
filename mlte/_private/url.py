@@ -1,4 +1,3 @@
-from typing import Optional, Tuple
 from urllib.parse import ParseResult, quote, urlparse
 
 from mlte._private import text
@@ -16,7 +15,7 @@ def set_url_username_password(url: str, username: str, password: str) -> str:
 
 def remove_url_username_password(
     url: str,
-) -> Tuple[str, Optional[str], Optional[str]]:
+) -> tuple[str, str | None, str | None]:
     """Removes user and password from URL, and returns the cleaned url, as well as the user and password, if any."""
     parsed_uri: ParseResult = urlparse(url)
 

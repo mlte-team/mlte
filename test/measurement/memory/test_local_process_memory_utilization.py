@@ -3,7 +3,6 @@
 import os
 import time
 import typing
-from typing import Tuple
 
 import pint
 import pytest
@@ -102,7 +101,7 @@ def test_memory_validate_failure() -> None:
 
 
 def test_result_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     store, ctx = artifact_store_with_context
 

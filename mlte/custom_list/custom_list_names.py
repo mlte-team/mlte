@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from strenum import StrEnum
 
 
@@ -26,7 +24,7 @@ class CustomListNameDict(dict[CustomListName, CustomListName]):
     """
 
     def __setitem__(
-        self: "CustomListNameDict",
+        self: CustomListNameDict,
         key: CustomListName,
         value: CustomListName,
     ):
@@ -66,7 +64,7 @@ class CustomListParentMappings:
     @staticmethod
     def get_parent_list_name(
         list_name: CustomListName,
-    ) -> Optional[CustomListName]:
+    ) -> CustomListName | None:
         """Gets the name of the parent list of list_name or None."""
         if list_name and list_name in CustomListParentMappings.parent_mappings:
             return CustomListParentMappings.parent_mappings[list_name]
@@ -76,7 +74,7 @@ class CustomListParentMappings:
     @staticmethod
     def get_child_list_name(
         list_name: CustomListName,
-    ) -> Optional[CustomListName]:
+    ) -> CustomListName | None:
         """Gets the name of the child list of list_name or None."""
         if list_name in CustomListParentMappings.parent_mappings.values():
             child_list_name = list(

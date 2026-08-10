@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Union
+from typing import Any
 
 import mlte.store.error as errors
 from mlte.store.base import StoreURI
@@ -58,9 +58,9 @@ class MemoryUserStorage:
     """A simple storage wrapper for the in-memory store."""
 
     def __init__(self) -> None:
-        self.users: Dict[str, User] = {}
-        self.groups: Dict[str, Group] = {}
-        self.permissions: Dict[str, Permission] = {}
+        self.users: dict[str, User] = {}
+        self.groups: dict[str, Group] = {}
+        self.permissions: dict[str, Permission] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ class InMemoryUserMapper(UserMapper):
         return hashed_user
 
     def edit(
-        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+        self, user: UserWithPassword | BasicUser, context: Any = None
     ) -> User:
         if user.username not in self.storage.users:
             raise errors.ErrorNotFound(f"User {user.username}")
@@ -157,14 +157,14 @@ class InMemoryUserMapper(UserMapper):
         user = self.storage.users[username]
 
         # Now get updated info for each group.
-        up_to_date_groups: List[Group] = []
+        up_to_date_groups: list[Group] = []
         for group in user.groups:
             up_to_date_groups.append(self.group_mapper.read(group.name))
         user.groups = up_to_date_groups
 
         return user
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [username for username in self.storage.users.keys()]
 
     def delete(self, username: str, context: Any = None) -> User:
@@ -204,7 +204,7 @@ class InMemoryGroupMapper(GroupMapper):
             raise errors.ErrorNotFound(f"Group {group_name}")
         return self.storage.groups[group_name]
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [group_name for group_name in self.storage.groups.keys()]
 
     def delete(self, group_name: str, context: Any = None) -> Group:
@@ -234,7 +234,7 @@ class InMemoryPermissionMapper(PermissionMapper):
             raise errors.ErrorNotFound(f"Permission {permission_str}")
         return self.storage.permissions[permission_str]
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [
             permission_str for permission_str in self.storage.permissions.keys()
         ]

@@ -7,7 +7,6 @@ from __future__ import annotations
 import base64
 import typing
 from pathlib import Path
-from typing import Union
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -23,7 +22,7 @@ class Image(Evidence):
 
     def __init__(
         self,
-        image: Union[str, Path, bytes],
+        image: str | Path | bytes,
     ):
         """
         Initialize an Image instance.
@@ -79,7 +78,7 @@ class Image(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Image:
+    def load(cls, identifier: str | None = None) -> Image:
         evidence = super().load(identifier)
         return typing.cast(Image, evidence)
 

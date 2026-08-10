@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any
 
 from mlte.store.base import StoreURI
 from mlte.store.common.fs_storage import FileSystemStorage
@@ -130,7 +130,7 @@ class FileSystemUserMappper(UserMapper):
         return self._write_user(hashed_user)
 
     def edit(
-        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+        self, user: UserWithPassword | BasicUser, context: Any = None
     ) -> User:
         # NOTE: a JSON file may not have the updated group data, which can make reading the JSON confusing.
         self.storage.ensure_resource_exists(user.username)
@@ -146,14 +146,14 @@ class FileSystemUserMappper(UserMapper):
         user = self._read_user(username)
 
         # Now get updated info for each group.
-        up_to_date_groups: List[Group] = []
+        up_to_date_groups: list[Group] = []
         for group in user.groups:
             up_to_date_groups.append(self.group_mapper.read(group.name))
         user.groups = up_to_date_groups
 
         return user
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, username: str, context: Any = None) -> User:
@@ -212,7 +212,7 @@ class FileSystemGroupMappper(GroupMapper):
     def read(self, group_name: str, context: Any = None) -> Group:
         return self._read_group(group_name)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, group_name: str, context: Any = None) -> Group:
@@ -267,7 +267,7 @@ class FileSystemPermissionMappper(PermissionMapper):
     def read(self, permission_str: str, context: Any = None) -> Permission:
         return self._read_permission(permission_str)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resources()
 
     def delete(self, permission_str: str, context: Any = None) -> Permission:

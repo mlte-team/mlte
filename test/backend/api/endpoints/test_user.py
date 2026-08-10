@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any
 
 import pytest
 
@@ -354,7 +354,7 @@ def test_list_user_groups(test_api_fixture, api_user: UserWithPassword) -> None:
     res = test_client.get(f"{USER_URI}/{user.username}/models")
     assert res.status_code == codes.OK
 
-    model_list: List[str] = res.json()
+    model_list: list[str] = res.json()
     assert m1_id in model_list
     assert m2_id in model_list
     assert m3_id not in model_list
@@ -388,7 +388,7 @@ def test_list_user_groups_me(
     res = test_client.get(f"{USER_URI}/me/models")
     assert res.status_code == codes.OK
 
-    model_list: List[str] = res.json()
+    model_list: list[str] = res.json()
     assert m1_id in model_list
     assert m2_id in model_list
     assert api_user.role == RoleType.ADMIN or m3_id not in model_list

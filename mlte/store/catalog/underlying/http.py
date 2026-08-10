@@ -15,7 +15,8 @@ this, the following assumptions are made of the values received by the CRUD meth
 
 from __future__ import annotations
 
-from typing import Any, List, Optional, OrderedDict
+from collections import OrderedDict
+from typing import Any
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import StoreURI
@@ -45,7 +46,7 @@ class HttpCatalogGroupStore(CatalogStore):
     """
 
     def __init__(
-        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
+        self, *, uri: StoreURI, client: OAuthHttpClient | None = None
     ) -> None:
         super().__init__(uri=uri)
 
@@ -135,7 +136,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         )
         return CatalogEntry(**response)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         entries = self.list_details()
         return [entry.header.identifier for entry in entries]
 
@@ -156,7 +157,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         context: Any = None,
         limit: int = CatalogEntryMapper.DEFAULT_LIST_LIMIT,
         offset: int = 0,
-    ) -> List[CatalogEntry]:
+    ) -> list[CatalogEntry]:
         # This is a bit hacky, in that we have a pseudo resource type "catalogs",
         # and a pseudo resource id "entry" to get all details of all entries.
         response = self.storage.send_command(
@@ -169,7 +170,7 @@ class HTTPCatalogGroupEntryMapper(CatalogEntryMapper):
         ]
 
 
-def _entry_group(catalog_id: Optional[str]) -> OrderedDict[str, str]:
+def _entry_group(catalog_id: str | None) -> OrderedDict[str, str]:
     """Returns the resource group info for entries inside a catalog."""
     if not catalog_id:
         raise RuntimeError(

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from mlte.negotiation.model import (
@@ -288,9 +286,9 @@ def _build_data_descriptors(
 
 def _build_model_descriptor(
     dev_resources: DBModelResourcesDescriptor,
-    deployment_platform: Optional[str],
-    capability_deployment_mechanism: Optional[str],
-    model_source: Optional[str],
+    deployment_platform: str | None,
+    capability_deployment_mechanism: str | None,
+    model_source: str | None,
     inputs: list[DBModelIODescriptor],
     outputs: list[DBModelIODescriptor],
     prod_resources: DBModelResourcesDescriptor,
@@ -324,7 +322,7 @@ def _build_model_descriptor(
 
 
 def _build_resources(
-    resources: Optional[DBModelResourcesDescriptor],
+    resources: DBModelResourcesDescriptor | None,
 ) -> ModelResourcesDescriptor:
     """Build a ModelResourcesDescriptor from DBModelResourcesDescriptor."""
     return ModelResourcesDescriptor(

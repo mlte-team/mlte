@@ -1,7 +1,5 @@
 """Model implementation for MLTE catalog entries."""
 
-from typing import Optional
-
 from mlte.model import BaseModel
 from mlte.store.query import Filterable
 
@@ -12,19 +10,19 @@ class CatalogEntryHeader(BaseModel):
     identifier: str
     """The unique identifier for the entry."""
 
-    creator: Optional[str] = None
+    creator: str | None = None
     """The username of the author for the entry."""
 
-    created: Optional[int] = -1
+    created: int | None = -1
     """The timestamp of creation of this entry, as Unix time."""
 
-    updater: Optional[str] = None
+    updater: str | None = None
     """The username of the author of the last edition."""
 
-    updated: Optional[int] = -1
+    updated: int | None = -1
     """The timestamp of last update of this entry, as Unix time."""
 
-    catalog_id: Optional[str] = None
+    catalog_id: str | None = None
     """The id of the catalog this entry came from."""
 
 
@@ -43,13 +41,13 @@ class CatalogEntry(Filterable):
     code: str
     """The actual code for the entry."""
 
-    description: Optional[str] = None
+    description: str | None = None
     """The description of the code for the entry."""
 
-    inputs: Optional[str] = None
+    inputs: str | None = None
     """The input for the entry."""
 
-    output: Optional[str] = None
+    output: str | None = None
     """The output for the entry."""
 
     def get_identifier(self) -> str:

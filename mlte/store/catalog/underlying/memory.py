@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any
 
 import mlte.store.error as errors
 from mlte.catalog.model import CatalogEntry
@@ -57,7 +57,7 @@ class MemoryCatalogStorage(Storage):
     def __init__(self, uri: StoreURI) -> None:
         super().__init__(uri)
 
-        self.entries: Dict[str, CatalogEntry] = {}
+        self.entries: dict[str, CatalogEntry] = {}
 
 
 # -----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ class InMemoryCatalogEntryMapper(CatalogEntryMapper):
         entry = self.storage.entries[entry_id]
         return entry
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [username for username in self.storage.entries.keys()]
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:

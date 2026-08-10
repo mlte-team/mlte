@@ -22,7 +22,6 @@ from test.store.utils import store_types
 @pytest.mark.parametrize("edit", [True, False])
 @pytest.mark.parametrize("create", [True, False])
 class TestPolicy:
-
     @staticmethod
     def test_creation(
         resource_type: ResourceType,

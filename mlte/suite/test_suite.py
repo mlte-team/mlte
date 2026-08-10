@@ -27,13 +27,13 @@ class TestSuite(Artifact):
     measured and validated.
     """
 
-    type = ArtifactType.TEST_SUITE
+    type_ = ArtifactType.TEST_SUITE
     """Class attribute indicating type."""
 
     def __init__(
         self,
-        identifier: typing.Optional[str] = None,
-        test_cases: list[TestCase] = [],
+        identifier: str | None = None,
+        test_cases: list[TestCase] | None = None,
     ):
         """
         Initialize a TestSuite instance.
@@ -46,6 +46,7 @@ class TestSuite(Artifact):
         """Indicate that this type of artifact will exist at the model level."""
 
         # Check that no tests cases have the same id.
+        test_cases = test_cases if test_cases else []
         found_ids = []
         for test_case in test_cases:
             if test_case.identifier in found_ids:
@@ -73,7 +74,7 @@ class TestSuite(Artifact):
         :return: a dict of Evidences, keyed by test case id, generated as resuts for all the executed measurements, one per test case.
         """
         # Check for invalid input ids.
-        for case_id, args in input.items():
+        for case_id, _ in input.items():
             if case_id not in self.test_cases:
                 raise RuntimeError(
                     f"Test Case id {case_id} received in input does not exist in this suite."
@@ -125,12 +126,12 @@ class TestSuite(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> TestSuite:
         """Convert a TestSuite model to its corresponding artifact."""
-        assert isinstance(
-            model, ArtifactModel
-        ), f"Can't create object from non-ArtifactModel model: type{type(model)}."
-        assert (
-            model.header.type == ArtifactType.TEST_SUITE
-        ), "Type should be TestSuite."
+        assert isinstance(model, ArtifactModel), (
+            f"Can't create object from non-ArtifactModel model: type{type(model)}."
+        )
+        assert model.header.type == ArtifactType.TEST_SUITE, (
+            "Type should be TestSuite."
+        )
         body = typing.cast(TestSuiteModel, model.body)
         return TestSuite(
             identifier=model.header.identifier,
@@ -142,7 +143,7 @@ class TestSuite(Artifact):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> TestSuite:
+    def load(cls, identifier: str | None = None) -> TestSuite:
         """
         Load a TestSuite from the configured global session.
         :param identifier: The identifier for the artifact. If None,

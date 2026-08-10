@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -19,10 +17,10 @@ class DBNegotiationCard(DBBase):
 
     # General
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_id: Mapped[Optional[DBArtifact]] = mapped_column(
+    artifact_id: Mapped[DBArtifact | None] = mapped_column(
         ForeignKey(DBArtifact.get_id_column())
     )
-    artifact: Mapped[Optional[DBArtifact]] = relationship(
+    artifact: Mapped[DBArtifact | None] = relationship(
         back_populates="body_negotiation_card",
         cascade="all",
     )
@@ -32,8 +30,8 @@ class DBNegotiationCard(DBBase):
         cascade="all, delete-orphan"
     )
     sys_problem_type: Mapped[str]
-    sys_task: Mapped[Optional[str]]
-    sys_usage_context: Mapped[Optional[str]]
+    sys_task: Mapped[str | None]
+    sys_usage_context: Mapped[str | None]
     sys_risks: Mapped[list[DBGeneralRisk]] = relationship(
         cascade="all, delete-orphan"
     )
@@ -51,9 +49,9 @@ class DBNegotiationCard(DBBase):
         cascade="all",
         foreign_keys=[model_dev_resources_id],
     )
-    model_prod_deployment_platform: Mapped[Optional[str]]
-    model_prod_capability_deployment_mechanism: Mapped[Optional[str]]
-    model_prod_model_source: Mapped[Optional[str]]
+    model_prod_deployment_platform: Mapped[str | None]
+    model_prod_capability_deployment_mechanism: Mapped[str | None]
+    model_prod_model_source: Mapped[str | None]
 
     model_prod_inputs: Mapped[list[DBModelIODescriptor]] = relationship(
         cascade="all, delete-orphan",
@@ -83,8 +81,8 @@ class DBGoalDescriptor(DBBase):
     __tablename__ = "nc_goal_descriptor"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    description: Mapped[Optional[str]]
-    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+    description: Mapped[str | None]
+    negotiation_card_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
@@ -100,8 +98,8 @@ class DBMetricDescriptor(DBBase):
     __tablename__ = "nc_metric_descriptor"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    description: Mapped[Optional[str]]
-    baseline: Mapped[Optional[str]]
+    description: Mapped[str | None]
+    baseline: Mapped[str | None]
     goal_descriptor_id: Mapped[int] = mapped_column(
         ForeignKey(DBGoalDescriptor.get_id_column())
     )
@@ -119,7 +117,7 @@ class DBGeneralRisk(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str]
-    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+    negotiation_card_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
@@ -137,14 +135,14 @@ class DBDataDescriptor(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    description: Mapped[Optional[str]]
-    purpose: Mapped[Optional[str]]
-    source: Mapped[Optional[str]]
-    access: Mapped[Optional[str]]
-    labeling_method: Mapped[Optional[str]]
-    rights: Mapped[Optional[str]]
-    policies: Mapped[Optional[str]]
-    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+    description: Mapped[str | None]
+    purpose: Mapped[str | None]
+    source: Mapped[str | None]
+    access: Mapped[str | None]
+    labeling_method: Mapped[str | None]
+    rights: Mapped[str | None]
+    policies: Mapped[str | None]
+    negotiation_card_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
@@ -164,9 +162,9 @@ class DBLabelDescriptor(DBBase):
     __tablename__ = "nc_label_descriptor"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[Optional[str]]
-    description: Mapped[Optional[str]]
-    percentage: Mapped[Optional[float]]
+    name: Mapped[str | None]
+    description: Mapped[str | None]
+    percentage: Mapped[float | None]
     data_descriptor_id: Mapped[int] = mapped_column(
         ForeignKey(DBDataDescriptor.get_id_column())
     )
@@ -183,12 +181,12 @@ class DBFieldDescriptor(DBBase):
     __tablename__ = "nc_field_descriptor"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[Optional[str]]
-    description: Mapped[Optional[str]]
-    type: Mapped[Optional[str]]
-    expected_values: Mapped[Optional[str]]
-    missing_values: Mapped[Optional[str]]
-    special_values: Mapped[Optional[str]]
+    name: Mapped[str | None]
+    description: Mapped[str | None]
+    type: Mapped[str | None]
+    expected_values: Mapped[str | None]
+    missing_values: Mapped[str | None]
+    special_values: Mapped[str | None]
     data_descriptor_id: Mapped[int] = mapped_column(
         ForeignKey(DBDataDescriptor.get_id_column())
     )
@@ -210,15 +208,15 @@ class DBModelIODescriptor(DBBase):
     __tablename__ = "nc_model_io"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[Optional[str]]
-    description: Mapped[Optional[str]]
-    type: Mapped[Optional[str]]
-    expected_values: Mapped[Optional[str]]
+    name: Mapped[str | None]
+    description: Mapped[str | None]
+    type: Mapped[str | None]
+    expected_values: Mapped[str | None]
 
-    negotiation_card_input_id: Mapped[Optional[int]] = mapped_column(
+    negotiation_card_input_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
-    negotiation_card_output_id: Mapped[Optional[int]] = mapped_column(
+    negotiation_card_output_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
@@ -230,12 +228,12 @@ class DBModelResourcesDescriptor(DBBase):
     __tablename__ = "nc_model_resource"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    cpu: Mapped[Optional[str]]
-    gpu: Mapped[Optional[str]]
-    gpu_memory: Mapped[Optional[str]]
-    main_memory: Mapped[Optional[str]]
-    storage: Mapped[Optional[str]]
-    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+    cpu: Mapped[str | None]
+    gpu: Mapped[str | None]
+    gpu_memory: Mapped[str | None]
+    main_memory: Mapped[str | None]
+    storage: Mapped[str | None]
+    negotiation_card_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 
@@ -247,15 +245,15 @@ class DBQAS(DBBase):
     __tablename__ = "nc_qas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    identifier: Mapped[Optional[str]]
+    identifier: Mapped[str | None]
     quality: Mapped[str]
-    stimulus: Mapped[Optional[str]]
-    source: Mapped[Optional[str]]
-    environment: Mapped[Optional[str]]
-    response: Mapped[Optional[str]]
-    measure: Mapped[Optional[str]]
+    stimulus: Mapped[str | None]
+    source: Mapped[str | None]
+    environment: Mapped[str | None]
+    response: Mapped[str | None]
+    measure: Mapped[str | None]
 
-    negotiation_card_id: Mapped[Optional[int]] = mapped_column(
+    negotiation_card_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBNegotiationCard.get_id_column())
     )
 

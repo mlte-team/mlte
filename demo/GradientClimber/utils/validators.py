@@ -2,7 +2,7 @@
 Standalone Validators used in this demo.
 """
 
-from typing import Callable
+from collections.abc import Callable
 
 from mlte.evidence.types.array import Array
 from mlte.validation.validator import Validator
@@ -17,9 +17,8 @@ def passed_percent_more_or_equal_then(
     :param threshold: The threshold of required pass tests.
     :return: A validator to check against this.
     """
-    bool_exp: Callable[[Array], bool] = (
-        lambda value: sum(g for g in value.array) / max(len(value.array), 1)
-        >= threshold
+    bool_exp: Callable[[Array], bool] = lambda value: (
+        sum(g for g in value.array) / max(len(value.array), 1) >= threshold
     )
     validator: Validator = Validator.build_validator(
         bool_exp=bool_exp,

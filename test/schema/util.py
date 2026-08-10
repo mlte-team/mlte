@@ -4,7 +4,7 @@ test/schema/util.py
 
 import os
 import pkgutil
-from typing import Any, Dict, Optional
+from typing import Any
 
 import jsonschema
 
@@ -37,7 +37,7 @@ _SCHEMA_FILE_NAME = "schema.json"
 
 
 def validate_evidence_schema(
-    document: Dict[str, Any], version: Optional[str] = None
+    document: dict[str, Any], version: str | None = None
 ):
     """
     Validate the schema of a Evidence document.
@@ -57,7 +57,7 @@ def validate_evidence_schema(
 
 
 def validate_test_suite_schema(
-    document: Dict[str, Any], version: Optional[str] = None
+    document: dict[str, Any], version: str | None = None
 ):
     """
     Validate the schema of a TestSuite document.
@@ -77,7 +77,7 @@ def validate_test_suite_schema(
 
 
 def validate_test_results_schema(
-    document: Dict[str, Any], version: Optional[str] = None
+    document: dict[str, Any], version: str | None = None
 ):
     """
     Validate the schema of a TestResults document.
@@ -98,7 +98,7 @@ def validate_test_results_schema(
 
 
 def validate_report_schema(
-    document: Dict[str, Any], version: Optional[str] = None
+    document: dict[str, Any], version: str | None = None
 ):
     """
     Validate the schema of a Report output document.
@@ -120,7 +120,7 @@ def validate_report_schema(
 # -----------------------------------------------------------------------------
 
 
-def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
+def _find_schema(version: str, subdirectory: str) -> dict[str, Any]:
     """
     Find, load, and return the JSON schema.
 
@@ -145,7 +145,7 @@ def _find_schema(version: str, subdirectory: str) -> Dict[str, Any]:
     return json.loads(data)  # type: ignore
 
 
-def _find_evidence_schema(version: Optional[str] = None) -> Dict[str, Any]:
+def _find_evidence_schema(version: str | None = None) -> dict[str, Any]:
     """
     Find, load, and return the JSON schema for Evidence output.
 
@@ -166,7 +166,7 @@ def _find_evidence_schema(version: Optional[str] = None) -> Dict[str, Any]:
     return _find_schema(version, "evidence")
 
 
-def _find_test_suite_schema(version: Optional[str] = None) -> Dict[str, Any]:
+def _find_test_suite_schema(version: str | None = None) -> dict[str, Any]:
     """
     Find, load, and return the JSON schema for TestSuite output.
 
@@ -187,7 +187,7 @@ def _find_test_suite_schema(version: Optional[str] = None) -> Dict[str, Any]:
     return _find_schema(version, "tests")
 
 
-def _find_test_results_schema(version: Optional[str] = None) -> Dict[str, Any]:
+def _find_test_results_schema(version: str | None = None) -> dict[str, Any]:
     """
     Find, load, and return the JSON schema for TestResults output.
 
@@ -208,7 +208,7 @@ def _find_test_results_schema(version: Optional[str] = None) -> Dict[str, Any]:
     return _find_schema(version, "results")
 
 
-def _find_report_schema(version: Optional[str] = None):
+def _find_report_schema(version: str | None = None):
     """
     Find, load, and return the JSON schema for Report output.
 

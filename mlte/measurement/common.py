@@ -4,7 +4,8 @@ Base class for unist specific measurements that track minimin, maximum and avera
 
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from mlte.evidence.external import ExternalEvidence
 from mlte.measurement.units import Quantity, Unit, str_to_unit, unit_to_str
@@ -12,11 +13,9 @@ from mlte.validation.validator import Validator
 
 
 class CommonStatistics(ExternalEvidence):
-    DEFAULT_UNIT: Optional[Unit] = None
+    DEFAULT_UNIT: Unit | None = None
 
-    def __init__(
-        self, avg: float, min: float, max: float, unit: Optional[Unit]
-    ):
+    def __init__(self, avg: float, min: float, max: float, unit: Unit | None):
         """
 
         :param avg: The average value
@@ -86,7 +85,7 @@ class CommonStatistics(ExternalEvidence):
     def max_utilization_less_than(
         cls,
         threshold: float,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -103,8 +102,8 @@ class CommonStatistics(ExternalEvidence):
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Any], bool] = (
-            lambda stats: stats.max < threshold_w_unit
+        bool_exp: Callable[[Any], bool] = lambda stats: (
+            stats.max < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -121,7 +120,7 @@ class CommonStatistics(ExternalEvidence):
     def average_utilization_less_than(
         cls,
         threshold: float,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -139,8 +138,8 @@ class CommonStatistics(ExternalEvidence):
             unit = cls.DEFAULT_UNIT
 
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Any], bool] = (
-            lambda stats: stats.avg < threshold_w_unit
+        bool_exp: Callable[[Any], bool] = lambda stats: (
+            stats.avg < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,

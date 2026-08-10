@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import gc
 import inspect
+from collections.abc import Callable, Mapping
 from types import FrameType, FunctionType
-from typing import Any, Callable, Mapping, Optional
+from typing import Any
 
 from mlte._private import meta
 
@@ -13,9 +14,9 @@ class FunctionInfo:
 
     def __init__(
         self,
-        function_name: Optional[str],
+        function_name: str | None,
         arguments: list[Any],
-        function_parent: Optional[str],
+        function_parent: str | None,
     ):
         """
         Initialize a FunctionInfo instance.
@@ -36,7 +37,7 @@ class FunctionInfo:
 
     @staticmethod
     def get_function_info(
-        caller_function: Optional[FrameType] = None,
+        caller_function: FrameType | None = None,
     ) -> FunctionInfo:
         """
         Extracting context info from current function that called us.
@@ -58,7 +59,7 @@ class FunctionInfo:
                 )
 
         # Get function name of caller. Handle case when called from top script.
-        function_name: Optional[str] = caller_function.f_code.co_name
+        function_name: str | None = caller_function.f_code.co_name
         if function_name == "<module>":
             function_name = None
 
@@ -90,7 +91,7 @@ class FunctionInfo:
 # -------------------------------------------------------------------------
 
 
-def get_func_from_frame(frame: FrameType) -> Optional[FunctionType]:
+def get_func_from_frame(frame: FrameType) -> FunctionType | None:
     # Nifty trick - get the function from the reference to its code object
     refs = gc.get_referrers(frame.f_code)
     for ref in refs:
@@ -99,7 +100,7 @@ def get_func_from_frame(frame: FrameType) -> Optional[FunctionType]:
     return None
 
 
-def get_class_from_func(func: Optional[FunctionType]) -> Optional[type]:
+def get_class_from_func(func: FunctionType | None) -> type | None:
     if not func or "." not in func.__qualname__:
         return None
 

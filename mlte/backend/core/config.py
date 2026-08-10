@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Dict, List
-
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -50,7 +48,7 @@ class Settings(BaseSettings):
     STORE_URI: str = StoreURI.create_uri_string(StoreType.LOCAL_MEMORY)
     """The store URI string; defaults to in-memory store."""
 
-    CATALOG_URIS: Dict[str, str] = {}
+    CATALOG_URIS: dict[str, str] = {}
     """The dict of catalog URI strings."""
 
     LOG_LEVEL: str = "ERROR"
@@ -63,7 +61,7 @@ class Settings(BaseSettings):
             raise ValueError(f"Unsupported log level: {v}.")
         return v
 
-    ALLOWED_ORIGINS: List[str] = [
+    ALLOWED_ORIGINS: list[str] = [
         DEFAULT_FRONTEND_ADDRESS,
         DEFAULT_DEV_FRONTEND_ADDRESS,
     ]

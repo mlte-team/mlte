@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -50,15 +48,15 @@ def create_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"Exists: {e}"
-            )
+            ) from None
         except errors.ForbiddenError as e:
             raise HTTPException(
                 status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -93,11 +91,11 @@ def edit_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ForbiddenError as e:
             raise HTTPException(
                 status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -124,7 +122,7 @@ def read_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -155,11 +153,11 @@ def delete_catalog_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except errors.ForbiddenError as e:
             raise HTTPException(
                 status_code=codes.FORBIDDEN, detail=f"Forbidden: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -169,7 +167,7 @@ def list_catalog_entries(
     *,
     catalog_id: str,
     current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
+) -> list[CatalogEntry]:
     """
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
@@ -183,7 +181,7 @@ def list_catalog_entries(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -192,13 +190,12 @@ def list_catalog_entries(
 def list_catalogs(
     *,
     current_user: AuthorizedUser,
-) -> List[CatalogReply]:
+) -> list[CatalogReply]:
     """
     List MLTE catalogs, returning their ids.
     :return: A collection of catalog ids.
     """
     with state_stores.catalog_stores_session() as catalog_stores:
-        catalog_stores.sessions
         try:
             return [
                 CatalogReply(
@@ -216,7 +213,7 @@ def list_catalogs(
 def list_catalog_entries_all_catalogs(
     *,
     current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
+) -> list[CatalogEntry]:
     """
     List MLTE catalog entries, with details for each entry.
     :return: A collection of entries with their details.
@@ -227,7 +224,7 @@ def list_catalog_entries_all_catalogs(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -237,7 +234,7 @@ def search(
     *,
     query: Query,
     current_user: AuthorizedUser,
-) -> List[CatalogEntry]:
+) -> list[CatalogEntry]:
     """
     Search MLTE catalog entries, with details for each entry.
     :param query: The search query.
@@ -247,6 +244,8 @@ def search(
         try:
             return catalog_stores.search(query=query)
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e}"
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)

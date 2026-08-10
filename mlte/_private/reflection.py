@@ -7,15 +7,16 @@ import inspect
 import json
 import os
 import re
+from collections.abc import Callable, Generator
 from types import ModuleType
-from typing import Any, Callable, Generator, Union
+from typing import Any
 
 import astunparse  # type: ignore
 
 
 def load_class_or_function(
     type_path: str,
-) -> Union[type[Any], Callable[[], Any]]:
+) -> type[Any] | Callable[[], Any]:
     """
     Returns a class or function of the given class name/path.
     :param type_path: A path to a class or function, including absolute package/module path and class/function name.
@@ -28,14 +29,16 @@ def load_class_or_function(
     try:
         loaded_module = importlib.import_module(module_name)
     except Exception as e:
-        raise RuntimeError(f"Module {module_name} could not be loaded: {e}")
+        raise RuntimeError(
+            f"Module {module_name} could not be loaded: {e}"
+        ) from None
 
     try:
         loaded_type: type[Any] = getattr(loaded_module, class_name)
     except Exception as e:
         raise RuntimeError(
             f"Class or function {class_name} in module {module_name} not found: {e}"
-        )
+        ) from None
 
     return loaded_type
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import Any, Optional
+from typing import Any
 
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
@@ -43,7 +43,7 @@ class ModelArtifacts:
 
     def get_artifact(
         self, version_id: str, artifact_id: str
-    ) -> Optional[ArtifactModel]:
+    ) -> ArtifactModel | None:
         """Gets an artifact from a model or version level."""
         # First check at the model level.
         if artifact_id in self.artifacts:
@@ -55,9 +55,7 @@ class ModelArtifacts:
             else:
                 return None
 
-    def delete_artifact(
-        self, artifact_id: str, version_id: Optional[str] = None
-    ):
+    def delete_artifact(self, artifact_id: str, version_id: str | None = None):
         """Removes the given artifact, from the given version, or from the model list."""
         if version_id:
             del self.version_artifacts[version_id][artifact_id]
@@ -80,9 +78,9 @@ class MemoryArtifactStorage:
     ):
         """Adds an artifact to the model or version level list."""
         if level == ArtifactLevel.MODEL:
-            self.models[model_id].artifacts[
-                artifact.header.identifier
-            ] = artifact
+            self.models[model_id].artifacts[artifact.header.identifier] = (
+                artifact
+            )
         else:
             self.models[model_id].version_artifacts[version_id][
                 artifact.header.identifier
@@ -178,7 +176,7 @@ class InMemoryModelMapper(ModelMapper):
             ],
         )
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return [model_id for model_id in self.storage.models.keys()]
 
     def delete(self, model_id: str, context: Any = None) -> Model:
@@ -217,7 +215,7 @@ class InMemoryVersionMapper(VersionMapper):
 
         return Version(identifier=version_id)
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         if model_id not in self.storage.models:
             raise errors.ErrorNotFound(f"Model {model_id}")
 
@@ -248,7 +246,7 @@ class InMemoryArtifactMapper(ArtifactMapper):
         model_id, version_id = model_and_version
         return self._get_artifact(model_id, version_id, artifact_id)
 
-    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+    def list_all(self, model_and_version: tuple[str, str]) -> list[str]:
         model_id, version_id = model_and_version
         return [
             artifact_id

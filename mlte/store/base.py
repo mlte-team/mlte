@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, List, Protocol
+from typing import Any, Protocol
 
 from mlte.store.query import Query
 from mlte.store.validators.cross_validator import CompositeValidator
@@ -211,10 +211,10 @@ class ResourceMapper(ABC):
     DEFAULT_LIST_LIMIT = 100
     """Default limit for lists."""
 
-    def __init__(
-        self, *, validators: CompositeValidator = CompositeValidator()
-    ) -> None:
-        self.validators: CompositeValidator = validators
+    def __init__(self, *, validators: CompositeValidator | None = None) -> None:
+        self.validators: CompositeValidator = (
+            validators if validators else CompositeValidator()
+        )
         """A reference to the store validators."""
 
     @abstractmethod
@@ -251,7 +251,7 @@ class ResourceMapper(ABC):
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     @abstractmethod
-    def list(self, context: Any) -> List[str]:
+    def list_all(self, context: Any) -> list[str]:
         """
         List all resources of this type in the store.
         :param context: Any additional context needed for this resource.
@@ -275,7 +275,7 @@ class ResourceMapper(ABC):
         context: Any = None,
         limit: int = DEFAULT_LIST_LIMIT,
         offset: int = 0,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """
         Read details of resources within limit and offset.
         :param context: Any additional context needed for this resource.
@@ -283,12 +283,12 @@ class ResourceMapper(ABC):
         :param offset: The offset on resources to read
         :return: The read resources
         """
-        entry_ids = self.list(context)
+        entry_ids = self.list_all(context)
         return [self.read(entry_id, context) for entry_id in entry_ids][
             offset : offset + limit
         ]
 
-    def search(self, query: Query, context: Any = None) -> List[Any]:
+    def search(self, query: Query, context: Any = None) -> list[Any]:
         """
         Read a collection of resources, optionally filtered.
         :param query: The resource query to apply

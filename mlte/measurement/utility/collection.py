@@ -1,9 +1,10 @@
 """Utilities related to measurement collection."""
 
-from typing import Any, Iterable, List, Union
+from collections.abc import Iterable
+from typing import Any
 
 
-def flatten(*collections: Union[Any, Iterable[Any]]) -> List[Any]:
+def flatten(*collections: Any | Iterable[Any]) -> list[Any]:
     """
     Flatten a variadic number of collections.
 

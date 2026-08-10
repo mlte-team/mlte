@@ -1,7 +1,5 @@
 """Define model policies."""
 
-from typing import Union
-
 from mlte.store.artifact.store_session import ArtifactStoreSession
 from mlte.store.user.policy.policy import Policy
 from mlte.store.user.policy.policy_store_service import PolicyStoreService
@@ -15,7 +13,7 @@ def create_model_policies_if_needed(
     Function that checks, for all models, if policies have not been created.
     This is for cases where the model may have been created without the API.
     """
-    models = artifact_store.model_mapper.list()
+    models = artifact_store.model_mapper.list_all()
     for model_id in models:
         policy = Policy(ResourceType.MODEL, model_id)
         if not policy_store.is_stored(policy):
@@ -24,9 +22,9 @@ def create_model_policies_if_needed(
 
 def create_model_policy(
     model_id: str,
-    current_user: Union[UserWithPassword, BasicUser],
+    current_user: UserWithPassword | BasicUser,
     policy_store: PolicyStoreService,
-) -> Union[UserWithPassword, BasicUser]:
+) -> UserWithPassword | BasicUser:
     """Create a basic policy for a model for the user, and returns the updated user."""
     policy = Policy(ResourceType.MODEL, model_id)
     policy_store.save_to_store(policy)

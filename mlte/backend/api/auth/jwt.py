@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import typing
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Union
 
 from jose import JWTError, jwt
 
@@ -42,11 +41,11 @@ class DecodedToken(BaseModel):
 
 
 def create_user_token(
-    username: str, key: str, expires_delta: Optional[timedelta] = None
+    username: str, key: str, expires_delta: timedelta | None = None
 ) -> EncodedToken:
     """Creates an access token containing a given username."""
     # Main data is username.
-    claims: dict[str, Union[str, int]] = {SUBJECT_CLAIM_KEY: username}
+    claims: dict[str, str | int] = {SUBJECT_CLAIM_KEY: username}
 
     # Calculate expiration time, and add it to claims.
     if expires_delta is None:
@@ -82,7 +81,7 @@ def decode_user_token(encoded_token: str, key: str) -> DecodedToken:
 
         return decoded_token
     except JWTError as ex:
-        raise Exception(f"Error decoding token: {str(ex)}")
+        raise JWTError(f"Error decoding token: {str(ex)}") from ex
 
 
 def check_expired_token(token: DecodedToken) -> bool:

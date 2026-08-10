@@ -6,8 +6,6 @@ Set up for store fixtures in API state.
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 from mlte.store.user.policy import Policy
 from mlte.user import passwords
 from mlte.user.model import Group, ResourceType, RoleType, UserWithPassword
@@ -30,8 +28,8 @@ def build_admin_user() -> UserWithPassword:
 def build_test_user(
     username: str = TEST_API_USERNAME,
     password: str = TEST_API_PASS,
-    role: Optional[RoleType] = None,
-    groups: Optional[List[Group]] = None,
+    role: RoleType | None = None,
+    groups: list[Group] | None = None,
 ) -> UserWithPassword:
     """Creaters a test user."""
     test_user = UserWithPassword(username=username, password=password)
@@ -43,8 +41,8 @@ def build_test_user(
 
 
 def get_test_users_with_read_permissions(
-    resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserWithPassword]:
+    resource_type: ResourceType, resource_id: str | None = None
+) -> list[UserWithPassword]:
     """Get a list of users that have permissions to read from different sources."""
     users = [
         build_test_user(role=RoleType.ADMIN),
@@ -76,8 +74,8 @@ def get_test_users_with_read_permissions(
 
 
 def get_test_users_with_write_permissions(
-    resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserWithPassword]:
+    resource_type: ResourceType, resource_id: str | None = None
+) -> list[UserWithPassword]:
     """Get a list of users that have permissions to write from different sources."""
     users = [
         build_test_user(role=RoleType.ADMIN),
@@ -101,8 +99,8 @@ def get_test_users_with_write_permissions(
 
 
 def get_test_users_with_no_read_permissions(
-    resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserWithPassword]:
+    resource_type: ResourceType, resource_id: str | None = None
+) -> list[UserWithPassword]:
     """Get a list of users that do not have permissions to read from different sources."""
     users = [
         build_test_user(),
@@ -129,8 +127,8 @@ def get_test_users_with_no_read_permissions(
 
 
 def get_test_users_with_no_write_permissions(
-    resource_type: ResourceType, resource_id: Optional[str] = None
-) -> List[UserWithPassword]:
+    resource_type: ResourceType, resource_id: str | None = None
+) -> list[UserWithPassword]:
     """Get a list of users that do not have permissions to write from different sources."""
     users = [
         build_test_user(),

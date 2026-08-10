@@ -23,7 +23,7 @@ class SampleProcessMeasurement(ProcessMeasurement):
         return String(first_arg)
 
     @classmethod
-    def get_output_type(cls) -> type[Evidence]:
+    def output(cls) -> type[Evidence]:
         return String
 
 

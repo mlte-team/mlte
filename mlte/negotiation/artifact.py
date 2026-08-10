@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import typing
-from typing import List, Optional
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactLevel, ArtifactModel
@@ -24,29 +23,29 @@ from mlte.store.artifact.store import ArtifactStore
 class NegotiationCard(Artifact):
     """The negotiation card contains information produced at MLTE negotiation points."""
 
-    type = ArtifactType.NEGOTIATION_CARD
+    type_ = ArtifactType.NEGOTIATION_CARD
     """Class attribute indicating type."""
 
     def __init__(
         self,
-        identifier: Optional[str] = None,
-        system: SystemDescriptor = SystemDescriptor(),
-        data: List[DataDescriptor] = [],
-        model: ModelDescriptor = ModelDescriptor(),
-        quality_scenarios: List[QASDescriptor] = [],
+        identifier: str | None = None,
+        system: SystemDescriptor | None = None,
+        data: list[DataDescriptor] | None = None,
+        model: ModelDescriptor | None = None,
+        quality_scenarios: list[QASDescriptor] | None = None,
     ) -> None:
         super().__init__(identifier)
 
-        self.system = system
+        self.system = system if system else SystemDescriptor()
         """A descriptor for the system into which the model is integrated."""
 
-        self.data = data
+        self.data = data if data else []
         """A collection of descriptors for relevant datasets."""
 
-        self.model = model
+        self.model = model if model else ModelDescriptor()
         """A descriptor for the model."""
 
-        self.quality_scenarios = quality_scenarios
+        self.quality_scenarios = quality_scenarios if quality_scenarios else []
         """A list of quality attribute scenarios."""
 
         self.level = ArtifactLevel.MODEL
@@ -75,12 +74,12 @@ class NegotiationCard(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> NegotiationCard:
         """Convert a negotiation card model to its corresponding artifact."""
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.NEGOTIATION_CARD
-        ), "Type should be NegotiationCard."
+        assert isinstance(model, ArtifactModel), (
+            "Can't create object from non-ArtifactModel model."
+        )
+        assert model.header.type == ArtifactType.NEGOTIATION_CARD, (
+            "Type should be NegotiationCard."
+        )
         body = typing.cast(NegotiationCardModel, model.body)
         return NegotiationCard(
             identifier=model.header.identifier,
@@ -92,7 +91,7 @@ class NegotiationCard(Artifact):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: Optional[str] = None) -> NegotiationCard:
+    def load(cls, identifier: str | None = None) -> NegotiationCard:
         """
         Load a NegotiationCard from the configured global session.
         :param identifier: The identifier for the artifact. If None,

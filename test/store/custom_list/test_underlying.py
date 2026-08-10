@@ -34,7 +34,7 @@ def test_custom_list_entry(
     new_description = "new description"
 
     with ManagedCustomListSession(store.session()) as custom_list_store:
-        original_entries = custom_list_store.custom_list_entry_mapper.list(
+        original_entries = custom_list_store.custom_list_entry_mapper.list_all(
             test_list.name
         )
 
@@ -48,7 +48,7 @@ def test_custom_list_entry(
         assert test_entry == read_entry
 
         # Test listing entries.
-        entries = custom_list_store.custom_list_entry_mapper.list(
+        entries = custom_list_store.custom_list_entry_mapper.list_all(
             test_list.name
         )
         assert len(entries) == 1 + len(original_entries)

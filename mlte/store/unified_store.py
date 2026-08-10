@@ -1,7 +1,7 @@
 """Manages info about a unified set of stores."""
 
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from mlte.store.artifact import factory as artifact_store_factory
 from mlte.store.artifact.store import ArtifactStore
@@ -36,13 +36,13 @@ class UnifiedStore:
     def __init__(self):
         """Defines the existing stores, none loaded yet."""
 
-        self._artifact_store: Optional[ArtifactStore] = None
+        self._artifact_store: ArtifactStore | None = None
         """The MLTE artifact store instance for the session."""
 
-        self._custom_list_store: Optional[CustomListStore] = None
+        self._custom_list_store: CustomListStore | None = None
         """The MLTE custom list store instance for the session."""
 
-        self._user_store: Optional[UserStore] = None
+        self._user_store: UserStore | None = None
         """The user store instance for the session."""
 
         self._catalog_stores: CatalogStoreGroup = CatalogStoreGroup()
@@ -123,7 +123,7 @@ class UnifiedStore:
 
 def setup_stores(
     stores_uri: StoreURI,
-    catalog_uris: dict[str, StoreURI] = {},
+    catalog_uris: dict[str, StoreURI] | None = None,
 ) -> UnifiedStore:
     """
     Sets up all stores required by MLTE, from the provided URIs.
@@ -145,7 +145,9 @@ def setup_stores(
     _setup_arifact_store(stores_uri, stores)
 
     # Initialize the backing catalog stores instances.
-    _setup_catalog_stores(stores_uri, stores, catalog_uris)
+    _setup_catalog_stores(
+        stores_uri, stores, catalog_uris if catalog_uris else {}
+    )
 
     return stores
 

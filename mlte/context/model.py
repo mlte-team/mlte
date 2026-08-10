@@ -1,7 +1,5 @@
 """Model implementation for MLTE context information."""
 
-from typing import List
-
 from mlte.model import BaseModel
 
 
@@ -18,5 +16,5 @@ class Model(BaseModel):
     identifier: str
     """The identifier for the model."""
 
-    versions: List[Version] = []
+    versions: list[Version] = []
     """A collection of the model versions."""
