@@ -85,7 +85,7 @@ def _artifact_check(
     with ManagedArtifactSession(
         artifact_store.session()
     ) as artifact_store_session:
-        model_id_list = artifact_store_session.model_mapper.list()
+        model_id_list = artifact_store_session.model_mapper.list_all()
         for model_id in artifact_data.keys():
             if model_id in model_id_list:
                 raise errors.ErrorAlreadyExists(f"Model {model_id}")
@@ -107,7 +107,7 @@ def _custom_list_check(
 
             list_name = CustomListName(list_name)
             entry_id_list = (
-                custom_list_store_session.custom_list_entry_mapper.list(
+                custom_list_store_session.custom_list_entry_mapper.list_all(
                     list_name
                 )
             )
@@ -121,7 +121,7 @@ def _custom_list_check(
 def _users_check(user_data: dict[str, Any], user_store: UserStore) -> None:
     """Check if any users to be imported are already in the store."""
     with ManagedUserSession(user_store.session()) as user_store_session:
-        user_name_list = user_store_session.user_mapper.list()
+        user_name_list = user_store_session.user_mapper.list_all()
         for user_name in user_data.keys():
             if user_name in user_name_list:
                 raise errors.ErrorAlreadyExists(f"User {user_name}")
@@ -136,7 +136,7 @@ def _catalogs_check(
         with ManagedCatalogSession(
             catalog_stores.catalogs[catalog_name].session()
         ) as catalog_store_session:
-            entry_list = catalog_store_session.entry_mapper.list()
+            entry_list = catalog_store_session.entry_mapper.list_all()
             for entry in catalogs_data[catalog_name]:
                 entry_id = entry["header"]["identifier"]
                 if entry_id in entry_list:
@@ -154,7 +154,7 @@ def _import_artifacts(
     with ManagedArtifactSession(
         artifact_store.session()
     ) as artifact_store_session:
-        model_id_list = artifact_store_session.model_mapper.list()
+        model_id_list = artifact_store_session.model_mapper.list_all()
 
         for model_id in artifact_data.keys():
             if model_id not in model_id_list:
@@ -162,7 +162,7 @@ def _import_artifacts(
                     Model(identifier=model_id)
                 )
 
-            version_id_list = artifact_store_session.version_mapper.list(
+            version_id_list = artifact_store_session.version_mapper.list_all(
                 model_id
             )
             for version_id in artifact_data[model_id].keys():
@@ -171,8 +171,10 @@ def _import_artifacts(
                         Version(identifier=version_id), model_id
                     )
 
-                artifact_id_list = artifact_store_session.artifact_mapper.list(
-                    (model_id, version_id)
+                artifact_id_list = (
+                    artifact_store_session.artifact_mapper.list_all(
+                        (model_id, version_id)
+                    )
                 )
                 for artifact_id in artifact_data[model_id][version_id].keys():
                     if artifact_id not in artifact_id_list:
@@ -207,7 +209,7 @@ def _import_custom_lists(
         for list_name in custom_list_data.keys():
             list_name = CustomListName(list_name)
             entry_id_list = (
-                custom_list_store_session.custom_list_entry_mapper.list(
+                custom_list_store_session.custom_list_entry_mapper.list_all(
                     list_name
                 )
             )
@@ -227,7 +229,7 @@ def _import_users(
 ) -> None:
     """Import user data into store."""
     with ManagedUserSession(user_store.session()) as user_store_session:
-        user_name_list = user_store_session.user_mapper.list()
+        user_name_list = user_store_session.user_mapper.list_all()
 
         for user_name in user_data.keys():
             if user_name not in user_name_list:
@@ -250,7 +252,7 @@ def _import_catalogs(
         with ManagedCatalogSession(
             catalog_stores.catalogs[catalog_name].session()
         ) as catalog_store_session:
-            entry_list = catalog_store_session.entry_mapper.list()
+            entry_list = catalog_store_session.entry_mapper.list_all()
 
             for entry in catalogs_data[catalog_name]:
                 entry_id = entry["header"]["identifier"]
