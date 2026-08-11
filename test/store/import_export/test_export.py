@@ -51,7 +51,7 @@ from test.store.user.test_underlying import (
 from test.store.utils import store_types
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_export_to_file(
     store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export
 ) -> None:
@@ -88,7 +88,7 @@ def test_export_to_file(
             assert export_json[CATALOG_KEY] == CATALOG_EXPORT_DATA
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_export(
     store_type: StoreType, tmp_path: Path, patched_setup_stores, patched_export
 ) -> None:
@@ -114,7 +114,7 @@ def test_export(
     assert export[CATALOG_KEY] == CATALOG_EXPORT_DATA
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_export_artifacts(
     store_type: StoreType,
     tmp_path: Path,
@@ -181,7 +181,7 @@ def test_export_artifacts(
     assert none_export == {}
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_export_custom_lists(
     store_type: StoreType,
     tmp_path: Path,
@@ -217,7 +217,7 @@ def test_export_custom_lists(
     assert none_export == {}
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_export_users(
     store_type: StoreType,
     tmp_path: Path,
@@ -266,7 +266,7 @@ def test_export_users(
     assert none_export == {}
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_export_catalogs(
     store_type: StoreType, tmp_path: Path, patched_setup_stores
 ) -> None:

@@ -32,7 +32,7 @@ from test.store.import_export.conftest import (
 from test.store.utils import store_types
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_import(
     store_type: StoreType,
     tmp_path: Path,
@@ -70,7 +70,7 @@ def test_import(
     )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_import_artifacts(
     store_type: StoreType,
     tmp_path: Path,
@@ -98,7 +98,7 @@ def test_import_artifacts(
         )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_import_custom_lists(
     store_type: StoreType,
     tmp_path: Path,
@@ -123,7 +123,7 @@ def test_import_custom_lists(
         )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_import_users(
     store_type: StoreType,
     tmp_path: Path,
@@ -143,7 +143,7 @@ def test_import_users(
         assert User(**user) == user_store_session.user_mapper.read(username)
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_import_catalogs(
     store_type: StoreType,
     tmp_path: Path,

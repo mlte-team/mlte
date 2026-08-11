@@ -11,7 +11,7 @@ from test.store.custom_list.conftest import get_test_entry, get_test_list
 from test.store.utils import store_types
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_init_store(
     store_type: StoreType, create_test_custom_list_store
 ) -> None:
@@ -22,7 +22,7 @@ def test_init_store(
     assert True
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_custom_list_entry(
     store_type: StoreType, create_test_custom_list_store
 ) -> None:
@@ -73,7 +73,7 @@ def test_custom_list_entry(
             )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_custom_list_parent_mappings(
     store_type: StoreType, create_test_custom_list_store
 ) -> None:
