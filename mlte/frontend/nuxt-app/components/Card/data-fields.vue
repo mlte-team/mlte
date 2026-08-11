@@ -20,7 +20,7 @@
         v-for="(dataItem, dataItemIndex) in props.modelValue"
         :key="dataItemIndex"
       >
-        <h3 style="display: inline">
+        <h3 style="display: inline; margin-right: .5rem">
           Dataset {{ dataItemIndex + 1 }}
         </h3>
         <UsaButton
