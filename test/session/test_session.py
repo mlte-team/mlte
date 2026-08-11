@@ -49,7 +49,7 @@ def test_session() -> None:
     assert s.stores.catalog_stores.catalogs[cat_id].uri.uri == catalog_store_uri
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_eager_context_creation(
     store_type: StoreType, create_test_artifact_store, patched_setup_stores
 ) -> None:

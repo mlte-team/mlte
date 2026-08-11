@@ -21,7 +21,7 @@ def test_add_catalog_store_from_uri():
     assert cat_id in session_stores.catalog_stores.catalogs
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_setup_stores(store_type: StoreType, tmp_path, patched_setup_stores):
     session_stores = create_test_unified_store(
         store_type, tmp_path, patched_setup_stores
@@ -33,7 +33,7 @@ def test_setup_stores(store_type: StoreType, tmp_path, patched_setup_stores):
     assert session_stores.catalog_stores.catalogs != {}
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_setup_stores_with_catalog_uris(
     store_type: StoreType, tmp_path, patched_setup_stores
 ):

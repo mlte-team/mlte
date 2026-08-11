@@ -36,7 +36,7 @@ def create_store_with_mem_cat(
 # -----------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_init_store(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
@@ -48,7 +48,7 @@ def test_init_store(
     assert True
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_catalog_entry(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
@@ -96,7 +96,7 @@ def test_catalog_entry(
             catalog_store.entry_mapper.read(test_entry.header.identifier)
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_catalog_group(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
@@ -137,7 +137,7 @@ def test_catalog_group(
         assert len(entries) == 2
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_list_details(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
@@ -169,7 +169,7 @@ def test_list_details(
         assert len(entries) == original_len + 2
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_search(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],
@@ -202,7 +202,7 @@ def test_search(
         assert len(entries) == original_len + 2
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_invalid_chars(
     store_type: StoreType,
     create_test_catalog_store: Callable[[StoreType], CatalogStore],

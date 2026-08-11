@@ -94,7 +94,7 @@ def get_internal_store_session(
 # -----------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_init_store(store_type: StoreType, create_test_user_store) -> None:
     """A store can be initialized."""
     _ = create_test_user_store(store_type)
@@ -103,7 +103,7 @@ def test_init_store(store_type: StoreType, create_test_user_store) -> None:
     assert True
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_user(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports user operations."""
     user_store: UserStore = create_test_user_store(store_type)
@@ -158,7 +158,7 @@ def test_user(store_type: StoreType, create_test_user_store) -> None:
             user_store_session.user_mapper.read(test_user.username)
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_user_group_change(
     store_type: StoreType, create_test_user_store
 ) -> None:
@@ -201,7 +201,7 @@ def test_user_group_change(
         assert found_group == updated_group
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_group(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports group operations."""
     store: UserStore = create_test_user_store(store_type)
@@ -241,7 +241,7 @@ def test_group(store_type: StoreType, create_test_user_store) -> None:
             user_store.group_mapper.read(test_group.name)
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_permission(store_type: StoreType, create_test_user_store) -> None:
     """An artifact store supports permission operations."""
 

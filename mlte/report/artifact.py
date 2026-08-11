@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import datetime
-import typing
 import re
+import typing
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -142,7 +142,7 @@ class Report(Artifact):
         :param store: The store in which to save the artifact
         """
         # Ensure that, if the id already had a timestamp, it is removed first.
-        timestamp_suffix = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+        timestamp_suffix = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         cleaned_id = re.sub(r"-\d{8}-\d{6}$", "", self.identifier)
         self.identifier = f"{cleaned_id}-{timestamp_suffix}"
 

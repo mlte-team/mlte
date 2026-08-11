@@ -19,7 +19,7 @@ from test.store.artifact.conftest import store_types_and_artifact_types
 from test.store.utils import store_types
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_init_store(store_type: StoreType, create_test_artifact_store) -> None:
     """A store can be initialized."""
     _ = create_test_artifact_store(store_type)
@@ -28,7 +28,7 @@ def test_init_store(store_type: StoreType, create_test_artifact_store) -> None:
     assert True
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_model(store_type: StoreType, create_test_artifact_store) -> None:
     """An artifact store supports model operations."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -49,7 +49,7 @@ def test_model(store_type: StoreType, create_test_artifact_store) -> None:
             artifact_store.model_mapper.read(model_id)
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_model_list(store_type: StoreType, create_test_artifact_store) -> None:
     """Models can be listed."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -64,7 +64,7 @@ def test_model_list(store_type: StoreType, create_test_artifact_store) -> None:
         assert models[0] == "model0"
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_version(store_type: StoreType, create_test_artifact_store) -> None:
     """An artifact store supports model version operations."""
     store: ArtifactStore = create_test_artifact_store(store_type)
@@ -90,7 +90,7 @@ def test_version(store_type: StoreType, create_test_artifact_store) -> None:
             _ = artifact_store.version_mapper.read(version_id, model_id)
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_two_versions_same_id_same_model(
     store_type: StoreType, create_test_artifact_store
 ) -> None:
@@ -112,7 +112,7 @@ def test_two_versions_same_id_same_model(
             )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_two_versions_same_id_different_model(
     store_type: StoreType, create_test_artifact_store
 ) -> None:
@@ -136,7 +136,7 @@ def test_two_versions_same_id_different_model(
         )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_version_list(
     store_type: StoreType, create_test_artifact_store
 ) -> None:
@@ -190,7 +190,7 @@ def check_artifact_writing(
 
 
 @pytest.mark.parametrize(
-    "store_type,artifact_type", store_types_and_artifact_types()
+    "store_type,artifact_type", list(store_types_and_artifact_types())
 )
 def test_search(
     store_type: StoreType,
@@ -225,7 +225,7 @@ def test_search(
 
 
 @pytest.mark.parametrize(
-    "store_type,artifact_type", store_types_and_artifact_types()
+    "store_type,artifact_type", list(store_types_and_artifact_types())
 )
 def test_artifact(
     store_type: StoreType,
@@ -272,7 +272,7 @@ def test_artifact(
 
 
 @pytest.mark.parametrize(
-    "store_type,artifact_type", store_types_and_artifact_types()
+    "store_type,artifact_type", list(store_types_and_artifact_types())
 )
 def test_artifact_without_parents(
     store_type: StoreType,
@@ -298,7 +298,7 @@ def test_artifact_without_parents(
 
 
 @pytest.mark.parametrize(
-    "store_type,artifact_type", store_types_and_artifact_types()
+    "store_type,artifact_type", list(store_types_and_artifact_types())
 )
 def test_artifact_overwrite(
     store_type: StoreType,
@@ -344,7 +344,7 @@ def test_artifact_overwrite(
         )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_invalid_chars(
     store_type: StoreType, create_test_artifact_store
 ) -> None:
