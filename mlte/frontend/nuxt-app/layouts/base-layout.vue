@@ -125,7 +125,7 @@
 
       <div class="body-container">
         <div class="header-row">
-          <h1 class="section-header" style="margin: 0px;">
+          <h1 class="section-header" style="margin: 0px">
             <slot name="page-title" />
           </h1>
           <div v-if="token" class="logout-header">

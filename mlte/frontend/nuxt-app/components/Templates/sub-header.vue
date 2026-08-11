@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 style="display: inline-block; margin-bottom: 0px;">
+    <h3 style="display: inline-block; margin-bottom: 0px">
       <slot />
       <UsaButton
         v-if="props.renderExample"
