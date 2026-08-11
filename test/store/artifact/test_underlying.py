@@ -312,6 +312,10 @@ def test_artifact_overwrite(
     version_id = "version0"
     artifact_id = "myid"
 
+    # Skip for Report, as it can never be overritten, since it changes its id each time it is generated.
+    if artifact_type == ArtifactType.REPORT:
+        return
+
     with ManagedArtifactSession(store.session()) as artifact_store:
         artifact_store.model_mapper.create(Model(identifier=model_id))
         artifact_store.version_mapper.create(
