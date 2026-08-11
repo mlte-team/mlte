@@ -2,9 +2,7 @@
   <NuxtLayout name="base-layout">
     <title>Test Suite</title>
     <template #page-title>Test Suite</template>
-    <h1 class="section-header">{{ queryArtifactId }}</h1>
-    <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
-
+    <TemplatesArtifactInfo :id="queryArtifactId as string" :model="queryModel as string" :version="queryVersion as string" :creator="creator" :timestamp="timestamp" />
     <TestSuiteTestCaseList :test-cases="suiteBody.test_cases" />
   </NuxtLayout>
 </template>

@@ -17,8 +17,7 @@
       <template #error-message> Identifier cannot be empty </template>
     </UsaTextInput>
     <div v-else>
-      <h1 class="section-header">{{ queryArtifactId }}</h1>
-      <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
+      <TemplatesArtifactInfo :id="queryArtifactId as string" :model="queryModel as string" :version="queryVersion as string" :creator="creator" :timestamp="timestamp" />
     </div>
 
     <p>

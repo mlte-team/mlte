@@ -115,7 +115,7 @@
 
       <div class="body-container">
         <div class="header-row">
-          <h1 class="section-header">
+          <h1 class="section-header no-margin-header">
             <slot name="page-title" />
           </h1>
           <div v-if="token" class="logout-header">
@@ -260,10 +260,6 @@ const currentDate = new Date();
   margin-top: 8px;
   margin-left: 40px;
   padding-right: 40px;
-}
-
-.section-header {
-  margin: 0;
 }
 
 footer {

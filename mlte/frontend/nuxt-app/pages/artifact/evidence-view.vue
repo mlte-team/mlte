@@ -2,13 +2,12 @@
   <NuxtLayout name="base-layout">
     <title>Evidence</title>
     <template #page-title>Evidence</template>
-    <h1 class="section-header">{{ queryArtifactId }}</h1>
-    <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
-
     <div>
-      <h2 class="section-header">Evidence</h2>
-      <EvidenceMetadataDisplay :evidence-metadata="evidenceBody.metadata" />
 
+    <TemplatesArtifactInfo :id="queryArtifactId as string" :model="queryModel as string" :version="queryVersion as string" :creator="creator" :timestamp="timestamp" />
+    </div>
+    <div>
+      <EvidenceMetadataDisplay :evidence-metadata="evidenceBody.metadata" />
       <div><b>Evidence Class: </b> {{ evidenceBody.evidence_class }}</div>
 
       <div>

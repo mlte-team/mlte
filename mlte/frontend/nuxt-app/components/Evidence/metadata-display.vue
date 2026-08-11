@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b>Evidence Metadata:</b>
+    <h2 class="section-header">Evidence Metadata:</h2>
     <ul>
       <li><b>Test Case ID: </b>{{ props.evidenceMetadata.test_case_id }}</li>
       <li>
