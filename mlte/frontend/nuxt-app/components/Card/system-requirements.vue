@@ -41,9 +41,7 @@
         v-for="(requirement, requirementIndex) in props.modelValue"
         :key="requirementIndex"
       >
-        <h3 class="no-margin-header">
-          Requirement {{ requirementIndex + 1 }}
-        </h3>
+        <h3 class="no-margin-header">Requirement {{ requirementIndex + 1 }}</h3>
         <p v-if="requirement.identifier">
           <b>ID: </b> {{ requirement.identifier }}
         </p>

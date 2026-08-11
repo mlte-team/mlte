@@ -3,8 +3,13 @@
     <title>Evidence</title>
     <template #page-title>Evidence</template>
     <div>
-
-    <TemplatesArtifactInfo :id="queryArtifactId as string" :model="queryModel as string" :version="queryVersion as string" :creator="creator" :timestamp="timestamp" />
+      <TemplatesArtifactInfo
+        :id="queryArtifactId as string"
+        :model="queryModel as string"
+        :version="queryVersion as string"
+        :creator="creator"
+        :timestamp="timestamp"
+      />
     </div>
     <div>
       <EvidenceMetadataDisplay :evidence-metadata="evidenceBody.metadata" />
