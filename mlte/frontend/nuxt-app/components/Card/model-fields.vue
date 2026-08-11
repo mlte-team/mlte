@@ -27,7 +27,7 @@
         v-for="(inputSpec, inputIndex) in props.modelValue.input_specification"
         :key="inputIndex"
       >
-        <h3 class="no-margin-header">Input {{ inputIndex + 1 }}</h3>
+        <h3>Input {{ inputIndex + 1 }}</h3>
         <UsaTextInput v-model="inputSpec.name">
           <template #label>
             Input Name
@@ -112,7 +112,7 @@
           .output_specification"
         :key="outputIndex"
       >
-        <h3 class="no-margin-header">Output {{ outputIndex + 1 }}</h3>
+        <h3>Output {{ outputIndex + 1 }}</h3>
         <UsaTextInput v-model="outputSpec.name">
           <template #label>
             Output Name

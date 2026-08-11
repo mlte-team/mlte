@@ -64,7 +64,7 @@
       <hr />
 
       <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
-        <h3 class="no-margin-header">Goal {{ goalIndex + 1 }}</h3>
+        <h3>Goal {{ goalIndex + 1 }}</h3>
         <UsaTextarea v-model="goal.description" style="height: 5.5rem">
           <template #label>
             Goal Description
@@ -154,7 +154,7 @@
       <hr />
 
       <div v-for="(risk, riskIndex) in props.modelValue.risks" :key="riskIndex">
-        <h3 class="no-margin-header">Risk {{ riskIndex + 1 }}</h3>
+        <h3>Risk {{ riskIndex + 1 }}</h3>
         <UsaTextarea
           v-model="props.modelValue.risks[riskIndex]"
           style="height: 5.5rem"
