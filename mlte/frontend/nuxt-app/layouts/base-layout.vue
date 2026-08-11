@@ -12,7 +12,7 @@
         <div class="header-main">MLTE</div>
         <div class="header-secondary">
           Machine Learning <br />
-          Test and Evaluation
+          Test and Evaluation {{ route.name }}
         </div>
       </NuxtLink>
     </header>
@@ -25,7 +25,17 @@
               <li class="usa-sidenav__item">
                 <NuxtLink
                   :to="{ path: '/' }"
-                  :class="{ 'usa-current': route.name === 'index' }"
+                  :class="{
+                    'usa-current': [
+                      'index',
+                      'artifact-negotiation-card',
+                      'artifact-report-view',
+                      'artifact-artifact-compare',
+                      'artifact-suite-view',
+                      'artifact-evidence-view',
+                      'artifact-results-view',
+                    ].includes(route.name as string),
+                  }"
                 >
                   Artifact Store
                 </NuxtLink>
