@@ -9,18 +9,16 @@ build:
   os: ubuntu-24.04
   tools:
     python: "3.10"
-  jobs:
-    # 1. Install uv into the environment setup 
-    post_create_environment:
-      - asdf plugin add uv
-      - asdf install uv latest
-      - asdf global uv latest    
 
-    # 2. Install deps.
-    install:
-    - uv sync --group docs
+# 1. Insall deps
+python:
+  install:
+    - method: uv
+      command: sync
+      groups:
+        - docs
 
-    # 3. Build the docs.
-    build:
-      html:
-      - uv run properdocs build -f docs/properdocs.yml --site-dir $READTHEDOCS_OUTPUT/html
+# 2. Build the docs.
+build:
+  html:
+  - uv run properdocs build -f docs/properdocs.yml --site-dir $READTHEDOCS_OUTPUT/html
