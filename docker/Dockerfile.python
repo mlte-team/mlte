@@ -1,6 +1,6 @@
 # Image definition for MLTE common code, to be used by backend and frontend.
 
-FROM python:3.12.10-slim-bookworm
+FROM python:3.13-slim-trixie
 
 # Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
 # NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format
@@ -21,7 +21,7 @@ RUN pipx ensurepath
 ENV PYTHONUNBUFFERED=1
 
 # Setup uv to handle dependencies.
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.12 /uv /uvx /bin/
 ENV PATH="/root/.local/bin:$PATH"
 
 # Install Python deps.

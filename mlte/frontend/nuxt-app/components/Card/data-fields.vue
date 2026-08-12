@@ -22,21 +22,21 @@
       >
         <h3 style="display: inline; margin-right: 0.5rem">
           Dataset {{ dataItemIndex + 1 }}
+          <UsaButton
+            v-if="!displayDataset[dataItemIndex]"
+            class="secondary-button"
+            @click="displayDataset[dataItemIndex] = true"
+          >
+            Show
+          </UsaButton>
+          <UsaButton
+            v-else
+            class="secondary-button"
+            @click="displayDataset[dataItemIndex] = false"
+          >
+            Hide
+          </UsaButton>
         </h3>
-        <UsaButton
-          v-if="!displayDataset[dataItemIndex]"
-          class="secondary-button"
-          @click="displayDataset[dataItemIndex] = true"
-        >
-          Show
-        </UsaButton>
-        <UsaButton
-          v-else
-          class="secondary-button"
-          @click="displayDataset[dataItemIndex] = false"
-        >
-          Hide
-        </UsaButton>
         <div v-if="displayDataset[dataItemIndex]">
           <div>
             <UsaTextarea v-model="dataItem.description" style="height: 5.5rem">

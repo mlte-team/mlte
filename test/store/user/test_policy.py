@@ -53,7 +53,7 @@ class TestPolicy:
             assert found_permissions[MethodType.POST]
 
     @staticmethod
-    @pytest.mark.parametrize("store_type", store_types())
+    @pytest.mark.parametrize("store_type", list(store_types()))
     def test_save_remove(
         resource_type: ResourceType,
         id: str,
@@ -105,7 +105,7 @@ class TestPolicy:
             assert group in user.groups
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_create_policy_if_needed(
     store_type: StoreType,
     create_test_artifact_store,

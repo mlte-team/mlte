@@ -65,15 +65,37 @@ const selectedQAOptions = ref<Array<QAOption>>([]);
 
 const formErrors = inject("formErrors", { qa: false });
 
-// On load, populate parent QA Category field if a qualiity attribute is selected
-if (props.modelValue) {
-  AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.text === props.modelValue && attribute.parent) {
-      qaCategory.value = attribute.parent;
-      categoryChange(qaCategory.value, props.modelValue);
-    }
-  });
+// Helper to update options list based on selected category
+function updateQAOptions(category: string) {
+  selectedQAOptions.value = AllQAOptions.value.filter(
+    (attribute: QAOption) => attribute.parent === category,
+  );
+  if (category && category !== "Other") {
+    selectedQAOptions.value.push(new QAOption("Other", "Other", "", ""));
+  }
 }
+
+// Watch modelValue to reactively update local state when parent props change
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (!newVal) {
+      qaCategory.value = "";
+      selectedQAOptions.value = [];
+      return;
+    }
+
+    const matchingQA = AllQAOptions.value.find(
+      (attribute: QAOption) => attribute.text === newVal && attribute.parent,
+    );
+
+    if (matchingQA && matchingQA.parent) {
+      qaCategory.value = matchingQA.parent;
+      updateQAOptions(matchingQA.parent);
+    }
+  },
+  { immediate: true },
+);
 
 /**
  * Handle QA Category change.
@@ -83,18 +105,9 @@ if (props.modelValue) {
  */
 function categoryChange(selectedCategory: string, selectedAttribute?: string) {
   qaCategory.value = selectedCategory;
-  selectedQAOptions.value = [];
-  AllQAOptions.value.forEach((attribute: QAOption) => {
-    if (attribute.parent === selectedCategory) {
-      selectedQAOptions.value.push(attribute);
-    }
-  });
+  updateQAOptions(selectedCategory);
 
-  if (selectedCategory != "Other") {
-    selectedQAOptions.value.push(new QAOption("Other", "Other", "", ""));
-  }
-
-  if (selectedCategory == "Other") {
+  if (selectedCategory === "Other") {
     // Value set to "Other" implies that a category addition is in progress, and should cause an error on submit.
     emit("update:modelValue", "Other");
   } else if (selectedAttribute === undefined) {
@@ -112,7 +125,6 @@ async function submitCategory(newCategory: string) {
   );
   if (response) {
     await fetchQACData();
-    qaCategory.value = newCategory;
     categoryChange(newCategory, "Other");
   }
 }

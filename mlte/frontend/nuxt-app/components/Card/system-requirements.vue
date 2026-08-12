@@ -48,7 +48,7 @@
         <p v-else><b>ID: </b> Defined after save</p>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
           <b>Scenario for {{ requirement.quality }}: </b>
-          {{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.stimulus }} {{ requirement.source }}
           {{ requirement.environment }}. {{ requirement.response }}
           {{ requirement.measure }}.
         </p>

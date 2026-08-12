@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime
+import re
 import typing
 
 from mlte.artifact.artifact import Artifact
@@ -139,9 +140,11 @@ class Report(Artifact):
         Override Artifact.pre_save_hook(). Assigns time-stamped id to report, to ensure all have different ids.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
-        :raises RuntimeError: On broken invariant
         """
-        self.identifier = f"{self.identifier}-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        # Ensure that, if the id already had a timestamp, it is removed first.
+        timestamp_suffix = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        cleaned_id = re.sub(r"-\d{8}-\d{6}$", "", self.identifier)
+        self.identifier = f"{cleaned_id}-{timestamp_suffix}"
 
     # ----------------------------------------------------------------------------------
     # Helper methods.
