@@ -24,7 +24,7 @@ spec = TestSuite(
             measurement=LocalObjectSize(),
             validator=Real.less_or_equal_to(2.0, unit=Units.gigabyte),
         ),
-        # Reviewer: implement validators.training_metadata_complete(...) because imported JSON metadata requires project specific field checks
+        # Reviewer: implement validators.training_metadata_complete(...) because imported JSON metadata requires project-specific field checks
         # Testability test case
         TestCase(
             identifier="imported_training_metadata",

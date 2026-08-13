@@ -1,5 +1,6 @@
 spec = TestSuite(
     test_cases=[
+        # Reviewer: implement model.accuracy(...) because ExternalMeasurement requires a project-specific function that returns accuracy evidence
         TestCase(
             identifier="classification_accuracy",
             goal="Check classification accuracy",
@@ -10,8 +11,8 @@ spec = TestSuite(
             ),
             validator=Real.greater_or_equal_to(0.90),
         ),
-        # Reviewer: implement validators.confusion_matrix_review(...) because class level error patterns require project specific review
-        # Analyzability test case
+        # Reviewer: implement model.confusion_matrix(...) because ExternalMeasurement requires a project-specific function that returns confusion matrix evidence
+        # Reviewer: implement validators.confusion_matrix_review(...) because class-level error patterns require project-specific review
         TestCase(
             identifier="classification_confusion_matrix",
             goal="Check classification confusion matrix",
@@ -22,8 +23,7 @@ spec = TestSuite(
             ),
             validator=validators.confusion_matrix_review(),
         ),
-        # Reviewer: implement validators.evaluation_summary_metadata_complete(...) because imported JSON metadata requires project specific field checks
-        # Testability test case
+        # Reviewer: implement validators.evaluation_summary_metadata_complete(...) because imported JSON metadata requires project-specific field checks
         TestCase(
             identifier="imported_evaluation_summary",
             goal="Check imported evaluation summary metadata",
