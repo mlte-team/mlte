@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   },
 
   ssr: false,
-  css: ["@/assets/css/styles.css", "@/assets/uswds/css/styles.css"],
+  css: ["@/assets/uswds/css/styles.css", "@/assets/css/styles.css"],
 
   runtimeConfig: {
     public: {

@@ -20,7 +20,7 @@
         v-for="(dataItem, dataItemIndex) in props.modelValue"
         :key="dataItemIndex"
       >
-        <h3 class="no-margin-sub-header" style="display: inline">
+        <h3 style="display: inline; margin-right: 0.5rem">
           Dataset {{ dataItemIndex + 1 }}
           <UsaButton
             v-if="!displayDataset[dataItemIndex]"
@@ -249,7 +249,7 @@
               v-for="(field, fieldIndex) in dataItem.fields"
               :key="fieldIndex"
             >
-              <h3 class="no-margin-sub-header">Field {{ fieldIndex + 1 }}</h3>
+              <h3 style="margin-bottom: 0px">Field {{ fieldIndex + 1 }}</h3>
               <div>
                 <div class="inline-input-left">
                   <UsaTextInput v-model="field.name">

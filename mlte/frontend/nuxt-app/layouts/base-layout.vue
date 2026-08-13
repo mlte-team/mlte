@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="page-container">
     <div style="height: 16px; background-color: #f3ca3e" />
-    <header class="flex-container">
-      <a href="/" class="header-link">
+    <header class="header-container">
+      <NuxtLink to="/" class="header-link">
         <img
           src="~/assets/img/MLTE_Logo_Color.svg"
           height="75px"
@@ -12,166 +12,166 @@
         <div class="header-main">MLTE</div>
         <div class="header-secondary">
           Machine Learning <br />
-          Test and Evaluation
+          Test and Evaluation {{ route.name }}
         </div>
-      </a>
+      </NuxtLink>
     </header>
 
-    <div class="flex-container">
-      <div class="sidebar left-sidebar">
-        <div style="position: fixed">
-          <div v-if="route.name != 'login'" class="grid-row grid-gap">
-            <div
-              class="tablet:grid-col-4 margin-bottom-4 tablet:margin-bottom-0"
-            >
-              <nav aria-label="Side navigation,">
-                <ul class="usa-sidenav" style="width: 30ch">
+    <div class="main-container">
+      <aside class="sidebar-container">
+        <div v-if="route.name != 'login'">
+          <nav>
+            <ul class="usa-sidenav">
+              <li class="usa-sidenav__item">
+                <NuxtLink
+                  :to="{ path: '/' }"
+                  :class="{
+                    'usa-current': [
+                      'index',
+                      'artifact-negotiation-card',
+                      'artifact-report-view',
+                      'artifact-artifact-compare',
+                      'artifact-suite-view',
+                      'artifact-evidence-view',
+                      'artifact-results-view',
+                    ].includes(route.name as string),
+                  }"
+                >
+                  Artifact Store
+                </NuxtLink>
+              </li>
+              <li class="usa-sidenav__item">
+                <NuxtLink
+                  :to="{ path: '/catalog' }"
+                  :class="{
+                    'usa-current': route.name === 'catalog',
+                  }"
+                  @click="$emit('nav')"
+                >
+                  Test Catalog
+                </NuxtLink>
+              </li>
+              <li class="usa-sidenav__item">
+                <NuxtLink
+                  :to="{ path: '/custom-list' }"
+                  :class="{
+                    'usa-current': route.name === 'custom-list',
+                  }"
+                  @click="$emit('nav')"
+                >
+                  Custom Lists
+                </NuxtLink>
+              </li>
+              <li class="usa-sidenav__item">
+                <NuxtLink
+                  :to="{ path: '/etc/quality-model' }"
+                  :class="{
+                    'usa-current': route.name === 'etc-quality-model',
+                  }"
+                  @click="$emit('nav')"
+                >
+                  Quality Model
+                </NuxtLink>
+              </li>
+              <li v-if="userRole === 'admin'" class="usa-sidenav__item">
+                <div class="nav-section-title">Admin Pages</div>
+                <ul class="usa-sidenav__sublist">
                   <li class="usa-sidenav__item">
                     <NuxtLink
-                      :to="{ path: '/' }"
-                      :class="{ 'usa-current': route.name === 'index' }"
-                    >
-                      Artifact Store
-                    </NuxtLink>
-                  </li>
-                  <li class="usa-sidenav__item">
-                    <NuxtLink
-                      :to="{ path: '/catalog' }"
+                      :to="{ path: '/admin/manage-users' }"
                       :class="{
-                        'usa-current': route.name === 'catalog',
+                        'usa-current': route.name === 'admin-manage-users',
                       }"
                       @click="$emit('nav')"
                     >
-                      Test Catalog
+                      Manage Users
                     </NuxtLink>
                   </li>
                   <li class="usa-sidenav__item">
                     <NuxtLink
-                      :to="{ path: '/custom-list' }"
+                      :to="{ path: '/admin/manage-groups' }"
                       :class="{
-                        'usa-current': route.name === 'custom-list',
+                        'usa-current': route.name === 'admin-manage-groups',
                       }"
                       @click="$emit('nav')"
                     >
-                      Custom Lists
+                      Manage Groups
                     </NuxtLink>
-                  </li>
-                  <li class="usa-sidenav__item">
-                    <NuxtLink
-                      :to="{ path: '/etc/quality-model' }"
-                      :class="{
-                        'usa-current': route.name === 'etc-quality-model',
-                      }"
-                      @click="$emit('nav')"
-                    >
-                      Quality Model
-                    </NuxtLink>
-                  </li>
-                  <li v-if="userRole === 'admin'" class="usa-sidenav__item">
-                    <div class="nav-section-title">Admin Pages</div>
-                    <ul class="usa-sidenav__sublist">
-                      <li class="usa-sidenav__item">
-                        <NuxtLink
-                          :to="{ path: '/admin/manage-users' }"
-                          :class="{
-                            'usa-current': route.name === 'admin-manage-users',
-                          }"
-                          @click="$emit('nav')"
-                        >
-                          Manage Users
-                        </NuxtLink>
-                      </li>
-                      <li class="usa-sidenav__item">
-                        <NuxtLink
-                          :to="{ path: '/admin/manage-groups' }"
-                          :class="{
-                            'usa-current': route.name === 'admin-manage-groups',
-                          }"
-                          @click="$emit('nav')"
-                        >
-                          Manage Groups
-                        </NuxtLink>
-                      </li>
-                    </ul>
-                  </li>
-                  <li v-else class="usa-sidenav__item">
-                    <div class="nav-section-title">User Pages</div>
-                    <ul class="usa-sidenav__sublist">
-                      <li class="usa-sidenav__item">
-                        <NuxtLink
-                          :to="{ path: '/regular/profile-edit' }"
-                          :class="{
-                            'usa-current':
-                              route.name === 'regular-profile-edit',
-                          }"
-                        >
-                          Edit Profile
-                        </NuxtLink>
-                      </li>
-                    </ul>
                   </li>
                 </ul>
-              </nav>
-            </div>
+              </li>
+              <li v-else class="usa-sidenav__item">
+                <div class="nav-section-title">User Pages</div>
+                <ul class="usa-sidenav__sublist">
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/regular/profile-edit' }"
+                      :class="{
+                        'usa-current': route.name === 'regular-profile-edit',
+                      }"
+                    >
+                      Edit Profile
+                    </NuxtLink>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+          <div class="sidebar-slot-container">
+            <slot name="left-sidebar" />
           </div>
         </div>
-      </div>
+      </aside>
 
-      <div class="body-div">
-        <h1
-          class="section-header"
-          style="display: inline; align-items: left; justify-content: left"
-        >
-          <slot name="page-title" />
-        </h1>
-        <div v-if="token" class="logout-header">
-          <div class="centered-container">
-            Welcome, {{ user }}
-            <UsaButton
-              class="secondary-button"
-              style="margin-left: 0.5em"
-              @click.prevent="confirmLogout()"
-            >
-              Logout
-            </UsaButton>
+      <div class="body-container">
+        <div class="header-row">
+          <h1 class="section-header" style="margin: 0px">
+            <slot name="page-title" />
+          </h1>
+          <div v-if="token" class="logout-header">
+            <div class="centered-container">
+              Welcome, {{ user }}
+              <UsaButton
+                class="secondary-button"
+                style="margin-left: 0.5em"
+                @click.prevent="confirmLogout()"
+              >
+                Logout
+              </UsaButton>
+            </div>
           </div>
         </div>
         <hr />
         <slot name="default" />
-        <footer>
-          <p class="footer-text-left">
-            <b>MLTE - {{ currentDate.getFullYear() }}</b>
-          </p>
-          <div class="footer-text-right">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://github.com/mlte-team/mlte"
-              >Github</a
-            >
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://mlte.readthedocs.io/en/latest/"
-              >Docs</a
-            >
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://mlte.readthedocs.io/en/latest/using_mlte/"
-              >User Guide</a
-            >
-            <span>v{{ version }}</span>
-          </div>
-        </footer>
-      </div>
-
-      <div class="sidebar">
-        <div class="right-sidebar">
-          <slot name="right-sidebar" />
-        </div>
       </div>
     </div>
+
+    <footer>
+      <p>
+        <b>MLTE - {{ currentDate.getFullYear() }}</b>
+      </p>
+      <div>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/mlte-team/mlte"
+          >Github</a
+        >
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://mlte.readthedocs.io/en/latest/"
+          >Docs</a
+        >
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://mlte.readthedocs.io/en/latest/using_mlte/"
+          >User Guide</a
+        >
+        <span>v{{ version }}</span>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -191,7 +191,13 @@ const currentDate = new Date();
 </script>
 
 <style>
-header {
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header-container {
   display: inline-block;
   margin-bottom: 8px;
   padding: 25px;
@@ -217,31 +223,38 @@ header {
   text-decoration: none;
 }
 
-.logout-header {
+.header-row {
   display: flex;
-  float: right;
-}
-
-.flex-container {
-  display: flex;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
-.sidebar {
-  flex: 0 0 30ch;
+.logout-header {
+  display: flex;
+  align-items: center;
+}
+
+.main-container {
+  display: flex;
+  width: 100%;
+  flex: 1;
+}
+
+.sidebar-container {
   width: 30ch;
   min-width: 30ch;
   padding-top: 60px;
-}
-
-.left-sidebar {
   margin-left: 30px;
+
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  height: fit-content;
 }
 
-.right-sidebar {
-  margin-right: 40px;
-  position: fixed;
+.sidebar-slot-container {
+  padding-top: 1rem;
 }
 
 .nav-section-title {
@@ -250,7 +263,7 @@ header {
   color: #565c65;
 }
 
-.body-div {
+.body-container {
   flex: 1;
   min-width: 0;
   max-width: 128ch;
@@ -260,21 +273,13 @@ header {
 }
 
 footer {
-  width: 100%;
-  height: 90px;
-  margin-top: 15px;
-  bottom: 0;
-  left: 0;
+  min-height: 90px;
+  padding: 20px 40px 0;
   font-size: 16px;
-}
 
-.footer-text-left {
-  float: left;
-}
-
-.footer-text-right {
-  margin-top: 20px;
-  float: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 footer > div > a,

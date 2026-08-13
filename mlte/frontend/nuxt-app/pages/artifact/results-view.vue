@@ -2,8 +2,13 @@
   <NuxtLayout name="base-layout">
     <title>Test Results</title>
     <template #page-title>Test Results</template>
-    <h1 class="section-header">{{ queryArtifactId }}</h1>
-    <TemplatesArtifactCreator :creator="creator" :timestamp="timestamp" />
+    <TemplatesArtifactInfo
+      :id="queryArtifactId as string"
+      :model="queryModel as string"
+      :version="queryVersion as string"
+      :creator="creator"
+      :timestamp="timestamp"
+    />
 
     <div>
       <h2 class="section-header">Results</h2>
