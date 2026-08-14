@@ -40,7 +40,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="inputSpec.description" style="height: 5.5rem">
+        <UsaTextarea v-model="inputSpec.description">
           <template #label>
             Description
             <TemplatesTooltipInfo>
@@ -64,7 +64,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="inputSpec.expected_values" style="height: 5.5rem">
+        <UsaTextarea v-model="inputSpec.expected_values">
           <template #label>
             Expected Values
             <TemplatesTooltipInfo>
@@ -125,7 +125,7 @@
           </template>
         </UsaTextInput>
 
-        <UsaTextarea v-model="outputSpec.description" style="height: 5.5rem">
+        <UsaTextarea v-model="outputSpec.description">
           <template #label>
             Description
             <TemplatesTooltipInfo>
@@ -155,7 +155,7 @@
 
         <UsaTextarea
           v-model="outputSpec.expected_values"
-          style="height: 5.5rem"
+         
         >
           <template #label>
             Expected Values
@@ -252,7 +252,7 @@
       </TemplatesSubHeader>
       <UsaTextarea
         v-model="props.modelValue.deployment_platform"
-        style="height: 5.5rem"
+       
       >
         <template #label>
           Deployment Platform
@@ -269,7 +269,7 @@
 
       <UsaTextarea
         v-model="props.modelValue.capability_deployment_mechanism"
-        style="height: 5.5rem"
+       
       >
         <template #label>
           Capability Deployment Mechanism

@@ -14,7 +14,7 @@
           General information about the problem and usage context.
         </template>
       </TemplatesSubHeader>
-      <UsaTextarea v-model="props.modelValue.task" style="height: 5.5rem">
+      <UsaTextarea v-model="props.modelValue.task">
         <template #label>
           ML Task
           <TemplatesTooltipInfo>
@@ -31,7 +31,7 @@
 
       <UsaTextarea
         v-model="props.modelValue.usage_context"
-        style="height: 5.5rem"
+       
       >
         <template #label>
           Usage Context for the Model

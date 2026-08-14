@@ -15,15 +15,8 @@
     margin-bottom: 1em;
 }
 
-.inline-input-left {
-    display: inline-block;
-    margin-right: 1em;
-    width: 28ch;
-}
-
-.inline-input-right {
-    display: inline-block;
-    width: 28ch;
+.usa-textarea {
+    height: 5.5rem;
 }
 
 .half-line-input {

@@ -39,7 +39,7 @@
         </h3>
         <div v-if="displayDataset[dataItemIndex]">
           <div>
-            <UsaTextarea v-model="dataItem.description" style="height: 5.5rem">
+            <UsaTextarea v-model="dataItem.description">
               <template #label>
                 Dataset Description
                 <TemplatesTooltipInfo>
@@ -55,7 +55,7 @@
               </template>
             </UsaTextarea>
 
-            <UsaTextarea v-model="dataItem.purpose" style="height: 5.5rem">
+            <UsaTextarea v-model="dataItem.purpose">
               <template #label>
                 Dataset Purpose
                 <TemplatesTooltipInfo>
@@ -87,7 +87,7 @@
 
           <CustomListClasfficationSelect v-model="dataItem.classification" />
 
-          <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
+          <UsaTextarea v-model="dataItem.access">
             <template #label>
               Requirements and Constraints for Data Access
               <TemplatesTooltipInfo>
@@ -102,7 +102,7 @@
             </template>
           </UsaTextarea>
 
-          <UsaTextarea v-model="dataItem.rights" style="height: 5.5rem">
+          <UsaTextarea v-model="dataItem.rights">
             <template #label>
               Data Rights
               <TemplatesTooltipInfo>
@@ -122,7 +122,7 @@
             </template>
           </UsaTextarea>
 
-          <UsaTextarea v-model="dataItem.policies" style="height: 5.5rem">
+          <UsaTextarea v-model="dataItem.policies">
             <template #label>
               Data Policies
               <TemplatesTooltipInfo>
