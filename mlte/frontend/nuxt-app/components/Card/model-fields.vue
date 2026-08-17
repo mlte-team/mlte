@@ -27,7 +27,15 @@
         v-for="(inputSpec, inputIndex) in props.modelValue.input_specification"
         :key="inputIndex"
       >
-        <h3>Input {{ inputIndex + 1 }}</h3>
+        <div class="inline-form-row">
+          <h3>Input {{ inputIndex + 1 }}</h3>
+          <UsaButton
+            class="delete-button"
+            @click="deleteInputSpec(inputIndex)"
+          >
+            Delete Input {{  inputIndex + 1 }}
+          </UsaButton>
+        </div>
         <div class="inline-form-row">
           <div class="grid-col-6">
             <UsaTextInput v-model="inputSpec.name">
@@ -81,17 +89,11 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <ButtonDeleteItem
-          class="margin-button"
-          @click="deleteInputSpec(inputIndex)"
-        >
-          Delete Input
-        </ButtonDeleteItem>
         <hr />
       </div>
-      <ButtonAddItem class="margin-button" @click="addInputSpec()">
+      <UsaButton class="secondary-button" @click="addInputSpec()">
         Add Additional Input
-      </ButtonAddItem>
+      </UsaButton>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
@@ -118,7 +120,15 @@
           .output_specification"
         :key="outputIndex"
       >
-        <h3>Output {{ outputIndex + 1 }}</h3>
+        <div class="inline-form-row">
+          <h3>Output {{ outputIndex + 1 }}</h3>
+          <UsaButton
+            class="delete-button"
+            @click="deleteOutputSpec(outputIndex)"
+          >
+            Delete Output {{ outputIndex + 1 }}
+          </UsaButton>
+        </div>
         <div class="inline-form-row">
           <div class="grid-col-6">
             <UsaTextInput v-model="outputSpec.name">
@@ -175,17 +185,11 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <ButtonDeleteItem
-          class="margin-button"
-          @click="deleteOutputSpec(outputIndex)"
-        >
-          Delete Output
-        </ButtonDeleteItem>
         <hr />
       </div>
-      <ButtonAddItem class="margin-button" @click="addOutputSpec()">
+      <UsaButton class="secondary-button" @click="addOutputSpec()">
         Add Additional Output
-      </ButtonAddItem>
+      </UsaButton>
     </div>
   </div>
 
@@ -235,7 +239,7 @@
         </div>
       </div>
 
-      <div class="inline-form-row">
+      <div class="inline-form-row" style="justify-content: flex-start;">
         <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.main_memory"
@@ -349,7 +353,7 @@
         </div>
       </div>
 
-      <div class="inline-form-row">
+      <div class="inline-form-row" style="justify-content: flex-start;">
         <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.main_memory"

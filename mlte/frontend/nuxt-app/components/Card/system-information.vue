@@ -29,10 +29,7 @@
 
       <CustomListProblemTypeSelect v-model="props.modelValue.problem_type" />
 
-      <UsaTextarea
-        v-model="props.modelValue.usage_context"
-       
-      >
+      <UsaTextarea v-model="props.modelValue.usage_context">
         <template #label>
           Usage Context for the Model
           <TemplatesTooltipInfo>
@@ -64,10 +61,15 @@
       <hr />
 
       <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
-        <h3>Goal {{ goalIndex + 1 }}</h3>
-        <ButtonDeleteItem @click="deleteGoal(goalIndex)">
-          Delete Goal {{ goalIndex + 1 }}
-        </ButtonDeleteItem>
+        <div class="inline-form-row">
+          <h3>Goal {{ goalIndex + 1 }}</h3>
+          <UsaButton
+            class="delete-button"
+            @click="deleteGoal(goalIndex)"
+          >
+            Delete Goal {{ goalIndex + 1 }}
+          </UsaButton>
+        </div>
         <UsaTextarea v-model="goal.description">
           <template #label>
             Goal Description
@@ -124,20 +126,21 @@
             </UsaTextInput>
           </div>
           <div class="grid-col-2">
-            <ButtonDeleteItem @click="deleteMetric(goalIndex, metricIndex)">
+            <UsaButton
+              class="delete-button"
+              @click="deleteMetric(goalIndex, metricIndex)"
+            >
               Delete Metric
-            </ButtonDeleteItem>
+            </UsaButton>
           </div>
         </div>
-        <ButtonAddItem class="margin-button" @click="addMetric(goalIndex)">
-          Add Metric
-        </ButtonAddItem>
+        <UsaButton class="secondary-button" @click="addMetric(goalIndex)"> Add Metric </UsaButton>
         <hr />
       </div>
 
-      <ButtonAddItem class="margin-button" @click="addGoal()">
+      <UsaButton class="secondary-button" @click="addGoal()">
         Add Goal
-      </ButtonAddItem>
+      </UsaButton>
     </div>
 
     <div class="input-group">
@@ -152,7 +155,15 @@
       <hr />
 
       <div v-for="(risk, riskIndex) in props.modelValue.risks" :key="riskIndex">
-        <h3>Risk {{ riskIndex + 1 }}</h3>
+        <div class="inline-form-row">
+          <h3>Risk {{ riskIndex + 1 }}</h3>
+          <UsaButton
+            class="delete-button"
+            @click="deleteRisk(riskIndex)"
+          >
+            Delete Risk {{ riskIndex + 1 }}
+          </UsaButton>
+        </div>
         <UsaTextarea
           v-model="props.modelValue.risks[riskIndex]"
          
@@ -170,18 +181,12 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-
-        <div class="margin-button">
-          <ButtonDeleteItem @click="deleteRisk(riskIndex)">
-            Delete Risk
-          </ButtonDeleteItem>
-        </div>
         <hr />
       </div>
 
-      <ButtonAddItem class="margin-button" @click="addRisk()">
+      <UsaButton class="secondary-button" @click="addRisk()">
         Add Risk
-      </ButtonAddItem>
+      </UsaButton>
     </div>
   </div>
 </template>

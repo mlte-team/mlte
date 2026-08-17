@@ -36,7 +36,7 @@
           Edit
         </UsaButton>
         <UsaButton
-          class="usa-button usa-button--secondary"
+          class="usa-button delete-button"
           @click="emit('deleteGroup', group.name)"
         >
           Delete

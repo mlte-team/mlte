@@ -4,16 +4,15 @@
     <template #page-title>Custom Lists</template>
 
     <div v-if="!editFlag">
-      <div class="inline-form-row" style="justify-content: space-between;">
-        <div class="grid-col-5">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaSelect
             v-model="selectedCustomList"
             :options="customListOptions"
             @change="updateList(selectedCustomList)"
           />
         </div>
-        <div class="grid-col-4"/>
-        <div class="grid-row-3">
+        <div class="grid-row-auto">
           <UsaButton
             class="secondary-button sub-header-float-button"
             @click="addEntry"

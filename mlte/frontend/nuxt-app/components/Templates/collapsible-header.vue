@@ -1,6 +1,6 @@
 <template>
-  <div style="margin-bottom: 1em">
-    <h2 class="section-header" style="display: inline">
+  <div class="inline-form-row">
+    <h2 class="section-header">
       <slot name="title" />
     </h2>
     <UsaButton

@@ -41,7 +41,15 @@
         v-for="(requirement, requirementIndex) in props.modelValue"
         :key="requirementIndex"
       >
-        <h3>Requirement {{ requirementIndex + 1 }}</h3>
+        <div class="inline-form-row">
+          <h3>Requirement {{ requirementIndex + 1 }}</h3>
+          <UsaButton
+            class="secondary-button"
+            @click="deleteRequirement(requirementIndex)"
+          >
+            Delete Requirement
+          </UsaButton>
+        </div>
         <p v-if="requirement.identifier">
           <b>ID: </b> {{ requirement.identifier }}
         </p>
@@ -157,17 +165,11 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <ButtonDeleteItem
-          class="margin-button"
-          @click="deleteRequirement(requirementIndex)"
-        >
-          Delete Requirement
-        </ButtonDeleteItem>
         <hr />
       </div>
-      <ButtonAddItem class="margin-button" @click="addRequirement()">
+      <UsaButton class="secondary-button" @click="addRequirement()">
         Add Requirement
-      </ButtonAddItem>
+      </UsaButton>
     </div>
   </div>
 </template>
