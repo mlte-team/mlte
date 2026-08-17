@@ -10,28 +10,29 @@
       >
         Add Catalog Entry
       </UsaButton>
-      <div class="inline-input-left">
-        <label class="usa-label" style="margin-top: 0px"> Search by Tag </label>
-        <UsaTextInput v-model="tagSearchValue" @keyup.enter="search()" />
+      <div class="inline-form-row">
+        <div class="grid-col-5">
+          <label class="usa-label" style="margin-top: 0px"> Search by Tag </label>
+          <UsaTextInput v-model="tagSearchValue" @keyup.enter="search()" />
+        </div>
+
+        <div class="grid-col-5">
+          <label class="usa-label" style="margin-top: 0px">
+            Search by Quality Attribute
+          </label>
+          <UsaTextInput v-model="QASearchValue" @keyup.enter="search()" />
+        </div>
+
+        <div class="grid-row-2">
+          <UsaButton class="usa-button--unstyled" @click="search()">
+            <img src="/assets/uswds/img/usa-icons/search.svg" class="usa-icon" />
+          </UsaButton>
+        </div>
       </div>
 
-      <div class="inline-input-right" style="margin-bottom: 1em">
-        <label class="usa-label" style="margin-top: 0px">
-          Search by Quality Attribute
-        </label>
-        <UsaTextInput v-model="QASearchValue" @keyup.enter="search()" />
-      </div>
-      <div class="inline-button">
-        <UsaButton class="usa-button--unstyled" @click="search()">
-          <img src="/assets/uswds/img/usa-icons/search.svg" class="usa-icon" />
-        </UsaButton>
-      </div>
-
-      <div>
-        <UsaButton class="secondary-button" @click="clearSearch()">
-          Clear Search
-        </UsaButton>
-      </div>
+      <UsaButton class="secondary-button" style="margin-left: .5rem" @click="clearSearch()">
+        Clear Search
+      </UsaButton>
 
       <TestCatalogEntryList
         v-model="entryList"

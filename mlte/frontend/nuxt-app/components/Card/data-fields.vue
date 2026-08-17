@@ -162,7 +162,7 @@
             </TemplatesSubHeader>
             <UsaTextarea
               v-model="dataItem.labeling_method"
-              style="height: 5.5rem"
+             
             >
               <template #label>
                 Labeling Method
@@ -178,8 +178,9 @@
             <div
               v-for="(label, labelIndex) in dataItem.labels"
               :key="labelIndex"
+              class="inline-form-row"
             >
-              <div class="inline-input-left">
+              <div class="grid-col-3">
                 <UsaTextInput v-model="label.name">
                   <template #label>
                     Label Name
@@ -190,7 +191,7 @@
                 </UsaTextInput>
               </div>
 
-              <div class="inline-input-left">
+              <div class="grid-col-3">
                 <UsaTextInput v-model="label.description">
                   <template #label>
                     Label Description
@@ -201,7 +202,7 @@
                 </UsaTextInput>
               </div>
 
-              <div class="inline-input-right">
+              <div class="grid-col-3">
                 <UsaTextInput v-model="label.percentage" type="number">
                   <template #label>
                     Percentage
@@ -211,7 +212,7 @@
                   </template>
                 </UsaTextInput>
               </div>
-              <div class="inline-button">
+              <div class="grid-col-3">
                 <ButtonDeleteItem
                   @click="deleteLabel(dataItemIndex, labelIndex)"
                 >
@@ -250,8 +251,8 @@
               :key="fieldIndex"
             >
               <h3 style="margin-bottom: 0px">Field {{ fieldIndex + 1 }}</h3>
-              <div>
-                <div class="inline-input-left">
+              <div class="inline-form-row">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.name">
                     <template #label>
                       Field Name
@@ -260,7 +261,7 @@
                   </UsaTextInput>
                 </div>
 
-                <div class="inline-input-right">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.description">
                     <template #label>
                       Field Description
@@ -270,10 +271,7 @@
                     </template>
                   </UsaTextInput>
                 </div>
-              </div>
-
-              <div>
-                <div class="inline-input-left">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.type">
                     <template #label>
                       Field Type
@@ -284,8 +282,10 @@
                     </template>
                   </UsaTextInput>
                 </div>
+              </div>
 
-                <div class="inline-input-right">
+              <div class="inline-form-row">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.expected_values">
                     <template #label>
                       Expected Values
@@ -296,10 +296,8 @@
                     </template>
                   </UsaTextInput>
                 </div>
-              </div>
 
-              <div>
-                <div class="inline-input-left">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.missing_values">
                     <template #label>
                       Handling Missing Values
@@ -311,7 +309,7 @@
                   </UsaTextInput>
                 </div>
 
-                <div class="inline-input-right">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.special_values">
                     <template #label>
                       Handling Special Values

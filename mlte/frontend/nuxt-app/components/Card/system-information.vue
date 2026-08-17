@@ -65,7 +65,10 @@
 
       <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
         <h3>Goal {{ goalIndex + 1 }}</h3>
-        <UsaTextarea v-model="goal.description" style="height: 5.5rem">
+        <ButtonDeleteItem @click="deleteGoal(goalIndex)">
+          Delete Goal {{ goalIndex + 1 }}
+        </ButtonDeleteItem>
+        <UsaTextarea v-model="goal.description">
           <template #label>
             Goal Description
             <TemplatesTooltipInfo>
@@ -83,8 +86,8 @@
         <TemplatesSubHeader :render-example="false" :render-info="false">
           Metrics
         </TemplatesSubHeader>
-        <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex">
-          <div class="inline-input-left">
+        <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex" class="inline-form-row">
+          <div class="grid-col-5">
             <UsaTextInput v-model="metric.description">
               <template #label>
                 Description
@@ -101,7 +104,7 @@
             </UsaTextInput>
           </div>
 
-          <div class="inline-input-right">
+          <div class="grid-col-5">
             <UsaTextInput v-model="metric.baseline">
               <template #label>
                 Baseline Source
@@ -120,7 +123,7 @@
               </template>
             </UsaTextInput>
           </div>
-          <div class="inline-button">
+          <div class="grid-col-2">
             <ButtonDeleteItem @click="deleteMetric(goalIndex, metricIndex)">
               Delete Metric
             </ButtonDeleteItem>
@@ -129,11 +132,6 @@
         <ButtonAddItem class="margin-button" @click="addMetric(goalIndex)">
           Add Metric
         </ButtonAddItem>
-        <div class="inline-button" style="vertical-align: bottom">
-          <ButtonDeleteItem @click="deleteGoal(goalIndex)">
-            Delete Goal
-          </ButtonDeleteItem>
-        </div>
         <hr />
       </div>
 
@@ -157,7 +155,7 @@
         <h3>Risk {{ riskIndex + 1 }}</h3>
         <UsaTextarea
           v-model="props.modelValue.risks[riskIndex]"
-          style="height: 5.5rem"
+         
         >
           <template #label>
             Risk

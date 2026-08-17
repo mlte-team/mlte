@@ -62,8 +62,6 @@
       <template #label> Full Name </template>
     </UsaTextInput>
 
-    <UsaCheckbox v-model="modelValue.disabled" label="Disabled" />
-
     <UsaSelect
       v-model="modelValue.role"
       :options="roleOptions"
@@ -73,6 +71,8 @@
       <template #label> Role </template>
       <template #error-message> A role must be selected </template>
     </UsaSelect>
+
+    <UsaCheckbox v-model="modelValue.disabled" label="Disabled" />
 
     <div class="multi-line-checkbox-div">
       <label class="usa-label">Groups</label>

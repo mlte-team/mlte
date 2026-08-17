@@ -28,17 +28,35 @@
         :key="inputIndex"
       >
         <h3>Input {{ inputIndex + 1 }}</h3>
-        <UsaTextInput v-model="inputSpec.name">
-          <template #label>
-            Input Name
-            <TemplatesTooltipInfo>
-              Input name.
-              <br />
-              <br />
-              <i>Example: Audio Recording.</i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
+        <div class="inline-form-row">
+          <div class="grid-col-6">
+            <UsaTextInput v-model="inputSpec.name">
+              <template #label>
+                Input Name
+                <TemplatesTooltipInfo>
+                  Input name.
+                  <br />
+                  <br />
+                  <i>Example: Audio Recording.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
+
+          <div class="grid-col-6">
+            <UsaTextInput v-model="inputSpec.type">
+              <template #label>
+                Type
+                <TemplatesTooltipInfo>
+                  Input type, e.g., number, string, Boolean, data, image, audio.
+                  <br />
+                  <br />
+                  <i>Example: Audio.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
+        </div>
 
         <UsaTextarea v-model="inputSpec.description">
           <template #label>
@@ -51,18 +69,6 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-
-        <UsaTextInput v-model="inputSpec.type">
-          <template #label>
-            Type
-            <TemplatesTooltipInfo>
-              Input type, e.g., number, string, Boolean, data, image, audio.
-              <br />
-              <br />
-              <i>Example: Audio.</i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
 
         <UsaTextarea v-model="inputSpec.expected_values">
           <template #label>
@@ -113,17 +119,39 @@
         :key="outputIndex"
       >
         <h3>Output {{ outputIndex + 1 }}</h3>
-        <UsaTextInput v-model="outputSpec.name">
-          <template #label>
-            Output Name
-            <TemplatesTooltipInfo>
-              Output name.
-              <br />
-              <br />
-              <i>Example: Matching recordings.</i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
+        <div class="inline-form-row">
+          <div class="grid-col-6">
+            <UsaTextInput v-model="outputSpec.name">
+              <template #label>
+                Output Name
+                <TemplatesTooltipInfo>
+                  Output name.
+                  <br />
+                  <br />
+                  <i>Example: Matching recordings.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
+
+          <div class="grid-col-6">
+            <UsaTextInput v-model="outputSpec.type">
+              <template #label>
+                Type
+                <TemplatesTooltipInfo>
+                  Field type, e.g., number, string, Boolean, data, image, audio.
+                  <br />
+                  <br />
+                  <i>
+                    Example: Vector of Strings with IDs of matching recordings — an
+                    empty <br />
+                    vector means that there were no matches.
+                  </i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
+        </div>
 
         <UsaTextarea v-model="outputSpec.description">
           <template #label>
@@ -137,25 +165,8 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextInput v-model="outputSpec.type">
-          <template #label>
-            Type
-            <TemplatesTooltipInfo>
-              Field type, e.g., number, string, Boolean, data, image, audio.
-              <br />
-              <br />
-              <i>
-                Example: Vector of Strings with IDs of matching recordings — an
-                empty <br />
-                vector means that there were no matches.
-              </i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
-
         <UsaTextarea
           v-model="outputSpec.expected_values"
-         
         >
           <template #label>
             Expected Values
@@ -198,8 +209,8 @@
           development such as training, fine-tuning, or evaluation.
         </template>
       </TemplatesSubHeader>
-      <div>
-        <div class="inline-input-left">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.gpu"
           >
@@ -207,35 +218,33 @@
           </UsaTextInput>
         </div>
 
-        <div class="inline-input-right">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.gpu_memory"
           >
             <template #label> Graphics Processing Unit (GPU) Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
+      </div>
 
-        <div class="inline-input-right">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.main_memory"
           >
             <template #label> Main Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.storage"
           >
@@ -314,8 +323,8 @@
           inference.
         </template>
       </TemplatesSubHeader>
-      <div>
-        <div class="inline-input-left">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.gpu"
           >
@@ -323,35 +332,33 @@
           </UsaTextInput>
         </div>
 
-        <div class="inline-input-right">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.gpu_memory"
           >
             <template #label> Graphics Processing Unit (GPU) Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
+      </div>
 
-        <div class="inline-input-right">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.main_memory"
           >
             <template #label> Main Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.storage"
           >
