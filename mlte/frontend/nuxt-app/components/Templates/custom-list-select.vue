@@ -72,7 +72,7 @@ watch(
     if (val !== "Other") {
       newOption.value = "";
     }
-  }
+  },
 );
 
 const handleSave = () => {

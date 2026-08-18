@@ -42,9 +42,9 @@
               class="delete-button"
               @click="deleteDataItem(dataItemIndex)"
             >
-              Delete Dataset {{ dataItemIndex + 1}}
+              Delete Dataset {{ dataItemIndex + 1 }}
             </UsaButton>
-          </div>  
+          </div>
         </div>
         <div v-if="displayDataset[dataItemIndex]">
           <div>
@@ -169,10 +169,7 @@
                 cases.
               </template>
             </TemplatesSubHeader>
-            <UsaTextarea
-              v-model="dataItem.labeling_method"
-             
-            >
+            <UsaTextarea v-model="dataItem.labeling_method">
               <template #label>
                 Labeling Method
                 <TemplatesTooltipInfo>
@@ -227,7 +224,7 @@
                   @click="deleteLabel(dataItemIndex, labelIndex)"
                 >
                   Delete Label
-              </Usabutton>
+                </UsaButton>
               </div>
             </div>
 
@@ -236,7 +233,7 @@
               @click="addLabel(dataItemIndex)"
             >
               Add Additional Label
-          </UsaButton>
+            </UsaButton>
           </div>
 
           <div class="input-group" style="margin-top: 1em">
@@ -347,7 +344,7 @@
               @click="addField(dataItemIndex)"
             >
               Add Additional Field
-          </UsaButton>
+            </UsaButton>
           </div>
         </div>
       </div>

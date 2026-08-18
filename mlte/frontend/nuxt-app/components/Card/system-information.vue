@@ -63,10 +63,7 @@
       <div v-for="(goal, goalIndex) in props.modelValue.goals" :key="goalIndex">
         <div class="inline-form-row">
           <h3>Goal {{ goalIndex + 1 }}</h3>
-          <UsaButton
-            class="delete-button"
-            @click="deleteGoal(goalIndex)"
-          >
+          <UsaButton class="delete-button" @click="deleteGoal(goalIndex)">
             Delete Goal {{ goalIndex + 1 }}
           </UsaButton>
         </div>
@@ -88,7 +85,11 @@
         <TemplatesSubHeader :render-example="false" :render-info="false">
           Metrics
         </TemplatesSubHeader>
-        <div v-for="(metric, metricIndex) in goal.metrics" :key="metricIndex" class="inline-form-row">
+        <div
+          v-for="(metric, metricIndex) in goal.metrics"
+          :key="metricIndex"
+          class="inline-form-row"
+        >
           <div class="grid-col-5">
             <UsaTextInput v-model="metric.description">
               <template #label>
@@ -134,7 +135,9 @@
             </UsaButton>
           </div>
         </div>
-        <UsaButton class="secondary-button" @click="addMetric(goalIndex)"> Add Metric </UsaButton>
+        <UsaButton class="secondary-button" @click="addMetric(goalIndex)">
+          Add Metric
+        </UsaButton>
         <hr />
       </div>
 
@@ -157,17 +160,11 @@
       <div v-for="(risk, riskIndex) in props.modelValue.risks" :key="riskIndex">
         <div class="inline-form-row">
           <h3>Risk {{ riskIndex + 1 }}</h3>
-          <UsaButton
-            class="delete-button"
-            @click="deleteRisk(riskIndex)"
-          >
+          <UsaButton class="delete-button" @click="deleteRisk(riskIndex)">
             Delete Risk {{ riskIndex + 1 }}
           </UsaButton>
         </div>
-        <UsaTextarea
-          v-model="props.modelValue.risks[riskIndex]"
-         
-        >
+        <UsaTextarea v-model="props.modelValue.risks[riskIndex]">
           <template #label>
             Risk
             <TemplatesTooltipInfo>

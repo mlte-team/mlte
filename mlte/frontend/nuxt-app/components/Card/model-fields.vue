@@ -29,11 +29,8 @@
       >
         <div class="inline-form-row">
           <h3>Input {{ inputIndex + 1 }}</h3>
-          <UsaButton
-            class="delete-button"
-            @click="deleteInputSpec(inputIndex)"
-          >
-            Delete Input {{  inputIndex + 1 }}
+          <UsaButton class="delete-button" @click="deleteInputSpec(inputIndex)">
+            Delete Input {{ inputIndex + 1 }}
           </UsaButton>
         </div>
         <div class="inline-form-row">
@@ -153,8 +150,8 @@
                   <br />
                   <br />
                   <i>
-                    Example: Vector of Strings with IDs of matching recordings — an
-                    empty <br />
+                    Example: Vector of Strings with IDs of matching recordings —
+                    an empty <br />
                     vector means that there were no matches.
                   </i>
                 </TemplatesTooltipInfo>
@@ -175,9 +172,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea
-          v-model="outputSpec.expected_values"
-        >
+        <UsaTextarea v-model="outputSpec.expected_values">
           <template #label>
             Expected Values
             <TemplatesTooltipInfo>
@@ -239,7 +234,7 @@
         </div>
       </div>
 
-      <div class="inline-form-row" style="justify-content: flex-start;">
+      <div class="inline-form-row" style="justify-content: flex-start">
         <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.main_memory"
@@ -263,10 +258,7 @@
         Deployment
         <template #info> Operational environment of the model. </template>
       </TemplatesSubHeader>
-      <UsaTextarea
-        v-model="props.modelValue.deployment_platform"
-       
-      >
+      <UsaTextarea v-model="props.modelValue.deployment_platform">
         <template #label>
           Deployment Platform
           <TemplatesTooltipInfo>
@@ -280,10 +272,7 @@
         </template>
       </UsaTextarea>
 
-      <UsaTextarea
-        v-model="props.modelValue.capability_deployment_mechanism"
-       
-      >
+      <UsaTextarea v-model="props.modelValue.capability_deployment_mechanism">
         <template #label>
           Capability Deployment Mechanism
           <TemplatesTooltipInfo>
@@ -353,7 +342,7 @@
         </div>
       </div>
 
-      <div class="inline-form-row" style="justify-content: flex-start;">
+      <div class="inline-form-row" style="justify-content: flex-start">
         <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.main_memory"

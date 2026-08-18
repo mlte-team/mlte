@@ -1,5 +1,5 @@
 <template>
-  <div class="inline-form-row" style="margin-top: 1rem;">
+  <div class="inline-form-row" style="margin-top: 1rem">
     <div class="grid-col-auto">
       <h3>
         <slot />
