@@ -10,22 +10,22 @@
       >
         Add Catalog Entry
       </UsaButton>
-      <div class="inline-form-row">
-        <div class="grid-col-5">
+      <div class="inline-form-row" style="justify-content: left">
+        <div class="grid-col-4">
           <label class="usa-label" style="margin-top: 0px">
             Search by Tag
           </label>
           <UsaTextInput v-model="tagSearchValue" @keyup.enter="search()" />
         </div>
 
-        <div class="grid-col-5">
+        <div class="grid-col-4">
           <label class="usa-label" style="margin-top: 0px">
             Search by Quality Attribute
           </label>
           <UsaTextInput v-model="QASearchValue" @keyup.enter="search()" />
         </div>
 
-        <div class="grid-row-2" style="align-items: flex-start">
+        <div class="grid-row-2">
           <UsaButton class="usa-button--unstyled" @click="search()">
             <img
               src="/assets/uswds/img/usa-icons/search.svg"
