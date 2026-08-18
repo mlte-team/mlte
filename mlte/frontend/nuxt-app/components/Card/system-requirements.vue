@@ -203,7 +203,7 @@ const systemModalRows = ref([
   },
   {
     id: "fairness",
-    systemQuality: "Fairness - Model Impartial to Photo Location",
+    systemQuality: "Responsible AI - Fairness",
     stimulus: "Model receives a picture taken at the garden",
     source: "Flower identification application",
     environment: "Normal operations",
@@ -212,7 +212,7 @@ const systemModalRows = ref([
   },
   {
     id: "robustness",
-    systemQuality: "Robustness - Model Robust to Noise (Image Blur)",
+    systemQuality: "Continued Operation - Robustness",
     stimulus:
       "Model receives a picture taken at the garden and it is a bit blurry",
     source: "Flower identification application",

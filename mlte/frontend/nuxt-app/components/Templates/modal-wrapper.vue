@@ -19,7 +19,9 @@
       </button>
     </template>
     <template #heading> <slot name="heading" /> </template>
-    <slot />
+    <div class="usa-table-container--scrollable">
+      <slot />
+    </div>
     <template #footer>
       <slot name="footer" />
     </template>
@@ -35,3 +37,10 @@ const props = defineProps({
   },
 });
 </script>
+
+<style scoped>
+:deep(.usa-table th),
+:deep(.usa-table td) {
+  white-space: normal;
+}
+</style>
