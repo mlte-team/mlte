@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { cancelFormSubmission } from "~/composables/form-methods";
+import { cancelFormSubmission } from "~/app/composables/form-methods";
 import { provide } from "vue";
 
 const queryModel = useRoute().query.model;

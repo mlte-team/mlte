@@ -70,7 +70,7 @@ function isValidArtifact(artifact: object, schema: object): boolean {
   }
 
   const v = new Validator();
-  const validation = v.validate(artifact.body, schema);
+  const validation = v.validate(artifact.body, schema, { base: "http://localhost/" });
   if (validation.errors.length === 0) {
     return true;
   } else {
