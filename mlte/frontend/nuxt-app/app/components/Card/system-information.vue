@@ -251,10 +251,14 @@ function deleteRisk(riskIndex: number) {
 /**
  * Add MetricDescriptor to list in a goal.
  *
- * @param {number} goalIndex Index of the goal to add a MetricDesriptor to
+ * @param {number} goalIndex Index of the goal to add a MetricDescriptor to
  */
 function addMetric(goalIndex: number) {
-  props.modelValue.goals[goalIndex].metrics.push(new MetricDescriptor());
+  const goal = props.modelValue?.goals?.[goalIndex];
+  if (goal) {
+    goal.metrics ??= [];
+    goal.metrics.push(new MetricDescriptor());
+  }
 }
 
 /**
@@ -264,8 +268,9 @@ function addMetric(goalIndex: number) {
  * @param {number} metricIndex Index of MetricDescriptor in goal to delete
  */
 function deleteMetric(goalIndex: number, metricIndex: number) {
-  if (confirm("Are you sure you want to delete this metric?")) {
-    props.modelValue.goals[goalIndex].metrics.splice(metricIndex, 1);
+  const metrics = props.modelValue?.goals?.[goalIndex]?.metrics;
+  if (metrics && confirm("Are you sure you want to delete this metric?")) {
+    metrics.splice(metricIndex, 1);
   }
 }
 </script>

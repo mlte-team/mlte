@@ -505,7 +505,11 @@ function deleteDataItem(dataItemIndex: number) {
  * @param {number} dataItemIndex Index of DataDescriptor to add LabelDescriptor to.
  */
 function addLabel(dataItemIndex: number) {
-  props.modelValue[dataItemIndex].labels.push(new LabelDescriptor());
+  const targetItem = props.modelValue?.[dataItemIndex];
+  if (!targetItem) return;
+
+  targetItem.labels ??= [];
+  targetItem.labels.push(new LabelDescriptor());
 }
 
 /**
@@ -515,8 +519,11 @@ function addLabel(dataItemIndex: number) {
  * @param {number} labelIndex Index of LabelDescriptor to delete
  */
 function deleteLabel(dataItemIndex: number, labelIndex: number) {
+  const labels = props.modelValue?.[dataItemIndex]?.labels;
+  if (!labels) return;
+
   if (confirm("Are you sure you want to delete this label?")) {
-    props.modelValue[dataItemIndex].labels.splice(labelIndex, 1);
+    labels.splice(labelIndex, 1);
   }
 }
 
@@ -526,7 +533,11 @@ function deleteLabel(dataItemIndex: number, labelIndex: number) {
  * @param {number} dataItemIndex Index of DataDescriptor to add FieldDescriptor to.
  */
 function addField(dataItemIndex: number) {
-  props.modelValue[dataItemIndex].fields.push(new FieldDescriptor());
+  const targetItem = props.modelValue?.[dataItemIndex];
+  if (!targetItem) return;
+
+  targetItem.fields ??= [];
+  targetItem.fields.push(new FieldDescriptor());
 }
 
 /**
@@ -536,8 +547,11 @@ function addField(dataItemIndex: number) {
  * @param {number} fieldIndex Index of FieldDescriptor to delete
  */
 function deleteField(dataItemIndex: number, fieldIndex: number) {
+  const fields = props.modelValue?.[dataItemIndex]?.fields;
+  if (!fields) return;
+
   if (confirm("Are you sure you want to delete this field?")) {
-    props.modelValue[dataItemIndex].fields.splice(fieldIndex, 1);
+    fields.splice(fieldIndex, 1);
   }
 }
 </script>

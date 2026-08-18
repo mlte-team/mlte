@@ -155,8 +155,8 @@ export default withNuxt(eslintPluginPrettierRecommended, [
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          varsIgnorePattern: "^_emits|props",
-          argsIgnorePatter: "^_",
+          varsIgnorePattern: "^_|emits|props",
+          argsIgnorePattern: "^_",
         },
       ],
     },

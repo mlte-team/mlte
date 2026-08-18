@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { PropType } from "vue";
-import { timestampToString } from "~/app/composables/util";
+import { timestampToString } from "~/composables/util";
 
 const props = defineProps({
   header: {

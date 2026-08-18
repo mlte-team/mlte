@@ -363,16 +363,12 @@ const testSuiteModalVisible = ref<boolean>(false);
 const testSuiteTemplate = ref<string>("");
 
 const selectedModel = useCookie("selectedModel", {
-  decode(value) {
-    return decodeURIComponent(value);
-  },
+  default: () => "",
 });
-
 selectedModel.value = selectedModel.value || "";
+
 const selectedVersion = useCookie("selectedVersion", {
-  decode(value) {
-    return decodeURIComponent(value);
-  },
+  default: () => "",
 });
 selectedVersion.value = selectedVersion.value || "";
 

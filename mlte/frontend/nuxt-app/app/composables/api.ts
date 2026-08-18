@@ -75,10 +75,10 @@ export async function getToken(
   };
 
   const formBodyArray: Array<string> = [];
-  for (const property in details) {
-    const encodedKey = encodeURIComponent(property);
-    const encodedValue = encodeURIComponent(details[property]);
-    formBodyArray.push(encodedKey + "=" + encodedValue);
+  for (const [key, value] of Object.entries(details ?? {})) {
+    const encodedKey = encodeURIComponent(key);
+    const encodedValue = encodeURIComponent(value != null ? String(value) : "");
+    formBodyArray.push(`${encodedKey}=${encodedValue}`);
   }
   const formBodyStr: string = formBodyArray.join("&");
 

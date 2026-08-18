@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { cancelFormSubmission } from "~/app/composables/form-methods";
+import { cancelFormSubmission } from "~/composables/form-methods";
 
 const userCookie = useCookie("user");
 
