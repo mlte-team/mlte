@@ -26,7 +26,7 @@
         {{ entry.quality_attribute }}
       </td>
       <td>
-        <template v-if="catalogLookup[entry.header.catalog_id].read_only">
+        <template v-if="catalogLookup[entry?.header?.catalog_id]?.read_only">
           <UsaButton class="secondary-button" @click="emit('editEntry', entry)">
             View
           </UsaButton>

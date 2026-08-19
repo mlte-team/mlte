@@ -44,32 +44,37 @@ export function compareResults(
   const differences: Dictionary<Array<string>> = {};
 
   keys.forEach((key: string) => {
-    differences[key] = [];
+    const res1 = results1[key];
+    const res2 = results2[key];
+    const keyDiffs: string[] = [];
 
-    if (!(key in results1) || !(key in results2)) {
-      differences[key].push("No matching result.");
+    if (!res1 || !res2) {
+      keyDiffs.push("No matching result.");
     } else {
-      if (results1[key].type != results2[key].type) {
-        differences[key].push("Status");
+      if (res1.type !== res2.type) {
+        keyDiffs.push("Status");
       }
-      if (results1[key].message != results2[key].message) {
-        differences[key].push("Message");
-      }
-      if (
-        (results1[key].evidence_metadata &&
-          results2[key].evidence_metadata &&
-          results1[key].evidence_metadata.measurement.measurement_class !=
-            results2[key].evidence_metadata.measurement.measurement_class) ||
-        (!results1[key].evidence_metadata && results2[key].evidence_metadata) ||
-        (results1[key].evidence_metadata && !results2[key].evidence_metadata)
-      ) {
-        differences[key].push("Measurement");
+      if (res1.message !== res2.message) {
+        keyDiffs.push("Message");
       }
 
-      if (differences[key].length === 0) {
-        differences[key].push("None");
+      const meta1 = res1.evidence_metadata;
+      const meta2 = res2.evidence_metadata;
+
+      if (
+        Boolean(meta1) !== Boolean(meta2) ||
+        meta1?.measurement?.measurement_class !==
+          meta2?.measurement?.measurement_class
+      ) {
+        keyDiffs.push("Measurement");
+      }
+
+      if (keyDiffs.length === 0) {
+        keyDiffs.push("None");
       }
     }
+
+    differences[key] = keyDiffs;
   });
 
   return differences;

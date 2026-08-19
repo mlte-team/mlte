@@ -58,11 +58,11 @@
                 <td v-if="key === 'identifier'">
                   <NuxtLink
                     :to="{
-                      path: '/artifact-views/report-view',
+                      path: '/artifact/report-view',
                       query: {
                         model: queryModel,
-                        version: row.version.value,
-                        artifactId: row.identifier.value,
+                        version: row.version?.value,
+                        artifactId: row.identifier?.value,
                       },
                     }"
                     target="_blank"
@@ -75,9 +75,9 @@
                     class="modal-button"
                     @click="
                       displayModal(
-                        row.identifier.value,
-                        value.value,
-                        value.message,
+                        row.identifier?.value ?? '',
+                        value?.value ?? '',
+                        value?.message ?? '',
                       )
                     "
                   >
@@ -89,9 +89,9 @@
                     class="modal-button"
                     @click="
                       displayModal(
-                        row.identifier.value,
-                        value.value,
-                        value.message,
+                        row.identifier?.value ?? '',
+                        value?.value ?? '',
+                        value?.message ?? '',
                       )
                     "
                   >
@@ -103,9 +103,9 @@
                     class="modal-button"
                     @click="
                       displayModal(
-                        row.identifier.value,
-                        value.value,
-                        value.message,
+                        row.identifier?.value ?? '',
+                        value?.value ?? '',
+                        value?.message ?? '',
                       )
                     "
                   >
@@ -148,54 +148,60 @@ if (versionList.length > 0) {
 
   // Populate reports dict
   for (const version of versionList) {
-    reports.value[version] = [];
     const artifacts = await getVersionArtifacts(queryModel as string, version);
+    const versionReports: Array<ArtifactModel<ReportModel>> = [];
     artifacts.forEach((artifact: ArtifactModel) => {
       if (artifact.body.artifact_type === "report") {
-        reports.value[version].push(artifact as ArtifactModel<ReportModel>);
+        versionReports.push(artifact as ArtifactModel<ReportModel>);
       }
     });
+    reports.value[version] = versionReports;
   }
 
-  firstReportIndex.value = Object.keys(reports.value).findIndex(
-    (version: string) => {
-      return reports.value[version].length > 0;
-    },
+  firstReportIndex.value = Object.values(reports.value).findIndex(
+    (reportList) => (reportList?.length ?? 0) > 0,
   );
   if (firstReportIndex.value > -1) {
-    // Populate table headers with all test result id's from any report
-    Object.keys(reports.value).forEach((reportKey: string) => {
-      reports.value[reportKey].forEach((report: ArtifactModel<ReportModel>) => {
-        Object.keys(report.body.test_results.results).forEach(
-          (test_result_id: string) => {
+    Object.values(reports.value).forEach((reportList) => {
+      // Populate table headers with all test result id's from any report
+      reportList?.forEach((report: ArtifactModel<ReportModel>) => {
+        const results = report.body.test_results?.results;
+        if (results) {
+          Object.keys(results).forEach((test_result_id: string) => {
             if (!tableHeaders.value.includes(test_result_id)) {
               tableHeaders.value.push(test_result_id);
             }
-          },
-        );
+          });
+        }
       });
     });
 
     // Populate table rows
-    versionList.forEach((version: string) => {
-      reports.value[version].forEach((report) => {
+    versionList.forEach((version) => {
+      if (!version) return;
+      const reportList = reports.value[version];
+      if (!reportList) return;
+
+      reportList.forEach((report) => {
         const row: Dictionary<Dictionary<string>> = {
           version: { value: version },
-          identifier: { value: report.header.identifier },
+          identifier: { value: report.header?.identifier ?? "N/A" },
         };
+        const results = report.body?.test_results?.results;
         tableHeaders.value.forEach((header) => {
-          if (header !== "Version" && header !== "Identifier") {
-            if (header in report.body.test_results.results) {
-              row[header] = {
-                value: report.body.test_results.results[header].type,
-                message: report.body.test_results.results[header].message,
-              };
-            } else {
-              row[header] = {
-                value: "N/A",
-                message: "N/A",
-              };
-            }
+          if (!header || header === "Version" || header === "Identifier")
+            return;
+          const resultItem = results?.[header];
+          if (resultItem) {
+            row[header] = {
+              value: resultItem.type ?? "N/A",
+              message: resultItem.message ?? "N/A",
+            };
+          } else {
+            row[header] = {
+              value: "N/A",
+              message: "N/A",
+            };
           }
         });
         allTableRows.value.push(row);
@@ -214,22 +220,19 @@ if (versionList.length > 0) {
 function versionChange(selected: boolean, version: string) {
   if (selected) {
     allTableRows.value.forEach((row: Dictionary<Dictionary<string>>) => {
-      if (row.version.value == version) {
+      if (row.version?.value === version) {
         filteredTableRows.value.push(row);
       }
     });
+
     filteredTableRows.value.sort((a, b) => {
-      if (a.version.value < b.version.value) {
-        return -1;
-      } else if (a.version.value > b.version.value) {
-        return 1;
-      } else {
-        return 0;
-      }
+      const versionA = a.version?.value ?? "";
+      const versionB = b.version?.value ?? "";
+      return versionA.localeCompare(versionB);
     });
   } else {
     filteredTableRows.value = filteredTableRows.value.filter(
-      (item) => item.version.value !== version,
+      (item) => item.version?.value !== version,
     );
   }
 }

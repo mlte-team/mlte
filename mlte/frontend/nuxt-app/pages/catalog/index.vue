@@ -45,9 +45,7 @@
         v-model="selectedEntry"
         :new-entry-flag="newEntryFlag"
         :read-only="
-          catalogLookup[selectedEntry.header.catalog_id]
-            ? catalogLookup[selectedEntry.header.catalog_id].read_only
-            : false
+          catalogLookup[selectedEntry?.header?.catalog_id]?.read_only ?? false
         "
         @cancel="cancelEdit"
         @submit="saveEntry"
@@ -173,13 +171,13 @@ async function deleteEntry(catalogId: string, entryId: string) {
 
 // Handle navigation on sidebar, if editing it exits edit view
 async function handleNav() {
-  if (editFlag.value) {
-    await cancelEdit(
-      catalogLookup.value[selectedEntry.value.header.catalog_id]
-        ? catalogLookup.value[selectedEntry.value.header.catalog_id].read_only
-        : false,
-    );
-  }
+  if (!editFlag.value) return;
+  const catalogId = selectedEntry.value?.header?.catalog_id;
+  const isReadOnly = catalogId
+    ? (catalogLookup.value?.[catalogId]?.read_only ?? false)
+    : false;
+
+  await cancelEdit(isReadOnly);
 }
 
 /**

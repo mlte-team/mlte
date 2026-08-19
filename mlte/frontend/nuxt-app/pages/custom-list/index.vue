@@ -50,7 +50,10 @@ pageSetup();
 
 // Select an initial list on page load
 async function pageSetup() {
-  if (customListOptions.value.length > 0) {
+  if (
+    customListOptions.value?.[0]?.value &&
+    customListOptions.value.length > 0
+  ) {
     selectedCustomList.value = customListOptions.value[0].value;
     updateList(customListOptions.value[0].value);
   }

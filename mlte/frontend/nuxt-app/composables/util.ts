@@ -1,4 +1,4 @@
-import type { Dictionary } from "../composables/types";
+import type { Dictionary } from "./types";
 
 export function resetFormErrors(
   formErrors: Dictionary<boolean>,

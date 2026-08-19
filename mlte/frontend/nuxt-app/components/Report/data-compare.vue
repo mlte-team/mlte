@@ -15,11 +15,12 @@
     <p><b>Result for: </b>{{ key }}</p>
     <ul>
       <li>
-        <div v-if="resultsDifferences[key][0] == 'None'" style="color: green">
-          <b>Differences: </b> {{ resultsDifferences[key].join(", ") }}
-        </div>
-        <div v-else style="color: red">
-          <b>Differences: </b> {{ resultsDifferences[key].join(", ") }}
+        <div
+          :style="{
+            color: resultsDifferences[key]?.[0] === 'None' ? 'green' : 'red',
+          }"
+        >
+          <b>Differences: </b> {{ resultsDifferences[key]?.join(", ") }}
         </div>
       </li>
       <li>
