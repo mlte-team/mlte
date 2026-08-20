@@ -193,42 +193,40 @@ const systemModalHeaders = ref([
 ]);
 const systemModalRows = ref([
   {
-    id: "responseTime",
-    systemQuality: "Response Time",
-    stimulus: "Model receives an audio recording",
-    source: "Intel analyst application",
-    environment: "Normal operations",
-    response: "Inference time",
-    measure: "At most 5 seconds",
-  },
-  {
     id: "fairness",
     systemQuality: "Responsible AI - Fairness",
-    stimulus: "Model receives a picture taken at the garden",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response: "Correct identification of flowers regardless of garden location",
-    measure: "At least 90% of the time",
+    stimulus: "The model receives a picture taken at the garden",
+    source: "the Garden Buddy application",
+    environment: "normal operations",
+    response: "Regardless of the location in the garden, the model can correctly identify the correct flowers",
+    measure: "at least 90% of the time",
   },
   {
     id: "robustness",
-    systemQuality: "Continued Operation - Robustness",
-    stimulus:
-      "Model receives a picture taken at the garden and it is a bit blurry",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response: "Correct identification of flowers",
-    measure: "Same rate as non-blurry images",
+    "systemQuality": "Continued Operation - Robustness",
+    "stimulus": "The model receives a picture that is a bit blurry",
+    "source": "the Garden Buddy application",
+    "environment": "normal operation",
+    "response": "the model successfully identifies flowers",
+    "measure": "at the same rate as non-blurry images"
   },
   {
-    id: "performance",
-    systemQuality: "Performance on Operational Platform",
-    stimulus: "Model receives a picture taken at a garden",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response:
-      "Model runs on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
-    measure: "No errors due to unavailable resources",
+    "id": "explainability",
+    "systemQuality": "Confidence - Explainability",
+    "stimulus": "The model receives a picture taken at the garden",
+    "source": "the Garden Buddy application",
+    "environment": "normal operations",
+    "response": "The application indicates main features that were used to recognize the flower, as part of the educational experience. ",
+    "measure": "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name"
+  },
+  {
+    "id": "analyzability",
+    "systemQuality": "Behavior Analysis - Analyzability",
+    "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
+    "source": "the Garden Buddy application",
+    "environment": "normal operations",
+    "response": "The model will process the input",
+    "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
   },
 ]);
 
