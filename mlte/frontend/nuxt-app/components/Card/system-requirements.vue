@@ -198,35 +198,40 @@ const systemModalRows = ref([
     stimulus: "The model receives a picture taken at the garden",
     source: "the Garden Buddy application",
     environment: "normal operations",
-    response: "Regardless of the location in the garden, the model can correctly identify the correct flowers",
+    response:
+      "Regardless of the location in the garden, the model can correctly identify the correct flowers",
     measure: "at least 90% of the time",
   },
   {
     id: "robustness",
-    "systemQuality": "Continued Operation - Robustness",
-    "stimulus": "The model receives a picture that is a bit blurry",
-    "source": "the Garden Buddy application",
-    "environment": "normal operation",
-    "response": "the model successfully identifies flowers",
-    "measure": "at the same rate as non-blurry images"
+    systemQuality: "Continued Operation - Robustness",
+    stimulus: "The model receives a picture that is a bit blurry",
+    source: "the Garden Buddy application",
+    environment: "normal operation",
+    response: "the model successfully identifies flowers",
+    measure: "at the same rate as non-blurry images",
   },
   {
-    "id": "explainability",
-    "systemQuality": "Confidence - Explainability",
-    "stimulus": "The model receives a picture taken at the garden",
-    "source": "the Garden Buddy application",
-    "environment": "normal operations",
-    "response": "The application indicates main features that were used to recognize the flower, as part of the educational experience. ",
-    "measure": "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name"
+    id: "explainability",
+    systemQuality: "Confidence - Explainability",
+    stimulus: "The model receives a picture taken at the garden",
+    source: "the Garden Buddy application",
+    environment: "normal operations",
+    response:
+      "The application indicates main features that were used to recognize the flower, as part of the educational experience. ",
+    measure:
+      "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name",
   },
   {
-    "id": "analyzability",
-    "systemQuality": "Behavior Analysis - Analyzability",
-    "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
-    "source": "the Garden Buddy application",
-    "environment": "normal operations",
-    "response": "The model will process the input",
-    "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
+    id: "analyzability",
+    systemQuality: "Behavior Analysis - Analyzability",
+    stimulus:
+      "The ML pipeline receives a picture that corresponds to an OOD input",
+    source: "the Garden Buddy application",
+    environment: "normal operations",
+    response: "The model will process the input",
+    measure:
+      'and the ML pipeline will create a log entry with the tag "Model - Input OOD Error - <Input>, where <Input> is the original input',
   },
 ]);
 
