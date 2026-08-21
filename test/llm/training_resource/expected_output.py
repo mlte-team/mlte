@@ -4,15 +4,15 @@ spec = TestSuite(
             identifier="training_cpu_utilization",
             goal="Check average training CPU utilization",
             quality_scenarios=["card.training_resource_profile-qas_001"],
-            measurement=LocalProcessCPUUtilization(group="training"),
+            measurement=LocalProcessCPUUtilization(),
             validator=CPUStatistics.average_utilization_less_than(80.0),
         ),
         TestCase(
             identifier="training_memory_utilization",
             goal="Check maximum training memory utilization",
             quality_scenarios=["card.training_resource_profile-qas_002"],
-            measurement=LocalProcessMemoryUtilization(group="training"),
-            validator=MemoryStatistics.max_utilization_less_than(
+            measurement=LocalProcessMemoryUtilization(),
+            validator=LocalProcessMemoryUtilization.get_output_type().max_utilization_less_than(
                 8.0,
                 unit=Units.gigabyte,
             ),

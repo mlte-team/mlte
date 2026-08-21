@@ -11,7 +11,7 @@ spec = TestSuite(
             identifier="local_process_memory_utilization",
             goal="Check maximum local process memory utilization",
             quality_scenarios=["card.edge_deployment_profile-qas_002"],
-            measurement=LocalProcessMemoryUtilization(group="inference"),
+            measurement=LocalProcessMemoryUtilization(),
             validator=MemoryStatistics.max_utilization_less_than(
                 512.0,
                 unit=Units.megabyte,
@@ -21,7 +21,7 @@ spec = TestSuite(
             identifier="local_process_cpu_utilization",
             goal="Check maximum local process CPU utilization",
             quality_scenarios=["card.edge_deployment_profile-qas_003"],
-            measurement=LocalProcessCPUUtilization(group="inference"),
+            measurement=LocalProcessCPUUtilization(),
             validator=CPUStatistics.max_utilization_less_than(75.0),
         ),
     ]
