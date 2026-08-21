@@ -4,18 +4,22 @@
     <template #page-title>Custom Lists</template>
 
     <div v-if="!editFlag">
-      <UsaButton
-        class="secondary-button sub-header-float-button"
-        @click="addEntry"
-      >
-        Add Entry
-      </UsaButton>
-      <div class="inline-input-left">
-        <UsaSelect
-          v-model="selectedCustomList"
-          :options="customListOptions"
-          @change="updateList(selectedCustomList)"
-        />
+      <div class="inline-form-row">
+        <div class="grid-col-4">
+          <UsaSelect
+            v-model="selectedCustomList"
+            :options="customListOptions"
+            @change="updateList(selectedCustomList)"
+          />
+        </div>
+        <div class="grid-row-auto">
+          <UsaButton
+            class="secondary-button sub-header-float-button"
+            @click="addEntry"
+          >
+            Add Entry
+          </UsaButton>
+        </div>
       </div>
 
       <CustomListEntryList

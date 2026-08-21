@@ -36,7 +36,7 @@
             Edit
           </UsaButton>
           <UsaButton
-            class="usa-button usa-button--secondary"
+            class="delete-button"
             @click="
               emit(
                 'deleteEntry',

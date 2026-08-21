@@ -15,31 +15,40 @@
           development of the model.
         </template>
       </TemplatesSubHeader>
-      <hr />
       <div
         v-for="(dataItem, dataItemIndex) in props.modelValue"
         :key="dataItemIndex"
       >
-        <h3 style="display: inline; margin-right: 0.5rem">
-          Dataset {{ dataItemIndex + 1 }}
-          <UsaButton
-            v-if="!displayDataset[dataItemIndex]"
-            class="secondary-button"
-            @click="displayDataset[dataItemIndex] = true"
-          >
-            Show
-          </UsaButton>
-          <UsaButton
-            v-else
-            class="secondary-button"
-            @click="displayDataset[dataItemIndex] = false"
-          >
-            Hide
-          </UsaButton>
-        </h3>
+        <div class="inline-form-row">
+          <div class="grid-col-auto">
+            <h3>Dataset {{ dataItemIndex + 1 }}</h3>
+          </div>
+          <div class="grid-col-auto">
+            <UsaButton
+              v-if="!displayDataset[dataItemIndex]"
+              class="secondary-button"
+              @click="displayDataset[dataItemIndex] = true"
+            >
+              Show
+            </UsaButton>
+            <UsaButton
+              v-else
+              class="secondary-button"
+              @click="displayDataset[dataItemIndex] = false"
+            >
+              Hide
+            </UsaButton>
+            <UsaButton
+              class="delete-button"
+              @click="deleteDataItem(dataItemIndex)"
+            >
+              Delete Dataset {{ dataItemIndex + 1 }}
+            </UsaButton>
+          </div>
+        </div>
         <div v-if="displayDataset[dataItemIndex]">
           <div>
-            <UsaTextarea v-model="dataItem.description" style="height: 5.5rem">
+            <UsaTextarea v-model="dataItem.description">
               <template #label>
                 Dataset Description
                 <TemplatesTooltipInfo>
@@ -55,7 +64,7 @@
               </template>
             </UsaTextarea>
 
-            <UsaTextarea v-model="dataItem.purpose" style="height: 5.5rem">
+            <UsaTextarea v-model="dataItem.purpose">
               <template #label>
                 Dataset Purpose
                 <TemplatesTooltipInfo>
@@ -87,7 +96,7 @@
 
           <CustomListClasfficationSelect v-model="dataItem.classification" />
 
-          <UsaTextarea v-model="dataItem.access" style="height: 5.5rem">
+          <UsaTextarea v-model="dataItem.access">
             <template #label>
               Requirements and Constraints for Data Access
               <TemplatesTooltipInfo>
@@ -102,7 +111,7 @@
             </template>
           </UsaTextarea>
 
-          <UsaTextarea v-model="dataItem.rights" style="height: 5.5rem">
+          <UsaTextarea v-model="dataItem.rights">
             <template #label>
               Data Rights
               <TemplatesTooltipInfo>
@@ -122,7 +131,7 @@
             </template>
           </UsaTextarea>
 
-          <UsaTextarea v-model="dataItem.policies" style="height: 5.5rem">
+          <UsaTextarea v-model="dataItem.policies">
             <template #label>
               Data Policies
               <TemplatesTooltipInfo>
@@ -160,10 +169,7 @@
                 cases.
               </template>
             </TemplatesSubHeader>
-            <UsaTextarea
-              v-model="dataItem.labeling_method"
-              style="height: 5.5rem"
-            >
+            <UsaTextarea v-model="dataItem.labeling_method">
               <template #label>
                 Labeling Method
                 <TemplatesTooltipInfo>
@@ -178,8 +184,9 @@
             <div
               v-for="(label, labelIndex) in dataItem.labels"
               :key="labelIndex"
+              class="inline-form-row"
             >
-              <div class="inline-input-left">
+              <div class="grid-col-3">
                 <UsaTextInput v-model="label.name">
                   <template #label>
                     Label Name
@@ -190,7 +197,7 @@
                 </UsaTextInput>
               </div>
 
-              <div class="inline-input-left">
+              <div class="grid-col-3">
                 <UsaTextInput v-model="label.description">
                   <template #label>
                     Label Description
@@ -201,7 +208,7 @@
                 </UsaTextInput>
               </div>
 
-              <div class="inline-input-right">
+              <div class="grid-col-3">
                 <UsaTextInput v-model="label.percentage" type="number">
                   <template #label>
                     Percentage
@@ -211,21 +218,22 @@
                   </template>
                 </UsaTextInput>
               </div>
-              <div class="inline-button">
-                <ButtonDeleteItem
+              <div class="grid-col-3">
+                <UsaButton
+                  class="delete-button"
                   @click="deleteLabel(dataItemIndex, labelIndex)"
                 >
                   Delete Label
-                </ButtonDeleteItem>
+                </UsaButton>
               </div>
             </div>
 
-            <ButtonAddItem
-              class="margin-button"
+            <UsaButton
+              class="secondary-button"
               @click="addLabel(dataItemIndex)"
             >
               Add Additional Label
-            </ButtonAddItem>
+            </UsaButton>
           </div>
 
           <div class="input-group" style="margin-top: 1em">
@@ -245,13 +253,22 @@
                 applicable in all cases.
               </template>
             </TemplatesSubHeader>
+            <hr />
             <div
               v-for="(field, fieldIndex) in dataItem.fields"
               :key="fieldIndex"
             >
-              <h3 style="margin-bottom: 0px">Field {{ fieldIndex + 1 }}</h3>
-              <div>
-                <div class="inline-input-left">
+              <div class="inline-form-row">
+                <h3>Field {{ fieldIndex + 1 }}</h3>
+                <UsaButton
+                  class="delete-button"
+                  @click="deleteField(dataItemIndex, fieldIndex)"
+                >
+                  Delete Field {{ fieldIndex + 1 }}
+                </UsaButton>
+              </div>
+              <div class="inline-form-row">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.name">
                     <template #label>
                       Field Name
@@ -260,7 +277,7 @@
                   </UsaTextInput>
                 </div>
 
-                <div class="inline-input-right">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.description">
                     <template #label>
                       Field Description
@@ -270,10 +287,7 @@
                     </template>
                   </UsaTextInput>
                 </div>
-              </div>
-
-              <div>
-                <div class="inline-input-left">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.type">
                     <template #label>
                       Field Type
@@ -284,8 +298,10 @@
                     </template>
                   </UsaTextInput>
                 </div>
+              </div>
 
-                <div class="inline-input-right">
+              <div class="inline-form-row">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.expected_values">
                     <template #label>
                       Expected Values
@@ -296,10 +312,8 @@
                     </template>
                   </UsaTextInput>
                 </div>
-              </div>
 
-              <div>
-                <div class="inline-input-left">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.missing_values">
                     <template #label>
                       Handling Missing Values
@@ -311,7 +325,7 @@
                   </UsaTextInput>
                 </div>
 
-                <div class="inline-input-right">
+                <div class="grid-col-4">
                   <UsaTextInput v-model="field.special_values">
                     <template #label>
                       Handling Special Values
@@ -322,35 +336,21 @@
                   </UsaTextInput>
                 </div>
               </div>
-              <ButtonDeleteItem
-                class="margin-button"
-                @click="deleteField(dataItemIndex, fieldIndex)"
-              >
-                Delete Field
-              </ButtonDeleteItem>
               <hr />
             </div>
 
-            <ButtonAddItem
-              class="margin-button"
+            <UsaButton
+              class="secondary-button"
               @click="addField(dataItemIndex)"
             >
               Add Additional Field
-            </ButtonAddItem>
+            </UsaButton>
           </div>
-
-          <ButtonDeleteItem
-            class="margin-button"
-            @click="deleteDataItem(dataItemIndex)"
-          >
-            Delete Dataset
-          </ButtonDeleteItem>
-          <hr />
         </div>
       </div>
-      <ButtonAddItem class="margin-button" @click="addDataItem()">
+      <UsaButton class="secondary-button" @click="addDataItem()">
         Add Dataset
-      </ButtonAddItem>
+      </UsaButton>
     </div>
   </div>
 </template>

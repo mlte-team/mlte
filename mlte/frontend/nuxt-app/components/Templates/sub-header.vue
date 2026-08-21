@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <h3 style="display: inline-block; margin-bottom: 0px">
-      <slot />
+  <div class="inline-form-row" style="margin-top: 1rem">
+    <div class="grid-col-auto">
+      <h3>
+        <slot />
+      </h3>
+    </div>
+    <div class="grid-col-auto">
       <UsaButton
         v-if="props.renderExample"
         class="secondary-button"
@@ -18,18 +22,18 @@
       >
         <UsaButton class="secondary-button"> View Quality Model </UsaButton>
       </NuxtLink>
-    </h3>
-    <TemplatesModalWrapper
-      :visible="exampleVisible"
-      @toggle-visible="(value) => (exampleVisible = value)"
-    >
-      <template #heading>Example:</template>
-      <slot name="example" />
-    </TemplatesModalWrapper>
-    <p v-if="props.renderInfo">
-      <slot name="info" />
-    </p>
+    </div>
   </div>
+  <TemplatesModalWrapper
+    :visible="exampleVisible"
+    @toggle-visible="(value) => (exampleVisible = value)"
+  >
+    <template #heading>Example:</template>
+    <slot name="example" />
+  </TemplatesModalWrapper>
+  <p v-if="props.renderInfo">
+    <slot name="info" />
+  </p>
 </template>
 
 <script setup>
