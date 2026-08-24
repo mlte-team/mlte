@@ -39,6 +39,38 @@
       "title": "EvidenceMetadata",
       "type": "object"
     },
+    "FailedValueModel": {
+      "description": "The model implementation for MLTE failed values.",
+      "properties": {
+        "evidence_type": {
+          "const": "failed",
+          "default": "failed",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "traceback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Traceback"
+        }
+      },
+      "required": [
+        "details"
+      ],
+      "title": "FailedValueModel",
+      "type": "object"
+    },
     "ImageValueModel": {
       "description": "The model implementation for MLTE image values.",
       "properties": {
@@ -211,6 +243,7 @@
       "discriminator": {
         "mapping": {
           "array": "#/$defs/ArrayValueModel",
+          "failed": "#/$defs/FailedValueModel",
           "image": "#/$defs/ImageValueModel",
           "integer": "#/$defs/IntegerValueModel",
           "opaque": "#/$defs/OpaqueValueModel",
@@ -237,6 +270,9 @@
         },
         {
           "$ref": "#/$defs/StringValueModel"
+        },
+        {
+          "$ref": "#/$defs/FailedValueModel"
         }
       ],
       "title": "Value"

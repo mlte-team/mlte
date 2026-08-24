@@ -35,6 +35,9 @@ class EvidenceType(StrEnum):
     STRING = "string"
     """A string media type."""
 
+    FAILED = "failed"
+    """Failure getting evidence."""
+
 
 class EvidenceModel(BaseModel):
     """The model implementation for MLTE evidence."""
@@ -55,6 +58,7 @@ class EvidenceModel(BaseModel):
         | ImageValueModel
         | ArrayValueModel
         | StringValueModel
+        | FailedValueModel
     ) = Field(..., discriminator="evidence_type")
     """The body of the evidence."""
 
@@ -125,6 +129,19 @@ class StringValueModel(BaseModel):
     """The encapsulated string."""
 
 
+class FailedValueModel(BaseModel):
+    """The model implementation for MLTE failed values."""
+
+    evidence_type: Literal[EvidenceType.FAILED] = EvidenceType.FAILED
+    """An identitifier for the evidence type."""
+
+    details: str
+    """The details."""
+
+    traceback: str | None = None
+    """Additional traceback."""
+
+
 # Value type mapping to models.
 EVIDENCE_MODEL_CLASS: dict[
     EvidenceType,
@@ -132,13 +149,15 @@ EVIDENCE_MODEL_CLASS: dict[
     | type[RealValueModel]
     | type[OpaqueValueModel]
     | type[ImageValueModel]
-    | type[ArrayValueModel],
+    | type[ArrayValueModel]
+    | type[FailedValueModel],
 ] = {
     EvidenceType.INTEGER: IntegerValueModel,
     EvidenceType.REAL: RealValueModel,
     EvidenceType.OPAQUE: OpaqueValueModel,
     EvidenceType.IMAGE: ImageValueModel,
     EvidenceType.ARRAY: ArrayValueModel,
+    EvidenceType.FAILED: FailedValueModel,
 }
 
 

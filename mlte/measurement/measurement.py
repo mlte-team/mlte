@@ -4,6 +4,7 @@ Superclass for all measurements.
 
 from __future__ import annotations
 
+import traceback
 import typing
 from abc import abstractmethod
 
@@ -11,6 +12,7 @@ import mlte._private.meta as meta
 from mlte._private.reflection import load_class_or_function
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.metadata import EvidenceMetadata
+from mlte.evidence.types.failed import Failed
 from mlte.evidence.types.opaque import Opaque
 from mlte.measurement.model import MeasurementMetadata
 
@@ -80,10 +82,15 @@ class Measurement:
                 "Can't evaluate measurement before setting its id"
             )
 
-        # Evaluate the measurement
-        return self.__call__(*args, **kwargs).with_metadata(
-            self.evidence_metadata
-        )
+        # Evaluate the measurement.
+        try:
+            return self.__call__(*args, **kwargs).with_metadata(
+                self.evidence_metadata
+            )
+        except Exception as e:
+            return Failed(
+                details=str(e), traceback=traceback.format_exc()
+            ).with_metadata(self.evidence_metadata)
 
     @classmethod
     def output(cls) -> type[Evidence]:

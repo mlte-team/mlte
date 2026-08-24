@@ -10,6 +10,7 @@ from typing import Any
 from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
+from mlte.evidence.types.failed import Failed, FailedException
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -157,8 +158,16 @@ class Validator(Serializable):
                 "Can't validate, Validator has no bool expression and is also missing informational message that is used in those cases."
             )
 
-        # Check we got proper arguments.
-        self._check_arguments(*args, **kwargs)
+        try:
+            # Check we got proper arguments.
+            self._check_arguments(*args, **kwargs)
+        except FailedException as fe:
+            return Failure(
+                str(fe),
+                additional_data=fe.failed_evidence.traceback
+                if fe.failed_evidence.traceback
+                else "",
+            )
 
         # First execute bool expression (if any), and get its boolean result.
         executed_bool_exp_value: bool | None = None
@@ -205,6 +214,8 @@ class Validator(Serializable):
 
         for input_type in self.input_types:
             for arg in all_arguments:
+                if type(arg) is Failed:
+                    raise FailedException(arg)
                 if input_type != meta.get_qualified_name(type(arg)):
                     raise RuntimeError(
                         f"Invalid argument type received: expected {input_type}, received {meta.get_qualified_name(type(arg))}"
