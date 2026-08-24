@@ -12,8 +12,8 @@ import mlte._private.meta as meta
 from mlte._private.reflection import load_class_or_function
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.metadata import EvidenceMetadata
-from mlte.evidence.types.failed import Failed
 from mlte.evidence.types.opaque import Opaque
+from mlte.evidence.types.unavailable import Unavailable
 from mlte.measurement.model import MeasurementMetadata
 
 
@@ -22,8 +22,16 @@ class Measurement:
     The superclass for all model measurements.
     """
 
-    def __init__(self, test_case_id: str | None = None):
+    force_stop: bool = True
+    """Attribute to force raising an Exception when error is encountered when running a measurement.
+    If False, will return an Unavailable Evidence type instead with the error details. Default to true."""
+
+    def __init__(
+        self, test_case_id: str | None = None, force_stop: bool = True
+    ):
         """Constructor."""
+
+        self.force_stop = force_stop
 
         # Initialize with no values.
         self.test_case_id: str | None = None
@@ -88,9 +96,13 @@ class Measurement:
                 self.evidence_metadata
             )
         except Exception as e:
-            return Failed(
-                details=str(e), traceback=traceback.format_exc()
-            ).with_metadata(self.evidence_metadata)
+            # If we want to force stop on error, just re-throw, otherwise return as Unavailable evidence.
+            if self.force_stop:
+                raise e
+            else:
+                return Unavailable(
+                    details=str(e), traceback=traceback.format_exc()
+                ).with_metadata(self.evidence_metadata)
 
     @classmethod
     def output(cls) -> type[Evidence]:

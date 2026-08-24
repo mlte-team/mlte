@@ -55,6 +55,8 @@ class TestCase(Serializable):
                 "Can't evaluate measurement, no measurement has been configured."
             )
 
+        # Turn off throwing exceptions on errors and evaluate.
+        self.measurement.force_stop = False
         return self.measurement.evaluate(*args, **kwargs)
 
     def validate(self, evidence: Evidence | None) -> Result:

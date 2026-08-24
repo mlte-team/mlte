@@ -1,5 +1,5 @@
 """
-An Evidence instance for a failure in the measurement process.
+An Evidence instance for a problem in the measurement process that resulted in unavailable evidence.
 """
 
 from __future__ import annotations
@@ -12,21 +12,21 @@ from mlte.evidence.model import EvidenceType, FailedValueModel
 from mlte.model.base_model import BaseModel
 
 
-class FailedException(Exception):
-    """Exception raised when an failed evidence is found processing fails.
+class UnavailableException(Exception):
+    """Exception raised when an unavailable evidence is found while processing evidence.
 
     Attributes:
-        failed_evidence -- the encapsulated Failed object
+        unavailable -- the encapsulated Unavailable object
     """
 
-    def __init__(self, failed_item: Failed):
-        self.failed_evidence = failed_item
-        super().__init__(f"Evidence gathering failed: {failed_item.details}")
+    def __init__(self, unavailable: Unavailable):
+        self.unavailable = unavailable
+        super().__init__(f"Evidence gathering failed: {unavailable.details}")
 
 
-class Failed(Evidence):
+class Unavailable(Evidence):
     """
-    Failed implements the Value interface for a failed evidence.
+    Implements the Evidence interface for evidence that could not be obtained due to a problem.
     """
 
     def __init__(self, details: str, traceback: str | None):
@@ -55,21 +55,21 @@ class Failed(Evidence):
         )
 
     @classmethod
-    def from_model(cls, model: BaseModel) -> Failed:
+    def from_model(cls, model: BaseModel) -> Unavailable:
         """
         Convert a value model to its corresponding artifact.
         :param model: The model representation
         :return: The failed value
         """
         body = cls._check_proper_types(model, EvidenceType.FAILED)
-        return Failed(
+        return Unavailable(
             details=body.value.details,  # type: ignore
             traceback=body.value.traceback,  # type: ignore
         ).with_metadata(body.metadata)
 
     def __eq__(self, other: object) -> bool:
         """Comparison between values."""
-        if not isinstance(other, Failed):
+        if not isinstance(other, Unavailable):
             return False
         return self._equal(other)
 
@@ -79,6 +79,6 @@ class Failed(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: str | None = None) -> Failed:
+    def load(cls, identifier: str | None = None) -> Unavailable:
         evidence = super().load(identifier)
-        return typing.cast(Failed, evidence)
+        return typing.cast(Unavailable, evidence)

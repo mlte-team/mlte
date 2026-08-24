@@ -10,7 +10,7 @@ from typing import Any
 from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
-from mlte.evidence.types.failed import Failed, FailedException
+from mlte.evidence.types.unavailable import Unavailable, UnavailableException
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -161,11 +161,11 @@ class Validator(Serializable):
         try:
             # Check we got proper arguments.
             self._check_arguments(*args, **kwargs)
-        except FailedException as fe:
+        except UnavailableException as fe:
             return Failure(
                 str(fe),
-                additional_data=fe.failed_evidence.traceback
-                if fe.failed_evidence.traceback
+                additional_data=fe.unavailable.traceback
+                if fe.unavailable.traceback
                 else "",
             )
 
@@ -214,8 +214,8 @@ class Validator(Serializable):
 
         for input_type in self.input_types:
             for arg in all_arguments:
-                if type(arg) is Failed:
-                    raise FailedException(arg)
+                if type(arg) is Unavailable:
+                    raise UnavailableException(arg)
                 if input_type != meta.get_qualified_name(type(arg)):
                     raise RuntimeError(
                         f"Invalid argument type received: expected {input_type}, received {meta.get_qualified_name(type(arg))}"
