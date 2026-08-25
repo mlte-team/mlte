@@ -559,10 +559,13 @@ export async function getSuite(
     "GET",
   );
   if (suite && suite.body.artifact_type == "suite") {
-    return suite;
-  } else {
-    return null;
+    if (isValidTestSuite(suite)) {
+      return suite;
+    } else {
+      invalidArtifactAlert("Test suite", suite.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 export async function getSuiteTemplate(
@@ -604,10 +607,13 @@ export async function getResults(
     "GET",
   );
   if (results && results.body.artifact_type == "results") {
-    return results;
-  } else {
-    return null;
+    if (isValidTestResults(results)) {
+      return results;
+    } else {
+      invalidArtifactAlert("Test results", results.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 /**
@@ -627,10 +633,13 @@ export async function getEvidence(
     "GET",
   );
   if (evidence && evidence.body.artifact_type == "evidence") {
-    return evidence;
-  } else {
-    return null;
+    if (isValidEvidence(evidence)) {
+      return evidence;
+    } else {
+      invalidArtifactAlert("Evidence", evidence.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 // --------------------------------------------------------------------------------------------------------------
