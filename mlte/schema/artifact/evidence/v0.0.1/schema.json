@@ -192,7 +192,7 @@
       "type": "object"
     },
     "UnavailableValueModel": {
-      "description": "The model implementation for MLTE failed values.",
+      "description": "The model implementation for MLTE values that could not be obtained.",
       "properties": {
         "evidence_type": {
           "const": "unavailable",
