@@ -35,8 +35,8 @@ class EvidenceType(StrEnum):
     STRING = "string"
     """A string media type."""
 
-    FAILED = "failed"
-    """Failure getting evidence."""
+    UNAVAILABLE = "unavailable"
+    """Evidence that could not be obtained, with error details."""
 
 
 class EvidenceModel(BaseModel):
@@ -58,7 +58,7 @@ class EvidenceModel(BaseModel):
         | ImageValueModel
         | ArrayValueModel
         | StringValueModel
-        | FailedValueModel
+        | UnavailableValueModel
     ) = Field(..., discriminator="evidence_type")
     """The body of the evidence."""
 
@@ -129,10 +129,10 @@ class StringValueModel(BaseModel):
     """The encapsulated string."""
 
 
-class FailedValueModel(BaseModel):
+class UnavailableValueModel(BaseModel):
     """The model implementation for MLTE failed values."""
 
-    evidence_type: Literal[EvidenceType.FAILED] = EvidenceType.FAILED
+    evidence_type: Literal[EvidenceType.UNAVAILABLE] = EvidenceType.UNAVAILABLE
     """An identitifier for the evidence type."""
 
     details: str
@@ -150,14 +150,14 @@ EVIDENCE_MODEL_CLASS: dict[
     | type[OpaqueValueModel]
     | type[ImageValueModel]
     | type[ArrayValueModel]
-    | type[FailedValueModel],
+    | type[UnavailableValueModel],
 ] = {
     EvidenceType.INTEGER: IntegerValueModel,
     EvidenceType.REAL: RealValueModel,
     EvidenceType.OPAQUE: OpaqueValueModel,
     EvidenceType.IMAGE: ImageValueModel,
     EvidenceType.ARRAY: ArrayValueModel,
-    EvidenceType.FAILED: FailedValueModel,
+    EvidenceType.UNAVAILABLE: UnavailableValueModel,
 }
 
 

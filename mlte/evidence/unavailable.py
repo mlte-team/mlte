@@ -8,7 +8,7 @@ import typing
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
-from mlte.evidence.model import EvidenceType, FailedValueModel
+from mlte.evidence.model import EvidenceType, UnavailableValueModel
 from mlte.model.base_model import BaseModel
 
 
@@ -49,7 +49,7 @@ class Unavailable(Evidence):
         :return: The artifact model
         """
         return self._to_artifact_model(
-            value_model=FailedValueModel(
+            value_model=UnavailableValueModel(
                 details=self.details, traceback=self.traceback
             )
         )
@@ -61,7 +61,7 @@ class Unavailable(Evidence):
         :param model: The model representation
         :return: The failed value
         """
-        body = cls._check_proper_types(model, EvidenceType.FAILED)
+        body = cls._check_proper_types(model, EvidenceType.UNAVAILABLE)
         return Unavailable(
             details=body.value.details,  # type: ignore
             traceback=body.value.traceback,  # type: ignore

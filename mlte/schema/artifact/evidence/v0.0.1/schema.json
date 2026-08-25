@@ -39,38 +39,6 @@
       "title": "EvidenceMetadata",
       "type": "object"
     },
-    "FailedValueModel": {
-      "description": "The model implementation for MLTE failed values.",
-      "properties": {
-        "evidence_type": {
-          "const": "failed",
-          "default": "failed",
-          "title": "Evidence Type",
-          "type": "string"
-        },
-        "details": {
-          "title": "Details",
-          "type": "string"
-        },
-        "traceback": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Traceback"
-        }
-      },
-      "required": [
-        "details"
-      ],
-      "title": "FailedValueModel",
-      "type": "object"
-    },
     "ImageValueModel": {
       "description": "The model implementation for MLTE image values.",
       "properties": {
@@ -222,6 +190,38 @@
       ],
       "title": "StringValueModel",
       "type": "object"
+    },
+    "UnavailableValueModel": {
+      "description": "The model implementation for MLTE failed values.",
+      "properties": {
+        "evidence_type": {
+          "const": "unavailable",
+          "default": "unavailable",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "traceback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Traceback"
+        }
+      },
+      "required": [
+        "details"
+      ],
+      "title": "UnavailableValueModel",
+      "type": "object"
     }
   },
   "description": "The model implementation for MLTE evidence.",
@@ -243,12 +243,12 @@
       "discriminator": {
         "mapping": {
           "array": "#/$defs/ArrayValueModel",
-          "failed": "#/$defs/FailedValueModel",
           "image": "#/$defs/ImageValueModel",
           "integer": "#/$defs/IntegerValueModel",
           "opaque": "#/$defs/OpaqueValueModel",
           "real": "#/$defs/RealValueModel",
-          "string": "#/$defs/StringValueModel"
+          "string": "#/$defs/StringValueModel",
+          "unavailable": "#/$defs/UnavailableValueModel"
         },
         "propertyName": "evidence_type"
       },
@@ -272,7 +272,7 @@
           "$ref": "#/$defs/StringValueModel"
         },
         {
-          "$ref": "#/$defs/FailedValueModel"
+          "$ref": "#/$defs/UnavailableValueModel"
         }
       ],
       "title": "Value"
