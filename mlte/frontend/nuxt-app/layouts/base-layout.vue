@@ -12,7 +12,7 @@
         <div class="header-main">MLTE</div>
         <div class="header-secondary">
           Machine Learning <br />
-          Test and Evaluation {{ route.name }}
+          Test and Evaluation
         </div>
       </NuxtLink>
     </header>
