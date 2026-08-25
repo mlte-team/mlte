@@ -130,7 +130,7 @@ class StringValueModel(BaseModel):
 
 
 class UnavailableValueModel(BaseModel):
-    """The model implementation for MLTE failed values."""
+    """The model implementation for MLTE values that could not be obtained."""
 
     evidence_type: Literal[EvidenceType.UNAVAILABLE] = EvidenceType.UNAVAILABLE
     """An identitifier for the evidence type."""
