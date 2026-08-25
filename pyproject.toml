@@ -176,3 +176,4 @@ ignore_missing_imports = true
 testpaths = [
     "test",
 ]
+python_classes=""

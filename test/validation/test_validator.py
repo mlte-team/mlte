@@ -1,8 +1,4 @@
-"""
-test/validation/test_validator.py
-
-Unit tests for Validator.
-"""
+"""Unit tests for Validator."""
 
 from __future__ import annotations
 
@@ -14,10 +10,13 @@ from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.model import MeasurementMetadata
 from mlte.measurement.units import Units
+from mlte.results.result import Failure
 from mlte.validation.model import ValidatorModel
 from mlte.validation.validator import Validator
+from test.evidence.types.helper import get_sample_evidence_metadata
 
 # -----------------------------------------------------------------------------
 # Helpers.
@@ -346,3 +345,14 @@ def test_validate_ignore_test_defaults():
         and result.message != validator.default_failure
         and result.message == validator.failure
     )
+
+
+def test_validate_unavailable_fails():
+    validator = get_sample_validator()
+    i = Unavailable(details="test", traceback="tb").with_metadata(
+        get_sample_evidence_metadata()
+    )
+
+    result = validator.validate(i, 1)
+    assert type(result) is Failure
+    assert result.message.endswith(i.details)

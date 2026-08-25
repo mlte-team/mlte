@@ -303,7 +303,7 @@ $ make build-in-docker
 Once the package is built, publish the package to `PyPi` using a PyPi API token:
 
 ```bash
-$ uv publish --index https://pypi.org --username __token__ --password <TOKEN>
+$ uv publish --username __token__ --password <TOKEN>
 ```
 
 ## Docker Integration
