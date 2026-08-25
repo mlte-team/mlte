@@ -13,7 +13,7 @@ from mlte._private.reflection import load_class_or_function
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.opaque import Opaque
-from mlte.evidence.types.unavailable import Unavailable
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.model import MeasurementMetadata
 
 

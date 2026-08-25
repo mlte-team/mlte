@@ -5,7 +5,7 @@ from __future__ import annotations
 from mlte.context.context import Context
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.types.string import String
-from mlte.evidence.types.unavailable import Unavailable
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.measurement import Measurement
 from mlte.store.artifact.store import ArtifactStore
 from test.evidence.types.helper import get_sample_evidence_metadata

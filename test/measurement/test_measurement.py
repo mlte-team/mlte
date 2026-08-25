@@ -4,7 +4,7 @@ import pytest
 
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.types.string import String
-from mlte.evidence.types.unavailable import Unavailable
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.measurement import Measurement
 
 

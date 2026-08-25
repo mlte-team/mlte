@@ -10,7 +10,7 @@ from typing import Any
 from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
-from mlte.evidence.types.unavailable import Unavailable, UnavailableException
+from mlte.evidence.unavailable import Unavailable, UnavailableException
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -161,11 +161,11 @@ class Validator(Serializable):
         try:
             # Check we got proper arguments.
             self._check_arguments(*args, **kwargs)
-        except UnavailableException as fe:
+        except UnavailableException as ue:
             return Failure(
-                str(fe),
-                additional_data=fe.unavailable.traceback
-                if fe.unavailable.traceback
+                str(ue),
+                additional_data=ue.unavailable.traceback
+                if ue.unavailable.traceback
                 else "",
             )
 

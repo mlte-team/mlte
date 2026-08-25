@@ -10,7 +10,7 @@ from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.integer import Integer
-from mlte.evidence.types.unavailable import Unavailable
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.model import MeasurementMetadata
 from mlte.measurement.units import Units
 from mlte.results.result import Failure
