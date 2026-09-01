@@ -15,7 +15,9 @@ spec = TestSuite(
             goal="Check NVIDIA GPU power utilization",
             quality_scenarios=["card.gpu_inference_profile-qas_002"],
             measurement=NvidiaGPUPowerUtilization(),
-            validator=NvidiaGPUPowerStatistics.average_utilization_less_than(250.0),
+            validator=NvidiaGPUPowerStatistics.average_utilization_less_than(
+                250.0
+            ),
         ),
         TestCase(
             identifier="gpu_inference_cpu_utilization",

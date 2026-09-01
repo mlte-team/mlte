@@ -4,7 +4,9 @@ spec = TestSuite(
         TestCase(
             identifier="classification_accuracy",
             goal="Check classification accuracy",
-            quality_scenarios=["card.classification_evaluation_profile-qas_001"],
+            quality_scenarios=[
+                "card.classification_evaluation_profile-qas_001"
+            ],
             measurement=ExternalMeasurement(
                 output_evidence_type=Real,
                 function=model.accuracy,
@@ -16,7 +18,9 @@ spec = TestSuite(
         TestCase(
             identifier="classification_confusion_matrix",
             goal="Check classification confusion matrix",
-            quality_scenarios=["card.classification_evaluation_profile-qas_002"],
+            quality_scenarios=[
+                "card.classification_evaluation_profile-qas_002"
+            ],
             measurement=ExternalMeasurement(
                 output_evidence_type=Array,
                 function=model.confusion_matrix,
@@ -27,7 +31,9 @@ spec = TestSuite(
         TestCase(
             identifier="imported_evaluation_summary",
             goal="Check imported evaluation summary metadata",
-            quality_scenarios=["card.classification_evaluation_profile-qas_003"],
+            quality_scenarios=[
+                "card.classification_evaluation_profile-qas_003"
+            ],
             measurement=ImportMeasurement(),
             validator=validators.evaluation_summary_metadata_complete(
                 required_fields=[
