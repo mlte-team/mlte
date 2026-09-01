@@ -33,6 +33,16 @@
             class="table"
           />
         </template>
+        <template #buttons>
+          <NuxtLink
+            target="_blank"
+            :to="{
+              path: '/etc/quality-model',
+            }"
+          >
+            <UsaButton class="secondary-button"> View Quality Model </UsaButton>
+          </NuxtLink>
+        </template>
       </TemplatesSubHeader>
 
       <hr />
