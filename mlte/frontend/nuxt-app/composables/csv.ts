@@ -12,11 +12,11 @@ export interface CsvParseError {
  * @template T - The Zod schema type
  * @param schema - Zod schema that will be used to parse each CSV row
  * @returns Object containing reactive state and parsing controls:
- *   - `rows`: Ref containing successfully parsed and validated rows.
- *   - `errors`: Ref containing row-level validation and parsing errors.
- *   - `isParsing`: Ref indicating if file processing is currently active.
- *   - `parseFile`: Async function to process a file and return local `{ data, errors }`.
- *   - `reset`: Function to clear current `rows` and `errors` reactive state.
+ *   - `rows`: Ref containing successfully parsed and validated rows
+ *   - `errors`: Ref containing row-level validation and parsing errors
+ *   - `isParsing`: Ref indicating if file processing is currently active
+ *   - `parseFile`: Async function to process a file and return local `{ data, errors }`
+ *   - `reset`: Function to clear current `rows` and `errors` reactive state
  */
 export function parseCsv<TSchema extends z.ZodType>(schema: TSchema) {
   type ParsedData = z.infer<TSchema>;
