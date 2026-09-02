@@ -198,22 +198,6 @@ const props = defineProps({
   },
 });
 
-// Provide hook for parent page to call addGoal. Needed for descriptor import.
-const parentAddGoal = () => {
-  addGoal();
-};
-
-// Provide hook for parent page to call addRisk. Needed for descriptor import.
-const parentAddRisk = () => {
-  addRisk();
-};
-
-// Expose the hooks to parent page.
-defineExpose({
-  parentAddGoal,
-  parentAddRisk,
-});
-
 const displaySection = ref<boolean>(true);
 
 // Add GoalDescriptor to goal list.

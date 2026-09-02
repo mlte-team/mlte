@@ -476,7 +476,7 @@ export async function getCard(
  * @param {string} model Model of the Version
  * @param {string} version Version to contain the Negotiation Card
  * @param {string} identifier Identifier for the Negotiation Card
- * @param {boolean} forceSave Force save true incidates an update to a Negotiatoin Card, false indates a new Negotation Card
+ * @param {boolean} forceSave Force save true incidates an update to a Negotiation Card, false indates a new Negotation Card
  * @param {NegotiationCardModel} card Negotiation Card to be saved
  * @returns {Promise<NegotiationCardModel | null>} Promise that resolves to saved Negotiation Card or null on failure
  */

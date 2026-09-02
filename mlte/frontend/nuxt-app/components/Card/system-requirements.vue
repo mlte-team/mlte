@@ -7,7 +7,7 @@
   </TemplatesCollapsibleHeader>
   <div v-if="displaySection">
     <div class="input-group">
-      <TemplatesSubHeader :render-model="true">
+      <TemplatesSubHeader>
         Requirements
         <template #info>
           <p>
@@ -32,6 +32,16 @@
             borderless
             class="table"
           />
+        </template>
+        <template #buttons>
+          <NuxtLink
+            target="_blank"
+            :to="{
+              path: '/etc/quality-model',
+            }"
+          >
+            <UsaButton class="secondary-button"> View Quality Model </UsaButton>
+          </NuxtLink>
         </template>
       </TemplatesSubHeader>
 

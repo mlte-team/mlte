@@ -13,15 +13,7 @@
       >
         Example
       </UsaButton>
-      <NuxtLink
-        v-if="props.renderModel"
-        target="_blank"
-        :to="{
-          path: '/etc/quality-model',
-        }"
-      >
-        <UsaButton class="secondary-button"> View Quality Model </UsaButton>
-      </NuxtLink>
+      <slot name="buttons" />
     </div>
   </div>
   <TemplatesModalWrapper
@@ -36,7 +28,7 @@
   </p>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const exampleVisible = ref(false);
 
 const props = defineProps({
@@ -44,11 +36,6 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: true,
-  },
-  renderModel: {
-    type: Boolean,
-    required: false,
-    default: false,
   },
   renderInfo: {
     type: Boolean,

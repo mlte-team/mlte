@@ -12,7 +12,7 @@ import reportSchemaData from "~/assets/schema/artifact/report/v0.0.1/schema.json
  * Validate if Negotiation Card object is valid.
  *
  * @param {object} artifact Artifact to validate
- * @returns Boolean specifying if any validation errors were found.
+ * @returns Boolean specifying if any validation errors were found
  */
 export function isValidNegotiation(artifact: object): boolean {
   return isValidArtifact(artifact, negotiationSchemaData);
@@ -22,7 +22,7 @@ export function isValidNegotiation(artifact: object): boolean {
  * Validate if Test Suite object is valid.
  *
  * @param {object} artifact Artifact to validate
- * @returns Boolean specifying if any validation errors were found.
+ * @returns Boolean specifying if any validation errors were found
  */
 export function isValidTestSuite(artifact: object): boolean {
   return isValidArtifact(artifact, testSuiteSchemaData);
@@ -32,7 +32,7 @@ export function isValidTestSuite(artifact: object): boolean {
  * Validate if Test Results object is valid.
  *
  * @param {object} artifact Artifact to validate
- * @returns Boolean specifying if any validation errors were found.
+ * @returns Boolean specifying if any validation errors were found
  */
 export function isValidTestResults(artifact: object): boolean {
   return isValidArtifact(artifact, testResultsSchemaData);
@@ -42,7 +42,7 @@ export function isValidTestResults(artifact: object): boolean {
  * Validate if Evidence object is valid.
  *
  * @param {object} artifact Artifact to validate
- * @returns Boolean specifying if any validation errors were found.
+ * @returns Boolean specifying if any validation errors were found
  */
 export function isValidEvidence(artifact: object): boolean {
   return isValidArtifact(artifact, evidenceSchemaData);
@@ -52,7 +52,7 @@ export function isValidEvidence(artifact: object): boolean {
  * Validate if Report object is valid.
  *
  * @param {object} artifact Artifact to validate
- * @returns Boolean specifying if any validation errors were found.
+ * @returns Boolean specifying if any validation errors were found
  */
 export function isValidReport(artifact: object): boolean {
   return isValidArtifact(artifact, reportSchemaData);
@@ -62,7 +62,7 @@ export function isValidReport(artifact: object): boolean {
  *
  * @param {object} artifact Artifact to validate
  * @param {object} schema Schema to use to validate
- * @returns {boolean} Boolean specifying if any validation errors were found.
+ * @returns {boolean} Boolean specifying if any validation errors were found
  */
 function isValidArtifact(artifact: object, schema: object): boolean {
   if (!artifact || !("body" in artifact)) {

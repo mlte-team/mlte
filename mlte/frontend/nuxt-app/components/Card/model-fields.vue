@@ -373,22 +373,6 @@ const props = defineProps({
   },
 });
 
-// Provide hook for parent page to call addInputspec. Needed for descriptor import.
-const parentAddInputSpec = () => {
-  addInputSpec();
-};
-
-// Provide hook for parent page to call addOutputSpec. Needed for descriptor import.
-const parentAddOutputSpec = () => {
-  addOutputSpec();
-};
-
-// Expose the hooks to parent page.
-defineExpose({
-  parentAddInputSpec,
-  parentAddOutputSpec,
-});
-
 const displayIO = ref<boolean>(true);
 const displayResources = ref<boolean>(true);
 const inputModalHeaders = ref([
