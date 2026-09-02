@@ -373,7 +373,6 @@ const props = defineProps({
   },
 });
 
-
 const displayIO = ref<boolean>(true);
 const displayResources = ref<boolean>(true);
 const inputModalHeaders = ref([

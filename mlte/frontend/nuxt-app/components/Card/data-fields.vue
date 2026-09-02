@@ -252,7 +252,50 @@
                 out all sections below for each data field. This may not be
                 applicable in all cases.
               </template>
+              <template #buttons>
+                <UsaButton
+                  class="secondary-button"
+                  @click="
+                    importVisible = true;
+                    resetCsv();
+                  "
+                >
+                  Import Schema
+                </UsaButton>
+              </template>
             </TemplatesSubHeader>
+            <TemplatesModalWrapper
+              :visible="importVisible"
+              @toggle-visible="(value) => (importVisible = value)"
+            >
+              <template #heading>Import data schema</template>
+              <div>
+                Import will overwrite all information currently in the data
+                schema for this dataset.
+                <br />
+                <br />
+                <b>CSV header must be:</b> Field Name,Field Description,Field
+                Type,Expected Values,Handling Missing Values,Handling Special
+                Values
+              </div>
+              <input
+                type="file"
+                accept=".csv"
+                :disabled="isParsing"
+                @change="handleImport($event, dataItemIndex)"
+              />
+              <div v-if="errors.length">
+                <h3 style="color: red">
+                  Found {{ errors.length }} row(s) with validation errors:
+                </h3>
+                <ul style="color: red">
+                  <li v-for="err in errors" :key="err.row">
+                    <strong>Row {{ err.row }}:</strong>
+                    {{ err.messages.join(", ") }}
+                  </li>
+                </ul>
+              </div>
+            </TemplatesModalWrapper>
             <hr />
             <div
               v-for="(field, fieldIndex) in dataItem.fields"
@@ -356,6 +399,8 @@
 </template>
 
 <script setup lang="ts">
+import { z } from "zod";
+
 const props = defineProps({
   modelValue: {
     type: Array<DataDescriptor>,
@@ -365,6 +410,7 @@ const props = defineProps({
 
 const displaySection = ref<boolean>(true);
 const displayDataset = ref<Array<boolean>>([]);
+const importVisible = ref(false);
 
 props.modelValue.forEach(() => {
   displayDataset.value.push(true);
@@ -459,6 +505,45 @@ const dataModalRows = ref([
       "00/00/0000 would indicate that the file did not have an associated date",
   },
 ]);
+
+const dataSchemaSchema = z
+  .object({
+    "Field Name": z.string(),
+    "Field Description": z.string(),
+    "Field Type": z.string(),
+    "Expected Values": z.string(),
+    "Handling Missing Values": z.string(),
+    "Handling Special Values": z.string(),
+  })
+  .transform(
+    (row) =>
+      new FieldDescriptor(
+        row["Field Name"],
+        row["Field Description"],
+        row["Field Type"],
+        row["Expected Values"],
+        row["Handling Missing Values"],
+        row["Handling Special Values"],
+      ),
+  );
+
+const { errors, isParsing, parseFile, resetCsv } = parseCsv(dataSchemaSchema);
+
+// Parse data schema csv and update the form
+const handleImport = async (event: Event, index: number) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (file) {
+    const { data, errors } = await parseFile(file);
+    if (errors.length > 0) return;
+
+    const targetItem = props.modelValue?.[index];
+    if (!targetItem) return;
+
+    targetItem.fields = data;
+    importVisible.value = false;
+  }
+};
 
 // Add DataDescriptor to data list.
 function addDataItem() {

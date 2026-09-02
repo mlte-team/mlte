@@ -7,7 +7,7 @@
   </TemplatesCollapsibleHeader>
   <div v-if="displaySection">
     <div class="input-group">
-      <TemplatesSubHeader :render-model="true">
+      <TemplatesSubHeader>
         Requirements
         <template #info>
           <p>
