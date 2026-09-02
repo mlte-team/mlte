@@ -363,28 +363,6 @@ const props = defineProps({
   },
 });
 
-// Provide hook for parent page to call addDataItem. Needed for descriptor import.
-const parentAddDataItem = () => {
-  addDataItem();
-};
-
-// Provide hook for parent page to call addLabel. Needed for descriptor import.
-const parentAddLabel = (dataIndex: number) => {
-  addLabel(dataIndex);
-};
-
-// Provide hook for parent page to call addField. Needed for descriptor import.
-const parentAddField = (dataIndex: number) => {
-  addField(dataIndex);
-};
-
-// Expose the hooks to parent page.
-defineExpose({
-  parentAddDataItem,
-  parentAddLabel,
-  parentAddField,
-});
-
 const displaySection = ref<boolean>(true);
 const displayDataset = ref<Array<boolean>>([]);
 
