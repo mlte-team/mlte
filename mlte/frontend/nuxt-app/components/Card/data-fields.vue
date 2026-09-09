@@ -297,90 +297,130 @@
               </div>
             </TemplatesModalWrapper>
             <hr />
-            <div
-              v-for="(field, fieldIndex) in dataItem.fields"
-              :key="fieldIndex"
-            >
-              <div class="inline-form-row">
-                <h3>Field {{ fieldIndex + 1 }}</h3>
-                <UsaButton
-                  class="delete-button"
-                  @click="deleteField(dataItemIndex, fieldIndex)"
+
+            <div v-if="dataItem.fields.length > 0">
+              <div class="inline-form-row align-items-end">
+                <div class="grid-col-8">
+                  <UsaSelect
+                    :model-value="selectedFieldIndexes[dataItemIndex] ?? 0"
+                    :options="getFieldOptions(dataItem.fields)"
+                    :error="!!schemaErrors[dataItemIndex]"
+                    @update:model-value="
+                      selectedFieldIndexes[dataItemIndex] = Number($event)
+                    "
+                    @change="clearSchemaError(dataItemIndex)"
+                  >
+                    <template #label> Select Field</template>
+                    <template #error-message>
+                      {{ schemaErrors[dataItemIndex] }}
+                    </template>
+                  </UsaSelect>
+                </div>
+                <div class="grid-col-4">
+                  <UsaButton
+                    class="delete-button"
+                    @click="
+                      deleteField(
+                        dataItemIndex,
+                        selectedFieldIndexes[dataItemIndex] ?? 0,
+                      )
+                    "
+                  >
+                    Delete Selected Field
+                  </UsaButton>
+                </div>
+              </div>
+
+              <template
+                v-for="(field, fieldIndex) in dataItem.fields"
+                :key="fieldIndex"
+              >
+                <div
+                  v-if="
+                    fieldIndex === (selectedFieldIndexes[dataItemIndex] ?? 0)
+                  "
+                  style="margin-top: 1.5rem"
                 >
-                  Delete Field {{ fieldIndex + 1 }}
-                </UsaButton>
-              </div>
-              <div class="inline-form-row">
-                <div class="grid-col-4">
-                  <UsaTextInput v-model="field.name">
-                    <template #label>
-                      Field Name
-                      <TemplatesTooltipInfo> Field name. </TemplatesTooltipInfo>
-                    </template>
-                  </UsaTextInput>
-                </div>
+                  <div class="inline-form-row">
+                    <div class="grid-col-4">
+                      <UsaTextInput
+                        v-model="field.name"
+                        @input="clearSchemaError(dataItemIndex)"
+                      >
+                        <template #label>
+                          Field Name
+                          <TemplatesTooltipInfo>
+                            Field name.
+                          </TemplatesTooltipInfo>
+                        </template>
+                      </UsaTextInput>
+                    </div>
 
-                <div class="grid-col-4">
-                  <UsaTextInput v-model="field.description">
-                    <template #label>
-                      Field Description
-                      <TemplatesTooltipInfo>
-                        Short field description.
-                      </TemplatesTooltipInfo>
-                    </template>
-                  </UsaTextInput>
-                </div>
-                <div class="grid-col-4">
-                  <UsaTextInput v-model="field.type">
-                    <template #label>
-                      Field Type
-                      <TemplatesTooltipInfo>
-                        Field type, e.g., number, string, Boolean, data, image,
-                        audio.
-                      </TemplatesTooltipInfo>
-                    </template>
-                  </UsaTextInput>
-                </div>
-              </div>
+                    <div class="grid-col-4">
+                      <UsaTextInput v-model="field.description">
+                        <template #label>
+                          Field Description
+                          <TemplatesTooltipInfo>
+                            Short field description.
+                          </TemplatesTooltipInfo>
+                        </template>
+                      </UsaTextInput>
+                    </div>
 
-              <div class="inline-form-row">
-                <div class="grid-col-4">
-                  <UsaTextInput v-model="field.expected_values">
-                    <template #label>
-                      Expected Values
-                      <TemplatesTooltipInfo>
-                        Expected values for field, e.g., any, range,
-                        enumeration.
-                      </TemplatesTooltipInfo>
-                    </template>
-                  </UsaTextInput>
-                </div>
+                    <div class="grid-col-4">
+                      <UsaTextInput v-model="field.type">
+                        <template #label>
+                          Field Type
+                          <TemplatesTooltipInfo>
+                            Field type, e.g., number, string, Boolean, data,
+                            image, audio.
+                          </TemplatesTooltipInfo>
+                        </template>
+                      </UsaTextInput>
+                    </div>
+                  </div>
 
-                <div class="grid-col-4">
-                  <UsaTextInput v-model="field.missing_values">
-                    <template #label>
-                      Handling Missing Values
-                      <TemplatesTooltipInfo>
-                        How to interpret missing values, e.g., null, empty
-                        string.
-                      </TemplatesTooltipInfo>
-                    </template>
-                  </UsaTextInput>
-                </div>
+                  <div class="inline-form-row">
+                    <div class="grid-col-4">
+                      <UsaTextInput v-model="field.expected_values">
+                        <template #label>
+                          Expected Values
+                          <TemplatesTooltipInfo>
+                            Expected values for field, e.g., any, range,
+                            enumeration.
+                          </TemplatesTooltipInfo>
+                        </template>
+                      </UsaTextInput>
+                    </div>
 
-                <div class="grid-col-4">
-                  <UsaTextInput v-model="field.special_values">
-                    <template #label>
-                      Handling Special Values
-                      <TemplatesTooltipInfo>
-                        How to interpret special values, e.g., 999, N/A.
-                      </TemplatesTooltipInfo>
-                    </template>
-                  </UsaTextInput>
+                    <div class="grid-col-4">
+                      <UsaTextInput v-model="field.missing_values">
+                        <template #label>
+                          Handling Missing Values
+                          <TemplatesTooltipInfo>
+                            How to interpret missing values, e.g., null, empty
+                            string.
+                          </TemplatesTooltipInfo>
+                        </template>
+                      </UsaTextInput>
+                    </div>
+
+                    <div class="grid-col-4">
+                      <UsaTextInput v-model="field.special_values">
+                        <template #label>
+                          Handling Special Values
+                          <TemplatesTooltipInfo>
+                            How to interpret special values, e.g., 999, N/A.
+                          </TemplatesTooltipInfo>
+                        </template>
+                      </UsaTextInput>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <hr />
+              </template>
             </div>
+
+            <div v-else>No fields added yet</div>
 
             <UsaButton
               class="secondary-button"
@@ -412,9 +452,28 @@ const displaySection = ref<boolean>(true);
 const displayDataset = ref<Array<boolean>>([]);
 const importVisible = ref(false);
 
+const selectedFieldIndexes = ref<Array<number>>(props.modelValue.map(() => 0));
+const schemaErrors = ref<Array<string>>(props.modelValue.map(() => ""));
+
 props.modelValue.forEach(() => {
   displayDataset.value.push(true);
 });
+
+// Transforms array of field items into options array formatted for UsaSelect
+function getFieldOptions(fields: Array<FieldDescriptor> = []) {
+  return fields.map((field, index) => {
+    const textLabel =
+      field.name && field.name.trim() !== ""
+        ? field.name
+        : `(Unnamed Field ${index + 1})`;
+
+    return {
+      value: index,
+      text: textLabel,
+      label: textLabel,
+    };
+  });
+}
 
 const labelModalHeaders = ref([
   { id: "labelName", label: "Label Name", sortable: false },
@@ -529,7 +588,6 @@ const dataSchemaSchema = z
 
 const { errors, isParsing, parseFile, resetCsv } = parseCsv(dataSchemaSchema);
 
-// Parse data schema csv and update the form
 const handleImport = async (event: Event, index: number) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
@@ -541,32 +599,28 @@ const handleImport = async (event: Event, index: number) => {
     if (!targetItem) return;
 
     targetItem.fields = data;
+    selectedFieldIndexes.value[index] = 0;
+    schemaErrors.value[index] = "";
     importVisible.value = false;
   }
 };
 
-// Add DataDescriptor to data list.
 function addDataItem() {
   props.modelValue.push(new DataDescriptor());
   displayDataset.value.push(true);
+  selectedFieldIndexes.value.push(0);
+  schemaErrors.value.push("");
 }
 
-/**
- * Delete DataDescriptor from data list.
- *
- * @param {number} dataItemIndex Index of DataDescriptor to delete
- */
 function deleteDataItem(dataItemIndex: number) {
   if (confirm("Are you sure you want to delete this data item?")) {
     props.modelValue.splice(dataItemIndex, 1);
+    displayDataset.value.splice(dataItemIndex, 1);
+    selectedFieldIndexes.value.splice(dataItemIndex, 1);
+    schemaErrors.value.splice(dataItemIndex, 1);
   }
 }
 
-/**
- * Add LabelDescriptor to specified DataDescriptor.
- *
- * @param {number} dataItemIndex Index of DataDescriptor to add LabelDescriptor to.
- */
 function addLabel(dataItemIndex: number) {
   const targetItem = props.modelValue?.[dataItemIndex];
   if (!targetItem) return;
@@ -575,12 +629,6 @@ function addLabel(dataItemIndex: number) {
   targetItem.labels.push(new LabelDescriptor());
 }
 
-/**
- * Delete LabelDescriptor from list in DataDescriptor.
- *
- * @param {number} dataItemIndex Index of DataDescriptor
- * @param {number} labelIndex Index of LabelDescriptor to delete
- */
 function deleteLabel(dataItemIndex: number, labelIndex: number) {
   const labels = props.modelValue?.[dataItemIndex]?.labels;
   if (!labels) return;
@@ -600,7 +648,23 @@ function addField(dataItemIndex: number) {
   if (!targetItem) return;
 
   targetItem.fields ??= [];
+
+  // Check if an unnamed field already exists
+  const unnamedIndex = targetItem.fields.findIndex(
+    (f) => !f.name || f.name.trim() === "",
+  );
+
+  if (unnamedIndex !== -1) {
+    schemaErrors.value[dataItemIndex] =
+      `Please provide a name for Field ${unnamedIndex + 1} before adding a new field.`;
+    selectedFieldIndexes.value[dataItemIndex] = unnamedIndex;
+    return;
+  }
+
+  // Clear any active errors and append new field
+  schemaErrors.value[dataItemIndex] = "";
   targetItem.fields.push(new FieldDescriptor());
+  selectedFieldIndexes.value[dataItemIndex] = targetItem.fields.length - 1;
 }
 
 /**
@@ -611,10 +675,26 @@ function addField(dataItemIndex: number) {
  */
 function deleteField(dataItemIndex: number, fieldIndex: number) {
   const fields = props.modelValue?.[dataItemIndex]?.fields;
-  if (!fields) return;
+  if (!fields || fieldIndex === undefined || fieldIndex < 0) return;
 
   if (confirm("Are you sure you want to delete this field?")) {
     fields.splice(fieldIndex, 1);
+    schemaErrors.value[dataItemIndex] = "";
+
+    const currentSelected = selectedFieldIndexes.value[dataItemIndex] ?? 0;
+
+    // Adjust selected index if it goes out of bounds
+    if (fields.length === 0) {
+      selectedFieldIndexes.value[dataItemIndex] = 0;
+    } else if (currentSelected >= fields.length) {
+      selectedFieldIndexes.value[dataItemIndex] = fields.length - 1;
+    }
+  }
+}
+
+function clearSchemaError(dataItemIndex: number) {
+  if (schemaErrors.value[dataItemIndex]) {
+    schemaErrors.value[dataItemIndex] = "";
   }
 }
 </script>
