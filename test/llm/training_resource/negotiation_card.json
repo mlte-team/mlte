@@ -1,0 +1,144 @@
+{
+  "header": {
+    "identifier": "card.training_resource_profile",
+    "type": "card",
+    "timestamp": 1762363735,
+    "creator": "admin",
+    "level": "model"
+  },
+  "body": {
+    "artifact_type": "card",
+    "system": {
+      "goals": [
+        {
+          "description": "Train a demand forecasting model within local workstation limits",
+          "metrics": [
+            {
+              "description": "Training CPU, memory, output size, and imported run metadata meet development limits",
+              "baseline": ""
+            }
+          ]
+        }
+      ],
+      "problem_type": "Regression",
+      "task": "Forecast weekly product demand",
+      "usage_context": "The model is trained by developers on a local workstation before being promoted to the inventory planning service",
+      "risks": [
+        "Training may overload the developer workstation",
+        "Training may consume too much memory",
+        "Training outputs may be too large to archive",
+        "Training metadata may be incomplete for later review"
+      ]
+    },
+    "data": [
+      {
+        "description": "Historical store sales and inventory dataset",
+        "purpose": "Training and testing demand forecasting model",
+        "source": "Retail data warehouse",
+        "classification": "Internal",
+        "access": "Restricted to inventory planning team",
+        "labeling_method": "Observed weekly sales totals",
+        "labels": [
+          {
+            "name": "Weekly demand",
+            "description": "Observed number of units sold in one week",
+            "percentage": 0.0
+          }
+        ],
+        "fields": [
+          {
+            "name": "store product features",
+            "description": "Store, product, calendar, promotion, and sales history features",
+            "type": "record",
+            "expected_values": "valid demand feature record",
+            "missing_values": "",
+            "special_values": ""
+          },
+          {
+            "name": "weekly demand",
+            "description": "Observed weekly product demand",
+            "type": "float",
+            "expected_values": "non-negative number",
+            "missing_values": "",
+            "special_values": ""
+          }
+        ],
+        "rights": "",
+        "policies": ""
+      }
+    ],
+    "model": {
+      "development_compute_resources": {
+        "cpu": "4",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "8 GB",
+        "storage": "20 GB"
+      },
+      "deployment_platform": "Inventory planning service",
+      "capability_deployment_mechanism": "The model is trained locally and then packaged for deployment",
+      "model_source": "in-house development",
+      "input_specification": [
+        {
+          "name": "store product features",
+          "description": "Features for one store and product",
+          "type": "record",
+          "expected_values": "valid demand feature record"
+        }
+      ],
+      "output_specification": [
+        {
+          "name": "Predicted weekly demand",
+          "description": "Predicted number of units demanded next week",
+          "type": "float",
+          "expected_values": "non-negative number"
+        }
+      ],
+      "production_compute_resources": {
+        "cpu": "2",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "2 GB",
+        "storage": "1 GB"
+      }
+    },
+    "system_requirements": [
+      {
+        "identifier": "card.training_resource_profile-qas_001",
+        "quality": "Resource Utilization",
+        "stimulus": "The local training process runs on the developer workstation",
+        "source": "the model training script",
+        "environment": "development",
+        "response": "The training process keeps average CPU usage within the workstation budget",
+        "measure": "the average local process CPU utilization is less than 80%"
+      },
+      {
+        "identifier": "card.training_resource_profile-qas_002",
+        "quality": "Resource Utilization",
+        "stimulus": "The local training process runs on the developer workstation",
+        "source": "the model training script",
+        "environment": "development",
+        "response": "The training process keeps peak memory usage within the workstation budget",
+        "measure": "the maximum local process memory utilization is less than 8 GB"
+      },
+      {
+        "identifier": "card.training_resource_profile-qas_003",
+        "quality": "Resource Utilization",
+        "stimulus": "The training process completes and writes model outputs",
+        "source": "the model training script",
+        "environment": "development",
+        "response": "The generated training output bundle remains small enough to archive",
+        "measure": "the local training output bundle size is no more than 2 GB"
+      },
+      {
+        "identifier": "card.training_resource_profile-qas_004",
+        "quality": "Testability",
+        "stimulus": "The training run produces metadata for review",
+        "source": "the training pipeline",
+        "environment": "development",
+        "response": "The training metadata can be imported into MLTE evidence",
+        "measure": "the imported JSON evidence includes training duration, random seed, dataset version, and model artifact path"
+      }
+    ]
+  }
+}
