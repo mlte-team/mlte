@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import typing
-from typing import Optional
 
 from mlte._private.function_info import get_function_code
 from mlte.evidence.artifact import Evidence
@@ -23,9 +22,9 @@ class TestCase(Serializable):
         identifier: str,
         goal: str,
         quality_scenarios: list[str],
-        measurement: Optional[Measurement] = None,
-        validator: Optional[Validator] = None,
-        note: Optional[str] = None,
+        measurement: Measurement | None = None,
+        validator: Validator | None = None,
+        note: str | None = None,
     ):
         self.identifier = identifier
         """Unique id or name given to the test case."""
@@ -56,9 +55,11 @@ class TestCase(Serializable):
                 "Can't evaluate measurement, no measurement has been configured."
             )
 
+        # Turn off throwing exceptions on errors and evaluate.
+        self.measurement.force_stop = False
         return self.measurement.evaluate(*args, **kwargs)
 
-    def validate(self, evidence: Optional[Evidence]) -> Result:
+    def validate(self, evidence: Evidence | None) -> Result:
         """Executes the configured validator with the given Evidence."""
         if self.validator is None:
             raise RuntimeError(
@@ -131,7 +132,7 @@ class TestCase(Serializable):
     # -------------------------------------------------------------------------
 
     def template(self):
-        TestCase(identifier="ID", goal="GOAL", quality_scenarios=["QA"]),
+        (TestCase(identifier="ID", goal="GOAL", quality_scenarios=["QA"]),)
 
     def to_template_str(self) -> str:
         """Convert the test case into a template string."""

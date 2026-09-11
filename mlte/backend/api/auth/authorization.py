@@ -2,10 +2,10 @@
 
 import logging
 from json import JSONDecodeError
+from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
-from typing_extensions import Annotated
 
 from mlte.backend.api import codes
 from mlte.backend.api.auth import jwt
@@ -145,7 +145,7 @@ async def get_authorized_user(
         raise HTTPAuthException(
             error="invalid_token",
             error_decription=f"Could not decode token: {ex}",
-        )
+        ) from None
 
     # Check if user in token exists.
     user = None

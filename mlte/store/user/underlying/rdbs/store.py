@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, List, Optional, Union
+from typing import Any
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import DeclarativeBase, Session
@@ -122,7 +122,9 @@ class RDBUserMapper(UserMapper):
         self.policy_store = policy_store
         """Policy store abstraection"""
 
-    def create(self, user: UserWithPassword, context: Any = None) -> User:
+    def create(
+        self, user: User | UserWithPassword, context: Any = None
+    ) -> User:
         with Session(self.storage.engine) as session:
             try:
                 _, _ = DBReader.get_user(user.username, session)
@@ -137,7 +139,10 @@ class RDBUserMapper(UserMapper):
                 )
 
                 # Hash password and create a user with hashed passwords to be stored.
-                hashed_user = user.to_hashed_user()
+                if isinstance(user, UserWithPassword):
+                    hashed_user = user.to_hashed_user()
+                else:
+                    hashed_user = user
                 user_orm = self._build_user(hashed_user, session)
                 session.add(user_orm)
                 session.commit()
@@ -145,7 +150,7 @@ class RDBUserMapper(UserMapper):
                 return stored_user
 
     def edit(
-        self, user: Union[UserWithPassword, BasicUser], context: Any = None
+        self, user: UserWithPassword | BasicUser, context: Any = None
     ) -> User:
         with Session(self.storage.engine) as session:
             curr_user, user_orm = DBReader.get_user(user.username, session)
@@ -163,8 +168,8 @@ class RDBUserMapper(UserMapper):
             user, _ = DBReader.get_user(username, session)
             return user
 
-    def list(self, context: Any = None) -> List[str]:
-        users: List[str] = []
+    def list_all(self, context: Any = None) -> list[str]:
+        users: list[str] = []
         with Session(self.storage.engine) as session:
             user_orms = session.scalars(select(DBUser))
             for user_orm in user_orms:
@@ -184,7 +189,7 @@ class RDBUserMapper(UserMapper):
             return user
 
     def _build_user(
-        self, user: User, session: Session, user_orm: Optional[DBUser] = None
+        self, user: User, session: Session, user_orm: DBUser | None = None
     ) -> DBUser:
         """Creates or updeates a DB user object from a model."""
         if user_orm is None:
@@ -244,8 +249,8 @@ class RDBGroupMapper(GroupMapper):
             group, _ = DBReader.get_group(group_name, session)
             return group
 
-    def list(self, context: Any = None) -> List[str]:
-        groups: List[str] = []
+    def list_all(self, context: Any = None) -> list[str]:
+        groups: list[str] = []
         with Session(self.storage.engine) as session:
             group_orms = session.scalars(select(DBGroup))
             for group_orm in group_orms:
@@ -263,7 +268,7 @@ class RDBGroupMapper(GroupMapper):
         self,
         group: Group,
         session: Session,
-        group_orm: Optional[DBGroup] = None,
+        group_orm: DBGroup | None = None,
     ) -> DBGroup:
         """Creates or updates a DB group object from a model."""
         if group_orm is None:
@@ -322,7 +327,7 @@ class RDBPermissionMapper(PermissionMapper):
             )
             return perm
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         with Session(self.storage.engine) as session:
             permissions, _ = DBReader.get_permissions(session)
             return [permission.to_str() for permission in permissions]

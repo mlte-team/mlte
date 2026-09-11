@@ -2,7 +2,7 @@
   <NuxtLayout name="base-layout">
     <title>Artifact Store</title>
     <template #page-title>Artifact Store</template>
-    <template #right-sidebar>
+    <template #left-sidebar>
       <div>
         <UsaTextInput
           v-model="newModelIdentifier"
@@ -12,7 +12,6 @@
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
-          style="margin-left: 0px"
           @click="createNewModel(newModelIdentifier)"
         >
           Create Model
@@ -27,7 +26,6 @@
         </UsaTextInput>
         <UsaButton
           class="secondary-button margin-button"
-          style="margin-left: 0px"
           @click="submitNewVersion(selectedModel, newVersionIdentifier)"
         >
           Create Version
@@ -365,16 +363,12 @@ const testSuiteModalVisible = ref<boolean>(false);
 const testSuiteTemplate = ref<string>("");
 
 const selectedModel = useCookie("selectedModel", {
-  decode(value) {
-    return decodeURIComponent(value);
-  },
+  default: () => "",
 });
-
 selectedModel.value = selectedModel.value || "";
+
 const selectedVersion = useCookie("selectedVersion", {
-  decode(value) {
-    return decodeURIComponent(value);
-  },
+  default: () => "",
 });
 selectedVersion.value = selectedVersion.value || "";
 

@@ -6,7 +6,7 @@ Fixtures for artifact store HTTP unit tests.
 
 from __future__ import annotations
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import pytest
 
@@ -19,11 +19,11 @@ from test.backend.fixture.test_api import TestAPI
 
 
 @pytest.fixture(scope="function")
-def mem_store_test_api() -> Callable[[Optional[UserWithPassword]], TestAPI]:
+def mem_store_test_api() -> Callable[[UserWithPassword | None], TestAPI]:
     """Sets up a memory-based test API and returns it."""
 
     def wrapper(
-        api_user: Optional[UserWithPassword] = None,
+        api_user: UserWithPassword | None = None,
     ) -> TestAPI:
         return TestAPI(user=api_user)
 

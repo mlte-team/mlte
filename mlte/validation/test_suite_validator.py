@@ -4,8 +4,6 @@ Class in charge of validating a TestSuite.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from mlte.evidence.artifact import Evidence
 from mlte.results.result import Result
 from mlte.results.test_results import TestResults
@@ -22,7 +20,7 @@ class TestSuiteValidator:
     """
 
     def __init__(
-        self, test_suite: Optional[TestSuite] = None, test_suite_id: str = ""
+        self, test_suite: TestSuite | None = None, test_suite_id: str = ""
     ):
         """
         Initialize a TestSuiteValidator instance.

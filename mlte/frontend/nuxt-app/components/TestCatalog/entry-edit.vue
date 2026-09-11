@@ -84,11 +84,7 @@
       :extensions="extensions"
     />
 
-    <UsaTextarea
-      v-model="modelValue.description"
-      :disabled="props.readOnly"
-      style="resize: both; width: 30rem; max-width: 100%"
-    >
+    <UsaTextarea v-model="modelValue.description" :disabled="props.readOnly">
       <template #label>
         Description
         <TemplatesTooltipInfo>

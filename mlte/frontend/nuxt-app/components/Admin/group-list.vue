@@ -19,7 +19,8 @@
           v-for="(permission, permissionIndex) in group.permissions"
           :key="permissionIndex"
         >
-          <div class="inline-input-left" style="max-width: 50ch">
+          <!-- TODO: Can this be adjusted to be grid cols? -->
+          <div style="max-width: 50ch">
             <span v-if="permission.resource_id === null">
               {{ permission.resource_type }} - (All) - {{ permission.method }}
             </span>
@@ -35,7 +36,7 @@
           Edit
         </UsaButton>
         <UsaButton
-          class="usa-button usa-button--secondary"
+          class="usa-button delete-button"
           @click="emit('deleteGroup', group.name)"
         >
           Delete

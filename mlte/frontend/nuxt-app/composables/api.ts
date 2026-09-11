@@ -75,10 +75,10 @@ export async function getToken(
   };
 
   const formBodyArray: Array<string> = [];
-  for (const property in details) {
-    const encodedKey = encodeURIComponent(property);
-    const encodedValue = encodeURIComponent(details[property]);
-    formBodyArray.push(encodedKey + "=" + encodedValue);
+  for (const [key, value] of Object.entries(details ?? {})) {
+    const encodedKey = encodeURIComponent(key);
+    const encodedValue = encodeURIComponent(value != null ? String(value) : "");
+    formBodyArray.push(`${encodedKey}=${encodedValue}`);
   }
   const formBodyStr: string = formBodyArray.join("&");
 
@@ -476,7 +476,7 @@ export async function getCard(
  * @param {string} model Model of the Version
  * @param {string} version Version to contain the Negotiation Card
  * @param {string} identifier Identifier for the Negotiation Card
- * @param {boolean} forceSave Force save true incidates an update to a Negotiatoin Card, false indates a new Negotation Card
+ * @param {boolean} forceSave Force save true incidates an update to a Negotiation Card, false indates a new Negotation Card
  * @param {NegotiationCardModel} card Negotiation Card to be saved
  * @returns {Promise<NegotiationCardModel | null>} Promise that resolves to saved Negotiation Card or null on failure
  */
@@ -559,10 +559,13 @@ export async function getSuite(
     "GET",
   );
   if (suite && suite.body.artifact_type == "suite") {
-    return suite;
-  } else {
-    return null;
+    if (isValidTestSuite(suite)) {
+      return suite;
+    } else {
+      invalidArtifactAlert("Test suite", suite.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 export async function getSuiteTemplate(
@@ -604,10 +607,13 @@ export async function getResults(
     "GET",
   );
   if (results && results.body.artifact_type == "results") {
-    return results;
-  } else {
-    return null;
+    if (isValidTestResults(results)) {
+      return results;
+    } else {
+      invalidArtifactAlert("Test results", results.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 /**
@@ -627,10 +633,13 @@ export async function getEvidence(
     "GET",
   );
   if (evidence && evidence.body.artifact_type == "evidence") {
-    return evidence;
-  } else {
-    return null;
+    if (isValidEvidence(evidence)) {
+      return evidence;
+    } else {
+      invalidArtifactAlert("Evidence", evidence.header.identifier, "loaded");
+    }
   }
+  return null;
 }
 
 // --------------------------------------------------------------------------------------------------------------

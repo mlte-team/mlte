@@ -9,7 +9,6 @@ from __future__ import annotations
 import random
 import string
 import typing
-from typing import List, Optional, Union
 
 from mlte._private import meta
 from mlte.artifact.factory import ArtifactFactory
@@ -53,7 +52,7 @@ class TypeUtil:
     """A static class for artifact type utilities."""
 
     @staticmethod
-    def all_others(type: ArtifactType) -> List[ArtifactType]:
+    def all_others(type: ArtifactType) -> list[ArtifactType]:
         """
         Return a collection of all artifact types that are not the given one.
         :param type: The excluded type
@@ -69,7 +68,7 @@ class ArtifactModelFactory:
     def make(
         type: ArtifactType,
         id: str = _random_id(),
-        user: Optional[str] = None,
+        user: str | None = None,
     ) -> ArtifactModel:
         """
         Construct an artifact model of the given type.
@@ -79,13 +78,13 @@ class ArtifactModelFactory:
         """
         header = ArtifactHeaderModel(identifier=id, type=type, creator=user)
 
-        body_model: Union[
-            NegotiationCardModel,
-            EvidenceModel,
-            TestSuiteModel,
-            TestResultsModel,
-            ReportModel,
-        ]
+        body_model: (
+            NegotiationCardModel
+            | EvidenceModel
+            | TestSuiteModel
+            | TestResultsModel
+            | ReportModel
+        )
         if type == ArtifactType.NEGOTIATION_CARD:
             body_model = _make_negotiation_card()
         elif type == ArtifactType.EVIDENCE:

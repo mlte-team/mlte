@@ -50,7 +50,7 @@ class SampleCatalog:
         """Ensures the sample catalog is reset to default values."""
         with ManagedCatalogSession(catalog_store.session()) as store:
             # First remove all existing entries.
-            entry_ids = store.entry_mapper.list()
+            entry_ids = store.entry_mapper.list_all()
             for entry_id in entry_ids:
                 store.entry_mapper.delete(entry_id)
 

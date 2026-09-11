@@ -6,7 +6,6 @@ import threading
 import time
 import traceback
 from abc import abstractmethod
-from typing import Optional
 
 from mlte._private import job
 from mlte.evidence.artifact import Evidence
@@ -46,7 +45,7 @@ class ProcessMeasurement(Measurement):
         return job.spawn_job(command[0], command[1:])
 
     def __init__(
-        self, test_case_id: Optional[str] = None, group: Optional[str] = None
+        self, test_case_id: str | None = None, group: str | None = None
     ):
         """
         Initialize a new ProcessMeasurement measurement.
@@ -54,15 +53,15 @@ class ProcessMeasurement(Measurement):
         :param test_case_id: A unique identifier for the measurement
         :param group: An optional group id, if we want to group this measurement with others.
         """
-        self.group: Optional[str] = group
+        self.group: str | None = group
         """An optional group id, if we want to group this measurement with others."""
 
         super().__init__(test_case_id)
 
-        self.thread: Optional[threading.Thread] = None
+        self.thread: threading.Thread | None = None
         """Thread that will be used to run the measurement process."""
 
-        self.stored_value: Optional[Evidence] = None
+        self.stored_value: Evidence | None = None
         """The result of the measurement."""
 
         self.error: str = ""

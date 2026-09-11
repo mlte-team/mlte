@@ -5,7 +5,7 @@ An Evidence instance for a scalar, integral value.
 from __future__ import annotations
 
 import typing
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -26,7 +26,7 @@ class Integer(Evidence):
     Integer implements the Value interface for a single integer value.
     """
 
-    def __init__(self, value: int, unit: Optional[Unit] = None):
+    def __init__(self, value: int, unit: Unit | None = None):
         """
         Initialize an Integer instance.
         :param value: The integer value
@@ -85,7 +85,7 @@ class Integer(Evidence):
     def less_than(
         cls,
         threshold: int,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -97,8 +97,8 @@ class Integer(Evidence):
         :return: The Validator that can be used to validate Evidence.
         """
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Integer], bool] = (
-            lambda integer: integer.get_value_w_units() < threshold_w_unit
+        bool_exp: Callable[[Integer], bool] = lambda integer: (
+            integer.get_value_w_units() < threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -115,7 +115,7 @@ class Integer(Evidence):
     def less_or_equal_to(
         cls,
         threshold: int,
-        unit: Optional[Unit] = None,
+        unit: Unit | None = None,
         success: str = "",
         failure: str = "",
     ) -> Validator:
@@ -127,8 +127,8 @@ class Integer(Evidence):
         :return: The Validator that can be used to validate Evidence.
         """
         threshold_w_unit = Quantity(threshold, unit)
-        bool_exp: Callable[[Integer], bool] = (
-            lambda integer: integer.get_value_w_units() <= threshold_w_unit
+        bool_exp: Callable[[Integer], bool] = lambda integer: (
+            integer.get_value_w_units() <= threshold_w_unit
         )
         validator: Validator = Validator.build_validator(
             bool_exp=bool_exp,
@@ -143,6 +143,6 @@ class Integer(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Integer:
+    def load(cls, identifier: str | None = None) -> Integer:
         evidence = super().load(identifier)
         return typing.cast(Integer, evidence)

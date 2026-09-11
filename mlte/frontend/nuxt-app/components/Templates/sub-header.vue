@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <h3 class="no-margin-sub-header" style="display: inline-block">
-      <slot />
+  <div class="inline-form-row" style="margin-top: 1rem">
+    <div class="grid-col-auto">
+      <h3>
+        <slot />
+      </h3>
+    </div>
+    <div class="grid-col-auto">
       <UsaButton
         v-if="props.renderExample"
         class="secondary-button"
@@ -9,30 +13,22 @@
       >
         Example
       </UsaButton>
-      <NuxtLink
-        v-if="props.renderModel"
-        target="_blank"
-        :to="{
-          path: '/etc/quality-model',
-        }"
-      >
-        <UsaButton class="secondary-button"> View Quality Model </UsaButton>
-      </NuxtLink>
-    </h3>
-    <TemplatesModalWrapper
-      :visible="exampleVisible"
-      @toggle-visible="(value) => (exampleVisible = value)"
-    >
-      <template #heading>Example:</template>
-      <slot name="example" />
-    </TemplatesModalWrapper>
-    <p v-if="props.renderInfo">
-      <slot name="info" />
-    </p>
+      <slot name="buttons" />
+    </div>
   </div>
+  <TemplatesModalWrapper
+    :visible="exampleVisible"
+    @toggle-visible="(value) => (exampleVisible = value)"
+  >
+    <template #heading>Example:</template>
+    <slot name="example" />
+  </TemplatesModalWrapper>
+  <p v-if="props.renderInfo">
+    <slot name="info" />
+  </p>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const exampleVisible = ref(false);
 
 const props = defineProps({
@@ -40,11 +36,6 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: true,
-  },
-  renderModel: {
-    type: Boolean,
-    required: false,
-    default: false,
   },
   renderInfo: {
     type: Boolean,

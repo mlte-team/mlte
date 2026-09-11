@@ -52,7 +52,7 @@ class CatalogEntryMapper(ResourceMapper):
     def read(self, entry_id: str, context: Any = None) -> CatalogEntry:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> typing.List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, entry_id: str, context: Any = None) -> CatalogEntry:
@@ -62,7 +62,7 @@ class CatalogEntryMapper(ResourceMapper):
         self,
         entry: CatalogEntry,
         context: Any = None,
-        user: typing.Optional[str] = None,
+        user: str | None = None,
     ) -> CatalogEntry:
         """Create an entry, generating the timestamp and adding creator. Internally calls the appropriate create implementation."""
         entry.header.created = int(time.time())
@@ -73,7 +73,7 @@ class CatalogEntryMapper(ResourceMapper):
         self,
         entry: CatalogEntry,
         context: Any = None,
-        user: typing.Optional[str] = None,
+        user: str | None = None,
     ) -> CatalogEntry:
         """Edit an entry, generating the proper timestamp. Internally calls the appropriate create implementation."""
         entry.header.updated = int(time.time())

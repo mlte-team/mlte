@@ -33,7 +33,7 @@ do
     if [[ "$file" == "ReviewPro/2f_evidence_time_behavior.ipynb" ]] && [[ -z "$OPENAI_API_KEY" ]]; then
       echo "Skipping notebook that requires unset API key env var."
     else
-      poetry run pytest --nbmake "$file"
+      uv run pytest --nbmake "$file"
     fi
   done
 done

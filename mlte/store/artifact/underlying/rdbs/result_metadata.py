@@ -5,7 +5,7 @@ as well as conversions between schema and internal models.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -31,15 +31,15 @@ class DBTestResults(DBBase):
     __tablename__ = "test_results"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_id: Mapped[Optional[DBArtifact]] = mapped_column(
+    artifact_id: Mapped[DBArtifact | None] = mapped_column(
         ForeignKey(DBArtifact.get_id_column())
     )
     test_suite_identifier: Mapped[str] = mapped_column()
-    test_suite_id: Mapped[Optional[int]] = mapped_column(
+    test_suite_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBTestSuite.get_id_column())
     )
 
-    artifact: Mapped[Optional[DBArtifact]] = relationship(
+    artifact: Mapped[DBArtifact | None] = relationship(
         back_populates="body_test_results", cascade="all"
     )
     test_suite: Mapped[DBTestSuite] = relationship()

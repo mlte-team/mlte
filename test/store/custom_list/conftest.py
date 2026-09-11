@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
-from typing import List, Optional
 
 import pytest
 from sqlalchemy import StaticPool
@@ -95,16 +94,17 @@ def create_test_custom_list_store(
 
 def get_test_list(
     name: CustomListName = DEFAULT_LIST_NAME,
-    entries: List[CustomListEntryModel] = [],
+    entries: list[CustomListEntryModel] | None = None,
 ) -> CustomListModel:
     """Helper to get a list structure."""
+    entries = entries or []
     return CustomListModel(name=name, entries=entries)
 
 
 def get_test_entry(
     name: str = DEFAULT_ENTRY_NAME,
     description: str = DEFAULT_ENTRY_DESCRIPTION,
-    parent: Optional[str] = DEFAULT_PARENT,
+    parent: str | None = DEFAULT_PARENT,
 ) -> CustomListEntryModel:
     """Helper to get a list entry structure."""
     return CustomListEntryModel(
@@ -113,8 +113,8 @@ def get_test_entry(
 
 
 def get_custom_list_uri(
-    custom_list_id: Optional[str] = None,
-    entry_id: Optional[str] = None,
+    custom_list_id: str | None = None,
+    entry_id: str | None = None,
     no_entry: bool = False,
 ):
     """Returns a proper URI for the endpoint based on the presence of the ids."""

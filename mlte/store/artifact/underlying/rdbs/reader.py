@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import ScalarResult, Select, select
 from sqlalchemy.orm import Session
 
@@ -116,7 +114,7 @@ class DBReader:
         """Reads the artifact with the given identifier using the provided session, and returns an internal object."""
         select_stmt = DBReader._get_version_artifacts_stmt(model_id, version_id)
         select_stmt = select_stmt.where(DBArtifact.identifier == artifact_id)
-        artifact_orm: Optional[DBArtifact] = session.scalar(select_stmt)
+        artifact_orm: DBArtifact | None = session.scalar(select_stmt)
 
         if artifact_orm is None:
             # Try at model level.

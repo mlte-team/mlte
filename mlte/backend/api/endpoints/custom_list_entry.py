@@ -1,7 +1,5 @@
 """Custom list Entry CRUD endpoints."""
 
-from typing import List, Optional
-
 from fastapi import APIRouter, HTTPException
 
 import mlte.backend.api.codes as codes
@@ -36,11 +34,13 @@ def create_custom_list_entry(
                 entry, CustomListName(custom_list_id)
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e}"
+            ) from None
         except errors.ErrorAlreadyExists as e:
             raise HTTPException(
                 status_code=codes.ALREADY_EXISTS, detail=f"Exists: {e}"
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -65,7 +65,7 @@ def read_custom_list_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -74,7 +74,7 @@ def read_custom_list_entry(
 def list_custom_lists(
     *,
     current_user: AuthorizedUser,
-) -> List[str]:
+) -> list[str]:
     """
     List MLTE custom lists.
     :return: A collection of list names
@@ -87,7 +87,7 @@ def list_custom_list_details(
     *,
     custom_list_id: str,
     current_user: AuthorizedUser,
-) -> List[CustomListEntryModel]:
+) -> list[CustomListEntryModel]:
     """
     List MLTE custom list, with details for each entry in list.
     :param custom_list_id: Name of custom list to read
@@ -120,7 +120,9 @@ def edit_custom_list_entry(
                 entry, CustomListName(custom_list_id)
             )
         except errors.ErrorNotFound as e:
-            raise HTTPException(status_code=codes.NOT_FOUND, detail=f"{e}")
+            raise HTTPException(
+                status_code=codes.NOT_FOUND, detail=f"{e}"
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -145,7 +147,7 @@ def delete_custom_list_entry(
         except errors.ErrorNotFound as e:
             raise HTTPException(
                 status_code=codes.NOT_FOUND, detail=f"{e} not found."
-            )
+            ) from None
         except Exception as e:
             raise_http_internal_error(e)
 
@@ -155,7 +157,7 @@ def get_custom_list_parent(
     *,
     custom_list_id: str,
     current_user: AuthorizedUser,
-) -> Optional[CustomListName]:
+) -> CustomListName | None:
     """
     Get the name of parent custom list of the given custom list.
     :param custom_list_id: Name of custom list to get parent of

@@ -84,9 +84,7 @@ def test_suite_validate():
                 identifier="case1",
                 goal="Check storage consumption",
                 quality_scenarios=["qas1"],
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
             ),
             TestCase(

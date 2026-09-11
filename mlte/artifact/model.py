@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional, Union
-
 from pydantic import ConfigDict, Field, model_validator
 from strenum import StrEnum
 
@@ -36,10 +34,10 @@ class ArtifactHeaderModel(BaseModel):
     type: ArtifactType
     """The type identfier for the artifact."""
 
-    timestamp: Optional[int] = -1
+    timestamp: int | None = -1
     """The timestamp of creation of this artifact, as Unix time."""
 
-    creator: Optional[str] = None
+    creator: str | None = None
     """The user that created this artifact."""
 
     level: ArtifactLevel = ArtifactLevel.VERSION
@@ -54,13 +52,13 @@ class ArtifactModel(Filterable):
     header: ArtifactHeaderModel
     """The artifact header."""
 
-    body: Union[
-        NegotiationCardModel,
-        EvidenceModel,
-        TestSuiteModel,
-        TestResultsModel,
-        ReportModel,
-    ] = Field(..., discriminator="artifact_type")
+    body: (
+        NegotiationCardModel
+        | EvidenceModel
+        | TestSuiteModel
+        | TestResultsModel
+        | ReportModel
+    ) = Field(..., discriminator="artifact_type")
     """The artifact body."""
 
     def get_identifier(self) -> str:

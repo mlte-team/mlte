@@ -9,10 +9,10 @@ from typing import Any
 class CompositeValidator:
     """Class to compose CrossValidators."""
 
-    def __init__(self, validators: list[CrossValidator] = []):
+    def __init__(self, validators: list[CrossValidator] | None = None):
         """Initialize a CompositeValidator instance."""
 
-        self.validators: list[CrossValidator] = validators
+        self.validators: list[CrossValidator] = validators if validators else []
         """List of validators to execute."""
 
     def validate_all(self, new_resource: Any):

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.model import BaseModel
 
@@ -27,7 +25,7 @@ class CustomListEntryModel(BaseModel):
     description: str
     """A description of the the entry."""
 
-    parent: Optional[str] = None
+    parent: str | None = None
     """ID of parent."""
 
     def __str__(self) -> str:

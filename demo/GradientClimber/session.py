@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from mlte.session import set_context, set_store

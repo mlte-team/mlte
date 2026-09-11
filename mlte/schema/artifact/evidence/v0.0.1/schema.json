@@ -190,6 +190,38 @@
       ],
       "title": "StringValueModel",
       "type": "object"
+    },
+    "UnavailableValueModel": {
+      "description": "The model implementation for MLTE values that could not be obtained.",
+      "properties": {
+        "evidence_type": {
+          "const": "unavailable",
+          "default": "unavailable",
+          "title": "Evidence Type",
+          "type": "string"
+        },
+        "details": {
+          "title": "Details",
+          "type": "string"
+        },
+        "traceback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Traceback"
+        }
+      },
+      "required": [
+        "details"
+      ],
+      "title": "UnavailableValueModel",
+      "type": "object"
     }
   },
   "description": "The model implementation for MLTE evidence.",
@@ -215,7 +247,8 @@
           "integer": "#/$defs/IntegerValueModel",
           "opaque": "#/$defs/OpaqueValueModel",
           "real": "#/$defs/RealValueModel",
-          "string": "#/$defs/StringValueModel"
+          "string": "#/$defs/StringValueModel",
+          "unavailable": "#/$defs/UnavailableValueModel"
         },
         "propertyName": "evidence_type"
       },
@@ -237,6 +270,9 @@
         },
         {
           "$ref": "#/$defs/StringValueModel"
+        },
+        {
+          "$ref": "#/$defs/UnavailableValueModel"
         }
       ],
       "title": "Value"

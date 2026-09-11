@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 
 from mlte.context.context import Context
 from mlte.evidence.types.image import Image
 from mlte.evidence.types.real import Real
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.external_measurement import ExternalMeasurement
 from mlte.measurement.storage import LocalObjectSize
 from mlte.negotiation.artifact import NegotiationCard
@@ -20,8 +21,9 @@ from test.negotiation.test_artifact import get_sample_negotiation_card
 
 
 def get_sample_test_suite(
-    identifier: Optional[str] = None, qas_ids: list[str] = []
+    identifier: str | None = None, qas_ids: list[str] | None = None
 ):
+    qas_ids = qas_ids or []
     test_suite = TestSuite(
         identifier=identifier if identifier else "test_suite",
         test_cases=[
@@ -29,9 +31,7 @@ def get_sample_test_suite(
                 identifier="model size",
                 goal="Check storage consumption",
                 quality_scenarios=qas_ids,
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
                 note="example note",
             ),
@@ -126,6 +126,10 @@ def test_run_measurements():
         """Internal function to simulate call to External measurement"""
         return sum(nums) / len(nums)
 
+    def broken_function():
+        """Throws an exception to simulate an issue."""
+        raise RuntimeError("Could not load resources to run measurement!")
+
     # Test suite to run measurements on.
     test_suite = TestSuite(
         test_cases=[
@@ -133,9 +137,7 @@ def test_run_measurements():
                 identifier="model size",
                 goal="Check storage consumption",
                 quality_scenarios=["qas3"],
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize(),
             ),
             TestCase(
@@ -160,6 +162,15 @@ def test_run_measurements():
                 quality_scenarios=["qas8"],
                 validator=Real.greater_than(0.9),
             ),
+            TestCase(
+                identifier="broken measurement",
+                goal="This test has a measurement with a bug/issue that will fail to generate a result.",
+                quality_scenarios=["qas8"],
+                validator=Real.greater_than(0.9),
+                measurement=ExternalMeasurement(
+                    output_evidence_type=Real, function=broken_function
+                ),
+            ),
         ]
     )
 
@@ -167,11 +178,12 @@ def test_run_measurements():
         "model size": ["./"],
         "overall accuracy": [[3, 4, 5]],
         "image attributions": ["test/evidence/types/flower3.jpg"],
+        "broken measurement": [0.95],
     }
 
     evidence = test_suite.run_measurements(input=inputs)
 
-    assert len(evidence) == 3
+    assert len(evidence) == len(inputs)
     assert (
         type(evidence["model size"]) is Real
         and evidence["model size"].value > 0
@@ -183,6 +195,7 @@ def test_run_measurements():
     assert type(evidence["image attributions"]) is Image and "Image" in str(
         evidence["image attributions"]
     )
+    assert type(evidence["broken measurement"]) is Unavailable
 
 
 def test_run_measurements_invalid_id():
@@ -195,9 +208,7 @@ def test_run_measurements_invalid_id():
                 identifier="model size",
                 goal="Check storage consumption",
                 quality_scenarios=["qas3"],
-                validator=LocalObjectSize.get_output_type().less_than(
-                    150000000
-                ),
+                validator=LocalObjectSize.output().less_than(150000000),
                 measurement=LocalObjectSize("model size"),
             ),
         ]

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional, Union
-
 from mlte.user.model import (
     BasicUser,
     Group,
@@ -30,7 +28,7 @@ class Policy:
 
     @staticmethod
     def _build_group_name(
-        prefix: str, resource_type: ResourceType, resource_id: Optional[str]
+        prefix: str, resource_type: ResourceType, resource_id: str | None
     ):
         """Builds group ids for the given prefix and resource id."""
         name = f"{prefix}{Policy.SEPARATOR}{resource_type}"
@@ -45,7 +43,7 @@ class Policy:
     def __init__(
         self,
         resource_type: ResourceType,
-        resource_id: Optional[str] = None,
+        resource_id: str | None = None,
         read_group: bool = True,
         edit_group: bool = True,
         create_group: bool = True,
@@ -143,8 +141,8 @@ class Policy:
         return groups
 
     def assign_to_user(
-        self, user: Union[UserWithPassword, BasicUser]
-    ) -> Union[UserWithPassword, BasicUser]:
+        self, user: UserWithPassword | BasicUser
+    ) -> UserWithPassword | BasicUser:
         """
         Add to this user object the groups from this policy he is not a member of.
         """

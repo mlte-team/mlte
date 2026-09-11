@@ -43,7 +43,7 @@ token.txt
 # docs
 docs/site
 
-# Pyenv conf
+# Pinned python conf
 .python-version
 
 /store*/
@@ -52,4 +52,4 @@ pgdata/
 default_store/
 
 .virtual_documents/
-
+.ruff_cache/

@@ -80,12 +80,11 @@ if (modelVersions) {
   });
 }
 
-if (modelVersions.length > 1) {
-  selectVersion(1, modelVersions[modelVersions.length - 2]);
-  selectVersion(2, modelVersions[modelVersions.length - 1]);
-} else if (modelVersions.length === 1) {
-  selectVersion(1, modelVersions[modelVersions.length - 1]);
-  selectVersion(2, modelVersions[modelVersions.length - 1]);
+const latestVersion = modelVersions.at(-1);
+if (latestVersion !== undefined) {
+  const secondLatestVersion = modelVersions.at(-2) ?? latestVersion;
+  selectVersion(1, secondLatestVersion);
+  selectVersion(2, latestVersion);
 }
 
 /**

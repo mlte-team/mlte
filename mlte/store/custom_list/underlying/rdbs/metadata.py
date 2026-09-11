@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -24,10 +22,10 @@ class DBCustomListEntry(DBBase):
     name: Mapped[str]
     description: Mapped[str]
 
-    parent_id: Mapped[Optional[int]] = mapped_column(
+    parent_id: Mapped[int | None] = mapped_column(
         ForeignKey("custom_list_entry.id"), nullable=True
     )
-    parent: Mapped[Optional[DBCustomListEntry]] = relationship(remote_side=[id])
+    parent: Mapped[DBCustomListEntry | None] = relationship(remote_side=[id])
     children: Mapped[list[DBCustomListEntry]] = relationship(
         back_populates="parent", cascade="all, delete-orphan"
     )

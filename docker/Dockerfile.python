@@ -1,6 +1,6 @@
 # Image definition for MLTE common code, to be used by backend and frontend.
 
-FROM python:3.12.10-slim-bookworm
+FROM python:3.13-slim-trixie
 
 # Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
 # NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format
@@ -20,16 +20,16 @@ RUN pipx ensurepath
 # Ensure we are not buffering output for clarity.
 ENV PYTHONUNBUFFERED=1
 
-# Setup poetry to handle dependencies.
-RUN pipx install poetry==2.0.1
+# Setup uv to handle dependencies.
+COPY --from=ghcr.io/astral-sh/uv:0.12 /uv /uvx /bin/
 ENV PATH="/root/.local/bin:$PATH"
 
 # Install Python deps.
 WORKDIR /mnt/app
 COPY pyproject.toml /mnt/app
-COPY poetry.lock /mnt/app
+COPY uv.lock /mnt/app
 COPY README.md /mnt/app
-RUN poetry install --no-root --all-extras
+RUN uv sync --no-install-project --all-extras --no-cache
 
 # Copy the rest of the MLTE code.
 # TODO: note that this is also copying all extra nuxt-app frontend code that is not needed.

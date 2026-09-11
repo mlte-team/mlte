@@ -1,13 +1,11 @@
 """Functions for bundling and unbundling remote catalog ids into the standard CatalogEntry entity."""
 
-from typing import Optional
-
 from mlte.catalog.model import CatalogEntry
 
 COMPOSITE_ID_SEPARATOR = "--"
 
 
-def split_ids(composite_id: str) -> tuple[Optional[str], str]:
+def split_ids(composite_id: str) -> tuple[str | None, str]:
     """Split a composite id, returning the first part, and the rest."""
     # We'll split it into two parts. If less, we just return the whole thing as the entry id.
     catalog_id = None
@@ -20,7 +18,7 @@ def split_ids(composite_id: str) -> tuple[Optional[str], str]:
     return catalog_id, entry_id
 
 
-def generate_composite_id(id1: Optional[str], id2: str) -> str:
+def generate_composite_id(id1: str | None, id2: str) -> str:
     """Creates a composite id given two ids."""
     if id1:
         return f"{id1}{COMPOSITE_ID_SEPARATOR}{id2}"

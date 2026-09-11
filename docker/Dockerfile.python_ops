@@ -4,9 +4,7 @@ FROM mlte-python
 WORKDIR /mnt/app
 
 # Install dev dependencies
-RUN poetry install --no-root --with dev,demo --all-extras \
-    && rm -rf /root/.cache/pypoetry/artifacts \
-    && rm -rf /root/.cache/pypoetry/cache
+RUN uv sync --no-install-project --group dev --group demo --all-extras --no-cache
 
 # Install jq for demo QA
 RUN apt-get install -y jq
@@ -17,11 +15,8 @@ RUN apt-get update && apt-get install -y git
 # Copy in files needed for QA/CI
 COPY .git .git
 COPY Makefile .
-COPY .flake8 .
 
 # Install MLTE package
-RUN poetry install \
-    && rm -rf /root/.cache/pypoetry/artifacts \
-    && rm -rf /root/.cache/pypoetry/cache
+RUN uv sync --group dev --group demo --all-extras --no-cache
 
 ENTRYPOINT ["make"]

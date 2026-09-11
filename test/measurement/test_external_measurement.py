@@ -6,7 +6,7 @@ Unit test for ExternalMeasurement.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -26,11 +26,11 @@ class BigInteger(ExternalEvidence):
         super().__init__()
         self.integer = integer
 
-    def serialize(self) -> Dict[str, Any]:
+    def serialize(self) -> dict[str, Any]:
         return {"integer": self.integer}
 
     @staticmethod
-    def deserialize(data: Dict[str, Any]) -> BigInteger:
+    def deserialize(data: dict[str, Any]) -> BigInteger:
         return BigInteger(data["integer"])
 
     def __eq__(self, other: object) -> bool:
@@ -190,14 +190,14 @@ def test_evaluate_tuple() -> None:
 def test_invalid_result_type() -> None:
     """An external measurement cannot be instantiated with a bad result type."""
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         _ = ExternalMeasurement("dummy", int)  # type: ignore
 
 
 def test_invalid_function() -> None:
     """An external measurement cannot be instantiated with a bad function type."""
 
-    with pytest.raises(Exception):
+    with pytest.raises(AttributeError):
         ExternalMeasurement("dummy", Integer, "not_a_function")  # type: ignore
 
 
@@ -207,8 +207,8 @@ def test_evaluate_invalid_args() -> None:
 
     measurement = ExternalMeasurement("dummy", Integer, _dummy_calculation)
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         _ = measurement.evaluate(x)
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         _ = measurement.evaluate(x, x, x)

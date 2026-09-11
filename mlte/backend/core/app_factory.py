@@ -13,7 +13,7 @@ from mlte.backend.api.auth.http_auth_exception import (
 from mlte.backend.core.config import settings
 
 
-def create(allowed_origins: list[str] = []) -> FastAPI:
+def create(allowed_origins: list[str] | None = None) -> FastAPI:
     """
     Create an instance of the application.
     :return: The app
@@ -30,7 +30,7 @@ def create(allowed_origins: list[str] = []) -> FastAPI:
 
     # Attach middleware
     # NOTE(Kyle): It is imporant middleware is applied AFTER routes are injected
-    if len(allowed_origins) > 0:
+    if allowed_origins and len(allowed_origins) > 0:
         app.add_middleware(
             CORSMiddleware,
             allow_origins=allowed_origins,
@@ -41,7 +41,8 @@ def create(allowed_origins: list[str] = []) -> FastAPI:
 
     # Add proper exception handling for Token responses, to be OAuth compliant.
     app.add_exception_handler(
-        HTTPTokenException, json_content_exception_handler  # type: ignore
+        HTTPTokenException,
+        json_content_exception_handler,  # type: ignore
     )
 
     return app

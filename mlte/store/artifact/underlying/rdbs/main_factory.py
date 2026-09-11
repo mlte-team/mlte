@@ -1,7 +1,6 @@
 """Creation of metadata objects from pydantic models."""
 
 import typing
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -42,8 +41,8 @@ def create_artifact_orm(
     version_id: str,
     level: ArtifactLevel,
     session: Session,
-    artifact_orm: Optional[DBArtifact] = None,
-) -> typing.Union[DBArtifact]:
+    artifact_orm: DBArtifact | None = None,
+) -> DBArtifact:
     """
     Converts an internal model to its corresponding DB object for artifacts.
     Can edit an existing ORM if provided.
@@ -134,13 +133,13 @@ def create_artifact_model(artifact_orm: DBArtifact) -> ArtifactModel:
     )
 
     # Create the body for the artifact from the ORM DB data.
-    body: typing.Union[
-        TestSuiteModel,
-        TestResultsModel,
-        NegotiationCardModel,
-        ReportModel,
-        EvidenceModel,
-    ]
+    body: (
+        TestSuiteModel
+        | TestResultsModel
+        | NegotiationCardModel
+        | ReportModel
+        | EvidenceModel
+    )
     if artifact_header.type == ArtifactType.NEGOTIATION_CARD:
         card_orm = typing.cast(
             DBNegotiationCard, artifact_orm.body_negotiation_card

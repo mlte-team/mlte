@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional, OrderedDict
+from collections import OrderedDict
+from typing import Any
 from urllib import parse as url_parse
 
 from mlte._private import url as url_utils
@@ -23,7 +24,7 @@ class HttpResourceStorage(Storage):
         self,
         uri: StoreURI,
         resource_type: ResourceType | str,
-        client: Optional[OAuthHttpClient] = None,
+        client: OAuthHttpClient | None = None,
     ) -> None:
         """
         Creates an HTTP storage for a specific resource.
@@ -57,42 +58,51 @@ class HttpResourceStorage(Storage):
         self.client.authenticate(f"{self.clean_url}{API_PREFIX}")
 
     def post(
-        self, json: Any, groups: OrderedDict[str, str] = OrderedDict()
+        self, json: Any, groups: OrderedDict[str, str] | None = None
     ) -> Any:
         """Post method, to create resource."""
-        return self.send_command(MethodType.POST, json=json, groups=groups)
+        return self.send_command(
+            MethodType.POST,
+            json=json,
+            groups=groups if groups else OrderedDict(),
+        )
 
     def put(
-        self, json: Any, groups: OrderedDict[str, str] = OrderedDict()
+        self, json: Any, groups: OrderedDict[str, str] | None = None
     ) -> Any:
         """Put method, to update resource."""
         return self.send_command(MethodType.PUT, json=json, groups=groups)
 
     def get(
         self,
-        id: Optional[str] = None,
-        groups: OrderedDict[str, str] = OrderedDict(),
-        query_args: dict[str, str] = {},
+        id: str | None = None,
+        groups: OrderedDict[str, str] | None = None,
+        query_args: dict[str, str] | None = None,
     ) -> Any:
         """Get method, to read resource."""
         return self.send_command(
-            MethodType.GET, id=id, groups=groups, query_args=query_args
+            MethodType.GET,
+            id=id,
+            groups=groups if groups else OrderedDict(),
+            query_args=query_args if query_args else {},
         )
 
     def delete(
-        self, id: str, groups: OrderedDict[str, str] = OrderedDict()
+        self, id: str, groups: OrderedDict[str, str] | None = None
     ) -> Any:
         """Delete method, to remove resource."""
-        return self.send_command(MethodType.DELETE, id=id, groups=groups)
+        return self.send_command(
+            MethodType.DELETE, id=id, groups=groups if groups else OrderedDict()
+        )
 
     def send_command(
         self,
         method: MethodType,
-        groups: OrderedDict[str, str] = OrderedDict(),
-        id: Optional[str] = None,
-        query_args: dict[str, str] = {},
-        json: Optional[Any] = None,
-        resource_type: Optional[str] = None,
+        groups: OrderedDict[str, str] | None = None,
+        id: str | None = None,
+        query_args: dict[str, str] | None = None,
+        json: Any | None = None,
+        resource_type: str | None = None,
     ) -> Any:
         """
         Sends an HTTP command request to the backend API, and returns a JSON response from it. Commonly not used directly, as it is expected
@@ -111,6 +121,7 @@ class HttpResourceStorage(Storage):
         path_url = ""
 
         # Add groups to path.
+        groups = groups if groups else OrderedDict()
         for group_id, subgroup_name in groups.items():
             path_url += f"/{url_utils.make_valid_url_part(group_id)}/{url_utils.make_valid_url_part(subgroup_name)}"
 
@@ -121,6 +132,7 @@ class HttpResourceStorage(Storage):
         # Add query args.
         query = ""
         link_char = "?"
+        query_args = query_args if query_args else {}
         for arg_name, arg_value in query_args.items():
             query += f"{link_char}{url_utils.make_valid_url_part(arg_name)}={url_utils.make_valid_url_part(arg_value)}"
             link_char = "&"

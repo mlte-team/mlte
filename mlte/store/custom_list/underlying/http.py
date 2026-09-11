@@ -1,7 +1,7 @@
 """Implementation of HTTP custom list store"""
 
 import typing
-from typing import Optional, OrderedDict
+from collections import OrderedDict
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.custom_list.model import CustomListEntryModel
@@ -27,7 +27,7 @@ class HttpCustomListStore(CustomListStore):
     """A http implementation of the MLTE custom list store."""
 
     def __init__(
-        self, *, uri: StoreURI, client: Optional[OAuthHttpClient] = None
+        self, *, uri: StoreURI, client: OAuthHttpClient | None = None
     ) -> None:
         super().__init__(uri=uri)
 
@@ -78,7 +78,7 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
     def create(
         self,
         new_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.post(
@@ -87,7 +87,7 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
         return CustomListEntryModel(**response)
 
     def read(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.get(
@@ -95,7 +95,7 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
         )
         return CustomListEntryModel(**response)
 
-    def list(self, list_name: Optional[CustomListName] = None) -> list[str]:
+    def list_all(self, list_name: CustomListName | None = None) -> list[str]:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.get(id=list_name)
         list_details = typing.cast(list[dict[str, str]], response)
@@ -105,7 +105,7 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
     def edit(
         self,
         updated_entry: CustomListEntryModel,
-        list_name: Optional[CustomListName] = None,
+        list_name: CustomListName | None = None,
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.put(
@@ -114,7 +114,7 @@ class HttpCustomListEntryMapper(CustomListEntryMapper):
         return CustomListEntryModel(**response)
 
     def delete(
-        self, entry_name: str, list_name: Optional[CustomListName] = None
+        self, entry_name: str, list_name: CustomListName | None = None
     ) -> CustomListEntryModel:
         list_name = self._check_valid_custom_list(list_name)
         response = self.storage.delete(

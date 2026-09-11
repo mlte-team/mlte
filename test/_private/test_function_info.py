@@ -4,7 +4,6 @@ Unit test for the function info util module.
 
 import inspect
 from types import FrameType
-from typing import Optional
 
 from mlte._private.function_info import FunctionInfo
 
@@ -20,7 +19,7 @@ top_frame = inspect.currentframe()
 class TestFuncClass:
     """Sample test class to test getting its info."""
 
-    def func_to_test(self, a: str) -> Optional[FrameType]:
+    def func_to_test(self, a: str) -> FrameType | None:
         """This test function returns the frame being called from here."""
         curr_frame = inspect.currentframe()
         return curr_frame

@@ -5,8 +5,6 @@ as well as conversions between schema and internal models.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -21,11 +19,11 @@ class DBTestSuite(DBBase):
     __tablename__ = "test_suite"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    artifact_id: Mapped[Optional[DBArtifact]] = mapped_column(
+    artifact_id: Mapped[DBArtifact | None] = mapped_column(
         ForeignKey(DBArtifact.get_id_column())
     )
 
-    artifact: Mapped[Optional[DBArtifact]] = relationship(
+    artifact: Mapped[DBArtifact | None] = relationship(
         back_populates="body_test_suite", cascade="all"
     )
     test_cases: Mapped[list[DBTestCase]] = relationship(
@@ -43,8 +41,8 @@ class DBTestCase(DBBase):
     identifier: Mapped[str]
     goal: Mapped[str]
     qas_list: Mapped[str]
-    measurement_metadata: Mapped[Optional[str]]
-    validator: Mapped[Optional[str]]
+    measurement_metadata: Mapped[str | None]
+    validator: Mapped[str | None]
     test_suite_id: Mapped[int] = mapped_column(
         ForeignKey(DBTestSuite.get_id_column())
     )

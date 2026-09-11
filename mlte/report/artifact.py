@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import datetime
+import re
 import typing
-from typing import List, Optional
 
 from mlte.artifact.artifact import Artifact
 from mlte.artifact.model import ArtifactModel
@@ -24,19 +24,19 @@ from mlte.suite.test_suite import TestSuite
 class Report(Artifact):
     """The report artifact contains the results of MLTE model evaluation."""
 
-    type = ArtifactType.REPORT
+    type_ = ArtifactType.REPORT
     """Class attribute indicating type."""
 
     def __init__(
         self,
-        identifier: Optional[str] = None,
+        identifier: str | None = None,
         negotiation_card_id: str = NegotiationCard.build_full_id(),
-        negotiation_card_model: Optional[NegotiationCardModel] = None,
+        negotiation_card_model: NegotiationCardModel | None = None,
         test_suite_id: str = TestSuite.build_full_id(),
-        test_suite_model: Optional[TestSuiteModel] = None,
+        test_suite_model: TestSuiteModel | None = None,
         test_results_id: str = TestResults.build_full_id(),
-        test_results_model: Optional[TestResultsModel] = None,
-        comments: List[CommentDescriptor] = [],
+        test_results_model: TestResultsModel | None = None,
+        comments: list[CommentDescriptor] | None = None,
     ) -> None:
         """
         Creates a Report.
@@ -84,7 +84,7 @@ class Report(Artifact):
         )
         """A summary of model performance evaluation."""
 
-        self.comments = comments
+        self.comments = comments if comments else []
         """A collection of comments for the report."""
 
     def to_model(self) -> ArtifactModel:
@@ -105,12 +105,12 @@ class Report(Artifact):
     @classmethod
     def from_model(cls, model: BaseModel) -> Report:
         """Convert a report model to its corresponding artifact."""
-        assert isinstance(
-            model, ArtifactModel
-        ), "Can't create object from non-ArtifactModel model."
-        assert (
-            model.header.type == ArtifactType.REPORT
-        ), "Type should be Report."
+        assert isinstance(model, ArtifactModel), (
+            "Can't create object from non-ArtifactModel model."
+        )
+        assert model.header.type == ArtifactType.REPORT, (
+            "Type should be Report."
+        )
         body = typing.cast(ReportModel, model.body)
         return Report(
             identifier=model.header.identifier,
@@ -125,7 +125,7 @@ class Report(Artifact):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Report:
+    def load(cls, identifier: str | None = None) -> Report:
         """
         Load a Report from the configured global session.
         :param identifier: The identifier for the artifact. If None,
@@ -140,9 +140,11 @@ class Report(Artifact):
         Override Artifact.pre_save_hook(). Assigns time-stamped id to report, to ensure all have different ids.
         :param context: The context in which to save the artifact
         :param store: The store in which to save the artifact
-        :raises RuntimeError: On broken invariant
         """
-        self.identifier = f"{self.identifier}-{datetime.datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        # Ensure that, if the id already had a timestamp, it is removed first.
+        timestamp_suffix = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        cleaned_id = re.sub(r"-\d{8}-\d{6}$", "", self.identifier)
+        self.identifier = f"{cleaned_id}-{timestamp_suffix}"
 
     # ----------------------------------------------------------------------------------
     # Helper methods.

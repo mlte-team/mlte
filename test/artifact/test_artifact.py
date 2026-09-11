@@ -123,8 +123,8 @@ def test_artifact_parents(
     # The write succeeds
     with ManagedArtifactSession(store.session()) as artifact_store:
         # The organizational elements are present
-        assert len(artifact_store.model_mapper.list()) == 1
-        assert len(artifact_store.version_mapper.list(ctx.model)) == 1
+        assert len(artifact_store.model_mapper.list_all()) == 1
+        assert len(artifact_store.version_mapper.list_all(ctx.model)) == 1
 
         # The artifact is present
         artifact_store.artifact_mapper.read(

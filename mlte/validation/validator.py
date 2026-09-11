@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import inspect
 import typing
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from mlte._private import meta, reflection, serializing
 from mlte._private.fixed_json import json
 from mlte._private.function_info import FunctionInfo
-from mlte.evidence.artifact import Evidence
+from mlte.evidence.unavailable import Unavailable, UnavailableException
 from mlte.model.base_model import BaseModel
 from mlte.model.serializable import Serializable
 from mlte.results.result import Failure, Info, Result, Success
@@ -24,15 +25,15 @@ class Validator(Serializable):
     def __init__(
         self,
         *,
-        bool_exp: Optional[Callable[[Any], bool]] = None,
-        thresholds: list[str] = [],
-        success: Optional[str] = None,
-        failure: Optional[str] = None,
+        bool_exp: Callable[[Any], bool] | None = None,
+        thresholds: list[str] | None = None,
+        success: str | None = None,
+        failure: str | None = None,
         default_success: str = "",
         default_failure: str = "",
-        info: Optional[str] = None,
-        input_types: list[str] = [],
-        creator: Optional[FunctionInfo] = None,
+        info: str | None = None,
+        input_types: list[str] | None = None,
+        creator: FunctionInfo | None = None,
     ):
         """
         Constructor.
@@ -67,13 +68,13 @@ class Validator(Serializable):
             )
 
         self.bool_exp = bool_exp
-        self.thresholds = thresholds.copy()
+        self.thresholds = thresholds.copy() if thresholds else []
         self.success = success
         self.failure = failure
         self.default_success = default_success
         self.default_failure = default_failure
         self.info = info
-        self.input_types = input_types
+        self.input_types = input_types if input_types else []
         self.creator = creator
 
         self.bool_exp_str = (
@@ -85,14 +86,14 @@ class Validator(Serializable):
 
     @staticmethod
     def build_validator(
-        bool_exp: Optional[Callable[[Any], bool]] = None,
-        thresholds: list[Any] = [],
-        success: Optional[str] = None,
-        failure: Optional[str] = None,
+        bool_exp: Callable[[Any], bool] | None = None,
+        thresholds: list[Any] | None = None,
+        success: str | None = None,
+        failure: str | None = None,
         default_success: str = "",
         default_failure: str = "",
-        info: Optional[str] = None,
-        input_types: list[type] = [Evidence],
+        info: str | None = None,
+        input_types: list[type] | None = None,
     ) -> Validator:
         """
         Creates a Validator using the provided test, extracting context info from the function that called us.
@@ -113,9 +114,12 @@ class Validator(Serializable):
         function_info = FunctionInfo.get_function_info(caller_function)
 
         # Build the validator. We can't really check at this point if the bool_exp actually returns a bool.
+        input_types = input_types if input_types else []
         validator = Validator(
             bool_exp=bool_exp,
-            thresholds=[str(threshold) for threshold in thresholds],
+            thresholds=[str(threshold) for threshold in thresholds]
+            if thresholds
+            else [],
             success=success,
             failure=failure,
             default_success=default_success,
@@ -154,11 +158,19 @@ class Validator(Serializable):
                 "Can't validate, Validator has no bool expression and is also missing informational message that is used in those cases."
             )
 
-        # Check we got proper arguments.
-        self._check_arguments(*args, **kwargs)
+        try:
+            # Check we got proper arguments.
+            self._check_arguments(*args, **kwargs)
+        except UnavailableException as ue:
+            return Failure(
+                str(ue),
+                additional_data=ue.unavailable.traceback
+                if ue.unavailable.traceback
+                else "",
+            )
 
         # First execute bool expression (if any), and get its boolean result.
-        executed_bool_exp_value: Optional[bool] = None
+        executed_bool_exp_value: bool | None = None
         if self.bool_exp is not None:
             executed_bool_exp_value = self.bool_exp(*args, **kwargs)
             if not isinstance(executed_bool_exp_value, bool):
@@ -202,6 +214,8 @@ class Validator(Serializable):
 
         for input_type in self.input_types:
             for arg in all_arguments:
+                if type(arg) is Unavailable:
+                    raise UnavailableException(arg)
                 if input_type != meta.get_qualified_name(type(arg)):
                     raise RuntimeError(
                         f"Invalid argument type received: expected {input_type}, received {meta.get_qualified_name(type(arg))}"

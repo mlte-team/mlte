@@ -5,7 +5,6 @@ from __future__ import annotations
 import subprocess
 import time
 from subprocess import SubprocessError
-from typing import Optional
 
 from mlte._private.platform import is_windows
 from mlte.measurement.common import CommonStatistics
@@ -52,9 +51,7 @@ class CPUStatistics(CommonStatistics):
 class LocalProcessCPUUtilization(ProcessMeasurement):
     """Measures CPU utilization for a local process."""
 
-    def __init__(
-        self, identifier: Optional[str] = None, group: Optional[str] = None
-    ):
+    def __init__(self, identifier: str | None = None, group: str | None = None):
         """
         Initialize a new LocalProcessCPUUtilization measurement.
 
@@ -94,7 +91,7 @@ class LocalProcessCPUUtilization(ProcessMeasurement):
 
     # Overriden.
     @classmethod
-    def get_output_type(cls) -> type[CPUStatistics]:
+    def output(cls) -> type[CPUStatistics]:
         return CPUStatistics
 
 
@@ -123,4 +120,4 @@ def _get_cpu_usage(pid: int) -> float:
     except FileNotFoundError as e:
         raise RuntimeError(
             f"External program needed to get CPU usage was not found: {e}"
-        )
+        ) from None

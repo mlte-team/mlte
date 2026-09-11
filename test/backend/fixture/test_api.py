@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Optional
+from typing import Any
 
-import httpx
 from fastapi.testclient import TestClient
+from httpx2 import Response
 
 import mlte.backend.core.app_factory as app_factory
 from mlte.backend.api import codes
@@ -35,32 +35,32 @@ class FastAPITestHttpClient(OAuthHttpClient):
     def __init__(
         self,
         client: TestClient,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
     ) -> None:
         super().__init__(username, password)
 
         self.client = client
         """The underlying client."""
 
-    def get(self, url: str, **kwargs) -> httpx.Response:
+    def get(self, url: str, **kwargs) -> Response:
         return self.client.get(url, headers=self.headers, **kwargs)
 
     def post(
         self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> httpx.Response:
+    ) -> Response:
         return self.client.post(
             url, headers=self.headers, data=data, json=json, **kwargs
         )
 
     def put(
         self, url: str, data: Any = None, json: Any = None, **kwargs
-    ) -> httpx.Response:
+    ) -> Response:
         return self.client.put(
             url, headers=self.headers, data=data, json=json, **kwargs
         )
 
-    def delete(self, url: str, **kwargs) -> httpx.Response:
+    def delete(self, url: str, **kwargs) -> Response:
         return self.client.delete(url, headers=self.headers, **kwargs)
 
 
@@ -77,8 +77,8 @@ class TestAPI:
 
     def __init__(
         self,
-        user: Optional[UserWithPassword] = None,
-        catalog_uris: dict[str, StoreURI] = {},
+        user: UserWithPassword | None = None,
+        catalog_uris: dict[str, StoreURI] | None = None,
     ) -> None:
         """Setup API, configure to use memory artifact store and create app itself."""
 
@@ -87,6 +87,7 @@ class TestAPI:
 
         # Set up API global state.
         state.reset()
+        catalog_uris = catalog_uris or {}
         state.stores = setup_stores(
             StoreURI.from_type(StoreType.LOCAL_MEMORY), catalog_uris
         )
@@ -96,7 +97,7 @@ class TestAPI:
         self.set_user(user)
         self.set_admin_user()
 
-    def set_user(self, user: Optional[UserWithPassword]):
+    def set_user(self, user: UserWithPassword | None):
         """Set up default user to use API."""
         user_store = typing.cast(InMemoryUserStore, state.stores.user_store)
         self.user = user
@@ -141,7 +142,7 @@ class TestAPI:
         return self._get_authenticated_client(user_generator.build_admin_user())
 
     def _get_authenticated_client(
-        self, user: Optional[UserWithPassword]
+        self, user: UserWithPassword | None
     ) -> FastAPITestHttpClient:
         """Returns a client configured for test and authenticated (if provided user is valid)."""
         # Create the test client, and authenticate to get token and allow protected endpoints to work.

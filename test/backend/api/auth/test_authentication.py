@@ -30,7 +30,7 @@ def set_test_user(
 # -----------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_authenticate_valid_user(
     store_type: StoreType, create_test_user_store
 ) -> None:
@@ -51,7 +51,7 @@ def test_authenticate_valid_user(
         assert success
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_authenticate_inexistent_user(
     store_type: StoreType, create_test_user_store
 ) -> None:
@@ -70,7 +70,7 @@ def test_authenticate_inexistent_user(
         assert not success
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_authenticate_wrong_password(
     store_type: StoreType, create_test_user_store
 ) -> None:

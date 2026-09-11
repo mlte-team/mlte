@@ -4,15 +4,16 @@ Superclass for all measurements.
 
 from __future__ import annotations
 
+import traceback
 import typing
 from abc import abstractmethod
-from typing import Optional
 
 import mlte._private.meta as meta
 from mlte._private.reflection import load_class_or_function
 from mlte.evidence.artifact import Evidence
 from mlte.evidence.metadata import EvidenceMetadata
 from mlte.evidence.types.opaque import Opaque
+from mlte.evidence.unavailable import Unavailable
 from mlte.measurement.model import MeasurementMetadata
 
 
@@ -21,12 +22,20 @@ class Measurement:
     The superclass for all model measurements.
     """
 
-    def __init__(self, test_case_id: Optional[str] = None):
+    force_stop: bool = True
+    """Attribute to force raising an Exception when error is encountered when running a measurement.
+    If False, will return an Unavailable Evidence type instead with the error details. Default to true."""
+
+    def __init__(
+        self, test_case_id: str | None = None, force_stop: bool = True
+    ):
         """Constructor."""
 
+        self.force_stop = force_stop
+
         # Initialize with no values.
-        self.test_case_id: Optional[str] = None
-        self.evidence_metadata: Optional[EvidenceMetadata] = None
+        self.test_case_id: str | None = None
+        self.evidence_metadata: EvidenceMetadata | None = None
 
         if test_case_id is not None:
             # Set our id to the test case id, and generate our evidence metadata.
@@ -81,13 +90,22 @@ class Measurement:
                 "Can't evaluate measurement before setting its id"
             )
 
-        # Evaluate the measurement
-        return self.__call__(*args, **kwargs).with_metadata(
-            self.evidence_metadata
-        )
+        # Evaluate the measurement.
+        try:
+            return self.__call__(*args, **kwargs).with_metadata(
+                self.evidence_metadata
+            )
+        except Exception as e:
+            # If we want to force stop on error, just re-throw, otherwise return as Unavailable evidence.
+            if self.force_stop:
+                raise e
+            else:
+                return Unavailable(
+                    details=str(e), traceback=traceback.format_exc()
+                ).with_metadata(self.evidence_metadata)
 
     @classmethod
-    def get_output_type(cls) -> type[Evidence]:
+    def output(cls) -> type[Evidence]:
         """Returns the class type object for the Evidence produced by the Measurement."""
         # Opaque is the default Evidence type.
         return Opaque
@@ -100,7 +118,7 @@ class Measurement:
         """Returns Measurement metadata."""
         return MeasurementMetadata(
             measurement_class=meta.get_qualified_name(self.__class__),
-            output_class=meta.get_qualified_name(self.get_output_type()),
+            output_class=meta.get_qualified_name(self.output()),
         )
 
     @classmethod

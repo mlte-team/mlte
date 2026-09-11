@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import mlte.store.error as errors
 from mlte.artifact.model import ArtifactModel
@@ -56,7 +56,7 @@ class ModelMapper(ResourceMapper):
     def read(self, model_id: str, context: Any = None) -> Model:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(self, model: Model, context: Any = None) -> Model:
@@ -75,7 +75,7 @@ class VersionMapper(ResourceMapper):
     def read(self, version_id: str, model_id: str) -> Version:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(self, version: Version, model_id: str) -> Version:
@@ -106,7 +106,7 @@ class ArtifactMapper(ResourceMapper):
     ) -> ArtifactModel:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+    def list_all(self, model_and_version: tuple[str, str]) -> list[str]:
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(
@@ -122,7 +122,7 @@ class ArtifactMapper(ResourceMapper):
         raise NotImplementedError(ResourceMapper.NOT_IMPLEMENTED_ERROR_MSG)
 
     def _add_header_data(
-        self, artifact: ArtifactModel, user: Optional[str]
+        self, artifact: ArtifactModel, user: str | None
     ) -> ArtifactModel:
         """Adds time and creator data to model."""
         artifact.header.timestamp = int(time.time())
@@ -136,7 +136,7 @@ class ArtifactMapper(ResourceMapper):
         artifact: ArtifactModel,
         *,
         force: bool = False,
-        user: Optional[str] = None,
+        user: str | None = None,
     ) -> ArtifactModel:
         """
         Write an artifact, generating the timestamp and adding creator. Internally calls the actual write_artifact implementation.

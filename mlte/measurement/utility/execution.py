@@ -1,10 +1,11 @@
 """Utilities for execution of measurements."""
 
 import concurrent.futures
-from typing import Any, Callable, List
+from collections.abc import Callable
+from typing import Any
 
 
-def concurrently(*callables: Callable[[], Any]) -> List[Any]:
+def concurrently(*callables: Callable[[], Any]) -> list[Any]:
     """
     Run an arbitrary number of functions concurrently.
 

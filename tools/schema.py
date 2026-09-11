@@ -9,7 +9,7 @@ import logging
 import sys
 import typing
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import deepdiff
 from pydantic import BaseModel
@@ -54,7 +54,7 @@ class Config:
         self.output_path = OUTPUT_BASE / sub_path / output_path / "schema.json"
         """The path to which the model is dumped."""
 
-    def generate(self) -> Dict[str, Any]:
+    def generate(self) -> dict[str, Any]:
         """Generate the schema for the configuration."""
         klass = self.model.resolve()
         return klass.model_json_schema()

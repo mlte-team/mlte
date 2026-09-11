@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -35,14 +33,14 @@ class DBReport(DBBase):
 
     # Test Suite.
     test_suite_identifier: Mapped[str] = mapped_column()
-    test_suite_id: Mapped[Optional[str]] = mapped_column(
+    test_suite_id: Mapped[str | None] = mapped_column(
         ForeignKey(DBTestSuite.get_id_column(), ondelete="SET NULL")
     )
     test_suite: Mapped[DBTestSuite] = relationship()
 
     # Results.
     test_results_identifier: Mapped[str] = mapped_column()
-    test_results_id: Mapped[Optional[str]] = mapped_column(
+    test_results_id: Mapped[str | None] = mapped_column(
         ForeignKey(DBTestResults.get_id_column(), ondelete="SET NULL")
     )
     test_results: Mapped[DBTestResults] = relationship()
@@ -60,8 +58,8 @@ class DBCommentDescriptor(DBBase):
     __tablename__ = "report_comment"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    content: Mapped[Optional[str]]
-    report_id: Mapped[Optional[int]] = mapped_column(
+    content: Mapped[str | None]
+    report_id: Mapped[int | None] = mapped_column(
         ForeignKey(DBReport.get_id_column())
     )
 

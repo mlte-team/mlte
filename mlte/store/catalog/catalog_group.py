@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Dict, List, Optional, cast
+from typing import cast
 
 from mlte.catalog.model import CatalogEntry
 from mlte.store.base import ManagedSession, StoreSession, StoreURI
@@ -21,7 +21,7 @@ class CatalogStoreGroup:
 
     def __init__(self):
         """Initialization."""
-        self.catalogs: Dict[str, CatalogStore] = {}
+        self.catalogs: dict[str, CatalogStore] = {}
         """Dictionary with all catalogs in this group."""
 
     def add_catalog_from_uri(
@@ -71,9 +71,9 @@ class CatalogStoreGroup:
 class CatalogStoreGroupSession(StoreSession):
     """Sessions for all catalogs in a group."""
 
-    def __init__(self, catalogs: Dict[str, CatalogStore]):
+    def __init__(self, catalogs: dict[str, CatalogStore]):
         """Initialize a session instance for each catalog."""
-        self.sessions: Dict[str, CatalogStoreSession] = {}
+        self.sessions: dict[str, CatalogStoreSession] = {}
         """Sessions for all catalogs in the group."""
 
         for id, catalog in catalogs.items():
@@ -94,10 +94,10 @@ class CatalogStoreGroupSession(StoreSession):
 
     def list_details(
         self,
-        catalog_id: Optional[str] = None,
+        catalog_id: str | None = None,
         limit: int = 100,
         offset: int = 0,
-    ) -> List[CatalogEntry]:
+    ) -> list[CatalogEntry]:
         """
         Read entries within limit and offset.
         :param catalog_id: The identifier of the catalog to read from; if not given, read from all catalogs.
@@ -110,15 +110,16 @@ class CatalogStoreGroupSession(StoreSession):
 
     def search(
         self,
-        catalog_id: Optional[str] = None,
-        query: Query = Query(),
-    ) -> List[CatalogEntry]:
+        catalog_id: str | None = None,
+        query: Query | None = None,
+    ) -> list[CatalogEntry]:
         """
         Read a collection of entries, optionally filtered.
         :param catalog_id: The identifier of the catalog to read from; if not given, search on all catalogs.
         :param query: The entry query to apply
         :return: A collection of entries that satisfy the filter
         """
+        query = query if query else Query()
         if catalog_id is not None:
             if catalog_id not in self.sessions:
                 raise ErrorNotFound(
@@ -127,7 +128,7 @@ class CatalogStoreGroupSession(StoreSession):
 
             catalog_session = self.sessions[catalog_id]
             entries = typing.cast(
-                List[CatalogEntry], catalog_session.entry_mapper.search(query)
+                list[CatalogEntry], catalog_session.entry_mapper.search(query)
             )
 
             # Ensure they are marked as coming from this catalog.
@@ -136,11 +137,11 @@ class CatalogStoreGroupSession(StoreSession):
             return entries
         else:
             # Go over all catalogs, reading from each one, and grouping results.
-            results: List[CatalogEntry] = []
+            results: list[CatalogEntry] = []
             for catalog_id, session in self.sessions.items():
                 # Get results for this catalog.
                 partial_results = typing.cast(
-                    List[CatalogEntry], session.entry_mapper.search(query)
+                    list[CatalogEntry], session.entry_mapper.search(query)
                 )
 
                 # Ensure they are marked as coming from this catalog.

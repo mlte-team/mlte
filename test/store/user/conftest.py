@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import typing
 from pathlib import Path
-from typing import Optional
 
 import pytest
 from sqlalchemy.pool import StaticPool
@@ -19,7 +18,7 @@ from mlte.store.user.underlying.rdbs.store import RelationalDBUserStore
 from test.store.defaults import IN_MEMORY_SQLITE_DB
 from test.store.utils import create_api_and_http_uri
 
-CACHED_DEFAULT_MEMORY_STORE: Optional[InMemoryUserStore] = None
+CACHED_DEFAULT_MEMORY_STORE: InMemoryUserStore | None = None
 """Global, initial, in memory store, cached for faster testing."""
 
 

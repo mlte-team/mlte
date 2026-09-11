@@ -4,7 +4,7 @@ Model implementation for MLTE evidence.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Literal
 
 from pydantic import Field
 from strenum import StrEnum
@@ -35,6 +35,9 @@ class EvidenceType(StrEnum):
     STRING = "string"
     """A string media type."""
 
+    UNAVAILABLE = "unavailable"
+    """Evidence that could not be obtained, with error details."""
+
 
 class EvidenceModel(BaseModel):
     """The model implementation for MLTE evidence."""
@@ -48,14 +51,15 @@ class EvidenceModel(BaseModel):
     evidence_class: str
     """Full path to class that implements this evidence."""
 
-    value: Union[
-        "IntegerValueModel",
-        "RealValueModel",
-        "OpaqueValueModel",
-        "ImageValueModel",
-        "ArrayValueModel",
-        "StringValueModel",
-    ] = Field(..., discriminator="evidence_type")
+    value: (
+        IntegerValueModel
+        | RealValueModel
+        | OpaqueValueModel
+        | ImageValueModel
+        | ArrayValueModel
+        | StringValueModel
+        | UnavailableValueModel
+    ) = Field(..., discriminator="evidence_type")
     """The body of the evidence."""
 
 
@@ -68,7 +72,7 @@ class IntegerValueModel(BaseModel):
     integer: int
     """The encapsulated value."""
 
-    unit: Optional[str] = None
+    unit: str | None = None
     """The unit associated with this value, if any."""
 
 
@@ -81,7 +85,7 @@ class RealValueModel(BaseModel):
     real: float
     """The encapsulated value."""
 
-    unit: Optional[str] = None
+    unit: str | None = None
     """The unit associated with this value, if any."""
 
 
@@ -91,7 +95,7 @@ class OpaqueValueModel(BaseModel):
     evidence_type: Literal[EvidenceType.OPAQUE] = EvidenceType.OPAQUE
     """An identitifier for the evidence type."""
 
-    data: Dict[str, Any]
+    data: dict[str, Any]
     """Encapsulated, opaque data."""
 
 
@@ -111,7 +115,7 @@ class ArrayValueModel(BaseModel):
     evidence_type: Literal[EvidenceType.ARRAY] = EvidenceType.ARRAY
     """An identitifier for the evidence type."""
 
-    data: List[Any]
+    data: list[Any]
     """The array to capture."""
 
 
@@ -125,22 +129,35 @@ class StringValueModel(BaseModel):
     """The encapsulated string."""
 
 
+class UnavailableValueModel(BaseModel):
+    """The model implementation for MLTE values that could not be obtained."""
+
+    evidence_type: Literal[EvidenceType.UNAVAILABLE] = EvidenceType.UNAVAILABLE
+    """An identitifier for the evidence type."""
+
+    details: str
+    """The details."""
+
+    traceback: str | None = None
+    """Additional traceback."""
+
+
 # Value type mapping to models.
 EVIDENCE_MODEL_CLASS: dict[
     EvidenceType,
-    Union[
-        type[IntegerValueModel],
-        type[RealValueModel],
-        type[OpaqueValueModel],
-        type[ImageValueModel],
-        type[ArrayValueModel],
-    ],
+    type[IntegerValueModel]
+    | type[RealValueModel]
+    | type[OpaqueValueModel]
+    | type[ImageValueModel]
+    | type[ArrayValueModel]
+    | type[UnavailableValueModel],
 ] = {
     EvidenceType.INTEGER: IntegerValueModel,
     EvidenceType.REAL: RealValueModel,
     EvidenceType.OPAQUE: OpaqueValueModel,
     EvidenceType.IMAGE: ImageValueModel,
     EvidenceType.ARRAY: ArrayValueModel,
+    EvidenceType.UNAVAILABLE: UnavailableValueModel,
 }
 
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, List, Union
+from typing import Any
 
 from mlte.store.base import ResourceMapper
 from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
@@ -11,12 +11,14 @@ from mlte.user.model import BasicUser, Group, Permission, User, UserWithPassword
 class UserMapper(ResourceMapper):
     """An interface for mapping CRUD actions to store users."""
 
-    def create(self, new_user: UserWithPassword, context: Any = None) -> User:
+    def create(
+        self, new_user: User | UserWithPassword, context: Any = None
+    ) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def edit(
         self,
-        updated_user: Union[UserWithPassword, BasicUser],
+        updated_user: UserWithPassword | BasicUser,
         context: Any = None,
     ) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
@@ -24,7 +26,7 @@ class UserMapper(ResourceMapper):
     def read(self, user_id: str, context: Any = None) -> User:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, user_id: str, context: Any = None) -> User:
@@ -43,7 +45,7 @@ class GroupMapper(ResourceMapper):
     def read(self, group_id: str, context: Any = None) -> Group:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, group_id: str, context: Any = None) -> Group:
@@ -66,7 +68,7 @@ class PermissionMapper(ResourceMapper):
     def read(self, permission: str, context: Any = None) -> Permission:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
-    def list(self, context: Any = None) -> List[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         raise NotImplementedError(self.NOT_IMPLEMENTED_ERROR_MSG)
 
     def delete(self, permission: str, context: Any = None) -> Permission:

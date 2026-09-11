@@ -2,7 +2,7 @@
 
 ###############################################################################
 # Image with Node.js environment for frontend.
-FROM node:22.16-bookworm-slim AS frontend-env
+FROM node:26.8-bookworm-slim AS frontend-env
 
 # Set up certificates for any proxies that can get in the middle of curl/wget commands during the build
 # NOTE: put any CA certificates needed for a proxy in the ./certs folder in the root of this repo, in PEM format
@@ -49,7 +49,7 @@ COPY --from=frontend-build /mnt/app/mlte/frontend/nuxt-app/.output /mnt/app/mlte
 
 # Install MLTE.
 WORKDIR /mnt/app/
-RUN poetry install
+RUN uv sync --all-extras --no-cache
 
 # Set the MLTE frontend server as the entry point.
-ENTRYPOINT ["poetry", "run", "mlte", "ui"]
+ENTRYPOINT ["uv", "run", "mlte", "ui"]

@@ -5,7 +5,7 @@ An opaque evaluation evidence, without semantics.
 from __future__ import annotations
 
 import typing
-from typing import Any, Dict
+from typing import Any
 
 from mlte.artifact.model import ArtifactModel
 from mlte.evidence.artifact import Evidence
@@ -18,7 +18,7 @@ class Opaque(Evidence):
     The 'default' Value instance for measurements that do not provide their own.
     """
 
-    def __init__(self, data: Dict[str, Any]):
+    def __init__(self, data: dict[str, Any]):
         """
         Initialize an Opaque instance.
         :param data: The output of the measurement
@@ -49,7 +49,7 @@ class Opaque(Evidence):
 
     # Overriden.
     @classmethod
-    def load(cls, identifier: typing.Optional[str] = None) -> Opaque:
+    def load(cls, identifier: str | None = None) -> Opaque:
         evidence = super().load(identifier)
         return typing.cast(Opaque, evidence)
 

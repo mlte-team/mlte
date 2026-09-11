@@ -2,10 +2,6 @@
     color: #d8ac16;
 }
 
-.no-margin-sub-header {
-    margin-bottom: 0px;
-}
-
 .sub-header-float-button {
     float: right;
     display: inline;
@@ -13,21 +9,49 @@
 
 .input-group {
     border: 1px solid gray;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 1em;
+    padding: 0 1em 1em 1em;
     margin-bottom: 1em;
 }
 
-.inline-input-left {
-    display: inline-block;
-    margin-right: 1em;
-    width: 28ch;
+.inline-form-row {
+    /* grid-row */
+    display: flex;
+    flex-wrap: wrap;
+
+    /* grid-gap */
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    margin-bottom: 1rem;
+
+    align-items: center;
+    justify-content: space-between;
+
+    /* Applies padding to all direct children except buttons */
+    > :not(button, .usa-button) {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    /* Automatically switches to bottom alignment when inputs are present */
+    &:has(.usa-textarea, .usa-input, .usa-select) {
+        align-items: flex-end;
+    }
+
+    /* All headers inline shouldn't have margin so the buttons line up */
+    h2, h3 {
+        margin: 0;
+    }
 }
 
-.inline-input-right {
-    display: inline-block;
-    width: 28ch;
+.usa-textarea,
+.usa-input,
+.usa-select,
+.usa-label {
+    max-width: none;
+}
+
+.usa-textarea {
+    height: 5.5rem;
 }
 
 .half-line-input {
@@ -45,9 +69,10 @@
     color: black !important;
 }
 
-.inline-button {
-    display: inline-block;
-    padding-left: 1em;
+.delete-button {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px #d83933 !important;
+    color: #d83933 !important;
 }
 
 .margin-button {

@@ -3,7 +3,6 @@
 import os
 import time
 import typing
-from typing import Tuple
 
 import pytest
 
@@ -87,7 +86,9 @@ def test_cpu_nix_validate_success() -> None:
 
     stats = m.evaluate(SPIN_COMMAND)
 
-    vr = Validator(bool_exp=lambda _: True, success="Yay", failure="oh").validate(stats)  # type: ignore
+    vr = Validator(
+        bool_exp=lambda _: True, success="Yay", failure="oh"
+    ).validate(stats)  # type: ignore
     assert bool(vr)
 
 
@@ -99,7 +100,9 @@ def test_cpu_nix_validate_failure() -> None:
 
     stats = m.evaluate(SPIN_COMMAND)
 
-    vr = Validator(bool_exp=lambda _: False, success="Yay", failure="oh").validate(stats)  # type: ignore
+    vr = Validator(
+        bool_exp=lambda _: False, success="Yay", failure="oh"
+    ).validate(stats)  # type: ignore
     assert not bool(vr)
 
 
@@ -116,7 +119,7 @@ def test_cpu_windows_evaluate() -> None:
     is_windows(), reason="LocalProcessCPUUtilization not supported on Windows."
 )
 def test_result_save_load(
-    artifact_store_with_context: Tuple[ArtifactStore, Context],
+    artifact_store_with_context: tuple[ArtifactStore, Context],
 ) -> None:
     store, ctx = artifact_store_with_context
 

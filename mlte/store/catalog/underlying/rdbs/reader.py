@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import typing
-from typing import List, Optional, Tuple
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -23,7 +22,7 @@ class DBReader:
     @staticmethod
     def get_entry(
         entry_id: str, session: Session
-    ) -> Tuple[CatalogEntry, DBCatalogEntry]:
+    ) -> tuple[CatalogEntry, DBCatalogEntry]:
         """Reads the entry with the given id using the provided session, and returns a CatalogEntry and DBCatalogEntry object."""
         entry_orm = session.scalar(
             select(DBCatalogEntry)
@@ -65,7 +64,7 @@ class DBReader:
     def _build_entry_orm(
         entry: CatalogEntry,
         session: Session,
-        entry_orm: Optional[DBCatalogEntry] = None,
+        entry_orm: DBCatalogEntry | None = None,
     ) -> DBCatalogEntry:
         """Creates or updates a DB catalog entry object from a model."""
         if entry_orm is None:
@@ -93,12 +92,12 @@ class DBReader:
     @staticmethod
     def get_entries(
         session: Session,
-    ) -> Tuple[List[CatalogEntry], List[DBCatalogEntry]]:
+    ) -> tuple[list[CatalogEntry], list[DBCatalogEntry]]:
         """Reads all catalog entries in the DB, and returns a list of CatalogEntry and DBCatalogEntry objects."""
         entries_orm = list(
             session.execute(select(DBCatalogEntry)).scalars().all()
         )
-        entries: List[CatalogEntry] = []
+        entries: list[CatalogEntry] = []
         for entry_orm in entries_orm:
             entry = DBReader._build_entry(entry_orm)
             entries.append(entry)

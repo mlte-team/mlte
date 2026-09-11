@@ -1,7 +1,5 @@
 """DB utils for getting custom list data from the DB."""
 
-from typing import Optional
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -57,7 +55,7 @@ class DBReader:
         entry: CustomListEntryModel,
         list_name: CustomListName,
         session: Session,
-        entry_orm: Optional[DBCustomListEntry] = None,
+        entry_orm: DBCustomListEntry | None = None,
     ) -> DBCustomListEntry:
         """Creates or updates the DB object from the corresponding internal model."""
         if entry_orm is None:

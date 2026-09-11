@@ -104,7 +104,9 @@ class FileSystemModelMapper(ModelMapper):
         try:
             self.storage.create_resource_group(model.identifier)
         except FileExistsError:
-            raise errors.ErrorAlreadyExists(f"Model {model.identifier}")
+            raise errors.ErrorAlreadyExists(
+                f"Model {model.identifier}"
+            ) from None
 
         return Model(identifier=model.identifier, versions=[])
 
@@ -115,7 +117,7 @@ class FileSystemModelMapper(ModelMapper):
             versions=self.version_mapper.list_details(model_id),
         )
 
-    def list(self, context: Any = None) -> list[str]:
+    def list_all(self, context: Any = None) -> list[str]:
         return self.storage.list_resource_groups()
 
     def delete(self, model_id: str, context: Any = None) -> Model:
@@ -147,7 +149,9 @@ class FileSystemVersionMapper(VersionMapper):
         try:
             self.storage.create_resource_group(version.identifier, [model_id])
         except FileExistsError:
-            raise errors.ErrorAlreadyExists(f"Version {version.identifier}")
+            raise errors.ErrorAlreadyExists(
+                f"Version {version.identifier}"
+            ) from None
         return Version(identifier=version.identifier)
 
     def read(self, version_id: str, model_id: str) -> Version:
@@ -155,7 +159,7 @@ class FileSystemVersionMapper(VersionMapper):
         self._ensure_version_exists(version_id, model_id)
         return Version(identifier=version_id)
 
-    def list(self, model_id: str) -> list[str]:
+    def list_all(self, model_id: str) -> list[str]:
         self._ensure_model_exists(model_id)
         return self.storage.list_resource_groups([model_id])
 
@@ -202,7 +206,7 @@ class FileSystemArtifactMapper(ArtifactMapper):
             **self.storage.read_resource(artifact_id, group_ids)
         )
 
-    def list(self, model_and_version: tuple[str, str]) -> list[str]:
+    def list_all(self, model_and_version: tuple[str, str]) -> list[str]:
         model_id, version_id = model_and_version
         return self._get_artifact_ids(model_id, version_id)
 
@@ -242,7 +246,7 @@ class FileSystemArtifactMapper(ArtifactMapper):
         except FileNotFoundError:
             raise errors.ErrorNotFound(
                 f"Model or version not found: {model_id}, {version_id}"
-            )
+            ) from None
 
     def _get_artifact_groups(
         self, model_id: str, version_id: str, artifact_id: str
@@ -257,7 +261,7 @@ class FileSystemArtifactMapper(ArtifactMapper):
                 group_ids = [model_id]
                 self.storage.ensure_resource_exists(artifact_id, group_ids)
             except errors.ErrorNotFound:
-                raise errors.ErrorNotFound(f"Artifact {artifact_id}")
+                raise errors.ErrorNotFound(f"Artifact {artifact_id}") from None
 
         return group_ids
 

@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union
+from typing import Any
 
-import httpx
+import httpx2
 import requests
 
 import mlte._private.url as url_utils
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
 
-HttpResponse = Union[requests.Response, httpx.Response]
+HttpResponse = requests.Response | httpx2.Response
 """Standard HTTP response, both have same implicit interface."""
 
 
@@ -77,12 +77,12 @@ class OAuthHttpClient(HttpClient):
 
     def __init__(
         self,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
     ) -> None:
         super().__init__()
 
-        self.access_token: Optional[str] = None
+        self.access_token: str | None = None
         """The access token."""
 
         self.username = username
@@ -108,8 +108,8 @@ class OAuthHttpClient(HttpClient):
     def authenticate(
         self,
         api_url: str,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        username: str | None = None,
+        password: str | None = None,
     ):
         """Sends an authentication request and retrieves and stores the token."""
         # Validate we have a user and password.
@@ -170,7 +170,7 @@ class RequestsClient(OAuthHttpClient):
     """Client implementation using requests library."""
 
     def __init__(
-        self, username: Optional[str] = None, password: Optional[str] = None
+        self, username: str | None = None, password: str | None = None
     ) -> None:
         super().__init__(username, password)
 

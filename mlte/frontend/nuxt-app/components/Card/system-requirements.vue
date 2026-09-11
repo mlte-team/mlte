@@ -7,7 +7,7 @@
   </TemplatesCollapsibleHeader>
   <div v-if="displaySection">
     <div class="input-group">
-      <TemplatesSubHeader :render-model="true">
+      <TemplatesSubHeader>
         Requirements
         <template #info>
           <p>
@@ -33,6 +33,16 @@
             class="table"
           />
         </template>
+        <template #buttons>
+          <NuxtLink
+            target="_blank"
+            :to="{
+              path: '/etc/quality-model',
+            }"
+          >
+            <UsaButton class="secondary-button"> View Quality Model </UsaButton>
+          </NuxtLink>
+        </template>
       </TemplatesSubHeader>
 
       <hr />
@@ -41,16 +51,22 @@
         v-for="(requirement, requirementIndex) in props.modelValue"
         :key="requirementIndex"
       >
-        <h3 class="no-margin-sub-header">
-          Requirement {{ requirementIndex + 1 }}
-        </h3>
+        <div class="inline-form-row">
+          <h3>Requirement {{ requirementIndex + 1 }}</h3>
+          <UsaButton
+            class="secondary-button"
+            @click="deleteRequirement(requirementIndex)"
+          >
+            Delete Requirement
+          </UsaButton>
+        </div>
         <p v-if="requirement.identifier">
           <b>ID: </b> {{ requirement.identifier }}
         </p>
         <p v-else><b>ID: </b> Defined after save</p>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
           <b>Scenario for {{ requirement.quality }}: </b>
-          {{ requirement.stimulus }} from {{ requirement.source }} during
+          {{ requirement.stimulus }} {{ requirement.source }}
           {{ requirement.environment }}. {{ requirement.response }}
           {{ requirement.measure }}.
         </p>
@@ -76,7 +92,7 @@
           <template #new-qac-label>New System Quality</template>
         </CustomListQualityAttributeSelect>
 
-        <UsaTextarea v-model="requirement.stimulus" style="height: 5.5rem">
+        <UsaTextarea v-model="requirement.stimulus">
           <template #label>
             <b>Stimulus:</b> What is the input to the model, the action, or the
             event that will enable testing of the quality attribute category,
@@ -94,7 +110,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.source" style="height: 5.5rem">
+        <UsaTextarea v-model="requirement.source">
           <template #label>
             <b>Source of Stimulus:</b> Where is the stimulus coming from, such
             as a system component, system user, or data source?
@@ -110,7 +126,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.environment" style="height: 5.5rem">
+        <UsaTextarea v-model="requirement.environment">
           <template #label>
             <b>Environment:</b> What are the conditions under which the scenario
             occurs, such as normal operations, overload conditions, or under
@@ -126,7 +142,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.response" style="height: 5.5rem">
+        <UsaTextarea v-model="requirement.response">
           <template #label>
             <b>Response:</b> What occurs as a result of the stimulus, such as
             inference on the data, event processing, or data validation?
@@ -142,7 +158,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextarea v-model="requirement.measure" style="height: 5.5rem">
+        <UsaTextarea v-model="requirement.measure">
           <template #label>
             <b>Response Measure: </b>What is the measure that will determine
             that the correct response has been achieved, such as a statistical
@@ -159,17 +175,11 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <ButtonDeleteItem
-          class="margin-button"
-          @click="deleteRequirement(requirementIndex)"
-        >
-          Delete Requirement
-        </ButtonDeleteItem>
         <hr />
       </div>
-      <ButtonAddItem class="margin-button" @click="addRequirement()">
+      <UsaButton class="secondary-button" @click="addRequirement()">
         Add Requirement
-      </ButtonAddItem>
+      </UsaButton>
     </div>
   </div>
 </template>
@@ -193,42 +203,45 @@ const systemModalHeaders = ref([
 ]);
 const systemModalRows = ref([
   {
-    id: "responseTime",
-    systemQuality: "Response Time",
-    stimulus: "Model receives an audio recording",
-    source: "Intel analyst application",
-    environment: "Normal operations",
-    response: "Inference time",
-    measure: "At most 5 seconds",
-  },
-  {
     id: "fairness",
-    systemQuality: "Fairness - Model Impartial to Photo Location",
-    stimulus: "Model receives a picture taken at the garden",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response: "Correct identification of flowers regardless of garden location",
-    measure: "At least 90% of the time",
+    systemQuality: "Responsible AI - Fairness",
+    stimulus: "The model receives a picture taken at the garden",
+    source: "the Garden Buddy application",
+    environment: "normal operations",
+    response:
+      "Regardless of the location in the garden, the model can correctly identify the correct flowers",
+    measure: "at least 90% of the time",
   },
   {
     id: "robustness",
-    systemQuality: "Robustness - Model Robust to Noise (Image Blur)",
-    stimulus:
-      "Model receives a picture taken at the garden and it is a bit blurry",
-    source: "Flower identification application",
-    environment: "Normal operations",
-    response: "Correct identification of flowers",
-    measure: "Same rate as non-blurry images",
+    systemQuality: "Continued Operation - Robustness",
+    stimulus: "The model receives a picture that is a bit blurry",
+    source: "the Garden Buddy application",
+    environment: "normal operation",
+    response: "the model successfully identifies flowers",
+    measure: "at the same rate as non-blurry images",
   },
   {
-    id: "performance",
-    systemQuality: "Performance on Operational Platform",
-    stimulus: "Model receives a picture taken at a garden",
-    source: "Flower identification application",
-    environment: "Normal operations",
+    id: "explainability",
+    systemQuality: "Confidence - Explainability",
+    stimulus: "The model receives a picture taken at the garden",
+    source: "the Garden Buddy application",
+    environment: "normal operations",
     response:
-      "Model runs on the devices loaned out by the garden centers to visitors. These are small, inexpensive devices with limited CPU power, as well as limited memory and disk space (512 MB and 128 GB, respectively).",
-    measure: "No errors due to unavailable resources",
+      "The application indicates main features that were used to recognize the flower, as part of the educational experience. ",
+    measure:
+      "The app displays the original image highlighting the most informative features in flower identification, in addition to the flower name",
+  },
+  {
+    id: "analyzability",
+    systemQuality: "Behavior Analysis - Analyzability",
+    stimulus:
+      "The ML pipeline receives a picture that corresponds to an OOD input",
+    source: "the Garden Buddy application",
+    environment: "normal operations",
+    response: "The model will process the input",
+    measure:
+      'and the ML pipeline will create a log entry with the tag "Model - Input OOD Error - <Input>, where <Input> is the original input',
   },
 ]);
 

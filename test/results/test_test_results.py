@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Dict, Tuple
-
 import pytest
 
 from mlte.artifact.type import ArtifactType
@@ -18,7 +16,7 @@ from test.evidence.types.helper import get_sample_evidence_metadata
 from test.fixture.artifact import ArtifactModelFactory
 
 
-def test_save_load(artifact_store_with_context: Tuple[ArtifactStore, Context]):
+def test_save_load(artifact_store_with_context: tuple[ArtifactStore, Context]):
     store, ctx = artifact_store_with_context
 
     test_suite = TestSuite.from_model(
@@ -45,7 +43,7 @@ def test_no_result():
         ArtifactModelFactory.make(ArtifactType.TEST_SUITE)
     )
 
-    results: Dict[str, Result] = {}
+    results: dict[str, Result] = {}
     with pytest.raises(RuntimeError):
         _ = TestResults(test_suite=test_suite, results=results)
 

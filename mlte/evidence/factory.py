@@ -16,7 +16,6 @@ from mlte.evidence.types.string import String
 
 
 class EvidenceFactory:
-
     @staticmethod
     def from_model(artifact_model: ArtifactModel) -> Evidence:
         """Returns a proper artifact from the given model."""

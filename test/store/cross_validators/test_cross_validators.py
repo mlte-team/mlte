@@ -25,7 +25,7 @@ VALID_USER = "admin"
 INVALID_USER = "not a user"
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_artifact_cross_validators(
     store_type: StoreType, tmp_path: Path, patched_setup_stores
 ) -> None:
@@ -116,7 +116,7 @@ def test_artifact_cross_validators(
             )
 
 
-@pytest.mark.parametrize("store_type", store_types())
+@pytest.mark.parametrize("store_type", list(store_types()))
 def test_catalog_cross_validators(
     store_type: StoreType, tmp_path: Path, patched_setup_stores
 ) -> None:

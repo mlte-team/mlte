@@ -27,20 +27,43 @@
         v-for="(inputSpec, inputIndex) in props.modelValue.input_specification"
         :key="inputIndex"
       >
-        <h3 class="no-margin-sub-header">Input {{ inputIndex + 1 }}</h3>
-        <UsaTextInput v-model="inputSpec.name">
-          <template #label>
-            Input Name
-            <TemplatesTooltipInfo>
-              Input name.
-              <br />
-              <br />
-              <i>Example: Audio Recording.</i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
+        <div class="inline-form-row">
+          <h3>Input {{ inputIndex + 1 }}</h3>
+          <UsaButton class="delete-button" @click="deleteInputSpec(inputIndex)">
+            Delete Input {{ inputIndex + 1 }}
+          </UsaButton>
+        </div>
+        <div class="inline-form-row">
+          <div class="grid-col-6">
+            <UsaTextInput v-model="inputSpec.name">
+              <template #label>
+                Input Name
+                <TemplatesTooltipInfo>
+                  Input name.
+                  <br />
+                  <br />
+                  <i>Example: Audio Recording.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
 
-        <UsaTextarea v-model="inputSpec.description" style="height: 5.5rem">
+          <div class="grid-col-6">
+            <UsaTextInput v-model="inputSpec.type">
+              <template #label>
+                Type
+                <TemplatesTooltipInfo>
+                  Input type, e.g., number, string, Boolean, data, image, audio.
+                  <br />
+                  <br />
+                  <i>Example: Audio.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
+        </div>
+
+        <UsaTextarea v-model="inputSpec.description">
           <template #label>
             Description
             <TemplatesTooltipInfo>
@@ -52,19 +75,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextInput v-model="inputSpec.type">
-          <template #label>
-            Type
-            <TemplatesTooltipInfo>
-              Input type, e.g., number, string, Boolean, data, image, audio.
-              <br />
-              <br />
-              <i>Example: Audio.</i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextarea v-model="inputSpec.expected_values" style="height: 5.5rem">
+        <UsaTextarea v-model="inputSpec.expected_values">
           <template #label>
             Expected Values
             <TemplatesTooltipInfo>
@@ -75,17 +86,11 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <ButtonDeleteItem
-          class="margin-button"
-          @click="deleteInputSpec(inputIndex)"
-        >
-          Delete Input
-        </ButtonDeleteItem>
         <hr />
       </div>
-      <ButtonAddItem class="margin-button" @click="addInputSpec()">
+      <UsaButton class="secondary-button" @click="addInputSpec()">
         Add Additional Input
-      </ButtonAddItem>
+      </UsaButton>
     </div>
 
     <div class="input-group" style="margin-top: 1em">
@@ -112,20 +117,50 @@
           .output_specification"
         :key="outputIndex"
       >
-        <h3 class="no-margin-sub-header">Output {{ outputIndex + 1 }}</h3>
-        <UsaTextInput v-model="outputSpec.name">
-          <template #label>
-            Output Name
-            <TemplatesTooltipInfo>
-              Output name.
-              <br />
-              <br />
-              <i>Example: Matching recordings.</i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
+        <div class="inline-form-row">
+          <h3>Output {{ outputIndex + 1 }}</h3>
+          <UsaButton
+            class="delete-button"
+            @click="deleteOutputSpec(outputIndex)"
+          >
+            Delete Output {{ outputIndex + 1 }}
+          </UsaButton>
+        </div>
+        <div class="inline-form-row">
+          <div class="grid-col-6">
+            <UsaTextInput v-model="outputSpec.name">
+              <template #label>
+                Output Name
+                <TemplatesTooltipInfo>
+                  Output name.
+                  <br />
+                  <br />
+                  <i>Example: Matching recordings.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
 
-        <UsaTextarea v-model="outputSpec.description" style="height: 5.5rem">
+          <div class="grid-col-6">
+            <UsaTextInput v-model="outputSpec.type">
+              <template #label>
+                Type
+                <TemplatesTooltipInfo>
+                  Field type, e.g., number, string, Boolean, data, image, audio.
+                  <br />
+                  <br />
+                  <i>
+                    Example: Vector of Strings with IDs of matching recordings —
+                    an empty <br />
+                    vector means that there were no matches.
+                  </i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+          </div>
+        </div>
+
+        <UsaTextarea v-model="outputSpec.description">
           <template #label>
             Description
             <TemplatesTooltipInfo>
@@ -137,26 +172,7 @@
           </template>
         </UsaTextarea>
 
-        <UsaTextInput v-model="outputSpec.type">
-          <template #label>
-            Type
-            <TemplatesTooltipInfo>
-              Field type, e.g., number, string, Boolean, data, image, audio.
-              <br />
-              <br />
-              <i>
-                Example: Vector of Strings with IDs of matching recordings — an
-                empty <br />
-                vector means that there were no matches.
-              </i>
-            </TemplatesTooltipInfo>
-          </template>
-        </UsaTextInput>
-
-        <UsaTextarea
-          v-model="outputSpec.expected_values"
-          style="height: 5.5rem"
-        >
+        <UsaTextarea v-model="outputSpec.expected_values">
           <template #label>
             Expected Values
             <TemplatesTooltipInfo>
@@ -164,17 +180,11 @@
             </TemplatesTooltipInfo>
           </template>
         </UsaTextarea>
-        <ButtonDeleteItem
-          class="margin-button"
-          @click="deleteOutputSpec(outputIndex)"
-        >
-          Delete Output
-        </ButtonDeleteItem>
         <hr />
       </div>
-      <ButtonAddItem class="margin-button" @click="addOutputSpec()">
+      <UsaButton class="secondary-button" @click="addOutputSpec()">
         Add Additional Output
-      </ButtonAddItem>
+      </UsaButton>
     </div>
   </div>
 
@@ -198,8 +208,8 @@
           development such as training, fine-tuning, or evaluation.
         </template>
       </TemplatesSubHeader>
-      <div>
-        <div class="inline-input-left">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.gpu"
           >
@@ -207,35 +217,33 @@
           </UsaTextInput>
         </div>
 
-        <div class="inline-input-right">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.gpu_memory"
           >
             <template #label> Graphics Processing Unit (GPU) Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
+      </div>
 
-        <div class="inline-input-right">
+      <div class="inline-form-row" style="justify-content: flex-start">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.main_memory"
           >
             <template #label> Main Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.development_compute_resources.storage"
           >
@@ -250,10 +258,7 @@
         Deployment
         <template #info> Operational environment of the model. </template>
       </TemplatesSubHeader>
-      <UsaTextarea
-        v-model="props.modelValue.deployment_platform"
-        style="height: 5.5rem"
-      >
+      <UsaTextarea v-model="props.modelValue.deployment_platform">
         <template #label>
           Deployment Platform
           <TemplatesTooltipInfo>
@@ -267,10 +272,7 @@
         </template>
       </UsaTextarea>
 
-      <UsaTextarea
-        v-model="props.modelValue.capability_deployment_mechanism"
-        style="height: 5.5rem"
-      >
+      <UsaTextarea v-model="props.modelValue.capability_deployment_mechanism">
         <template #label>
           Capability Deployment Mechanism
           <TemplatesTooltipInfo>
@@ -314,8 +316,8 @@
           inference.
         </template>
       </TemplatesSubHeader>
-      <div>
-        <div class="inline-input-left">
+      <div class="inline-form-row">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.gpu"
           >
@@ -323,35 +325,33 @@
           </UsaTextInput>
         </div>
 
-        <div class="inline-input-right">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.gpu_memory"
           >
             <template #label> Graphics Processing Unit (GPU) Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.cpu"
           >
             <template #label> Central Processing Units (CPUs) </template>
           </UsaTextInput>
         </div>
+      </div>
 
-        <div class="inline-input-right">
+      <div class="inline-form-row" style="justify-content: flex-start">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.main_memory"
           >
             <template #label> Main Memory </template>
           </UsaTextInput>
         </div>
-      </div>
 
-      <div>
-        <div class="inline-input-left">
+        <div class="grid-col-4">
           <UsaTextInput
             v-model="props.modelValue.production_compute_resources.storage"
           >
@@ -371,22 +371,6 @@ const props = defineProps({
     type: Object as PropType<ModelDescriptor>,
     required: true,
   },
-});
-
-// Provide hook for parent page to call addInputspec. Needed for descriptor import.
-const parentAddInputSpec = () => {
-  addInputSpec();
-};
-
-// Provide hook for parent page to call addOutputSpec. Needed for descriptor import.
-const parentAddOutputSpec = () => {
-  addOutputSpec();
-};
-
-// Expose the hooks to parent page.
-defineExpose({
-  parentAddInputSpec,
-  parentAddOutputSpec,
 });
 
 const displayIO = ref<boolean>(true);

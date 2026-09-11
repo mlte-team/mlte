@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, List, Literal, Union
+from typing import Any, Literal, Union
 
 from strenum import LowercaseStrEnum
 
@@ -36,7 +36,7 @@ class Filter(BaseModel):
 class CompositeFilter(Filter):
     """Definition of a composite filter interface."""
 
-    filters: List[SupportedFilter]
+    filters: list[SupportedFilter]
 
 
 class Filterable(BaseModel):
@@ -63,9 +63,9 @@ class Filterable(BaseModel):
         except Exception:
             raise errors.ErrorNotFound(
                 f"Property '{property_name}' is not part of the model."
-            )
+            ) from None
 
-    def get_tags(self, property_name: str) -> List[Any]:
+    def get_tags(self, property_name: str) -> list[Any]:
         """Returns the given tags. Tags are a property of type list."""
         value = self.get_property(property_name)
         if type(value) is not list:

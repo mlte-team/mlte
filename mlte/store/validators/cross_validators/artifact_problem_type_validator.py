@@ -40,4 +40,4 @@ class ArtifactProblemTypeValidator(CrossValidator):
                     except ErrorNotFound:
                         raise RuntimeError(
                             f"Artifact problem type validation failure. Problem type: {card.system.problem_type} not found. For artifact {new_artifact.header.identifier}."
-                        )
+                        ) from None
