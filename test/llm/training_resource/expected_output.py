@@ -1,5 +1,5 @@
-# ruff: noqa
-
+# mypy: ignore-errors
+# ruff: noqa: F821
 spec = TestSuite(
     test_cases=[
         TestCase(
