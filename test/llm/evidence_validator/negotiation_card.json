@@ -1,0 +1,154 @@
+{
+  "header": {
+    "identifier": "card.evidence_validator_profile",
+    "type": "card",
+    "timestamp": 1762363735,
+    "creator": "admin",
+    "level": "model"
+  },
+  "body": {
+    "artifact_type": "card",
+    "system": {
+      "goals": [
+        {
+          "description": "Validate pipeline outputs and review artifacts using MLTE evidence validators",
+          "metrics": [
+            {
+              "description": "Status output, log output, explanation image, and structured review evidence meet validation expectations",
+              "baseline": ""
+            }
+          ]
+        }
+      ],
+      "problem_type": "Classification",
+      "task": "Classify inspection inputs and report validation behavior",
+      "usage_context": "The model runs inside an inspection pipeline that must return clear status values, useful logs, and reviewable evidence artifacts",
+      "risks": [
+        "Invalid inputs may not be handled consistently",
+        "Diagnostic logs may not contain the required error tag",
+        "Reviewers may not receive useful explanation evidence",
+        "Structured error-pattern evidence may be hard to inspect"
+      ]
+    },
+    "data": [
+      {
+        "description": "Inspection validation dataset",
+        "purpose": "Testing output validation and review evidence behavior",
+        "source": "Inspection validation archive",
+        "classification": "Internal",
+        "access": "Restricted to quality engineering team",
+        "labeling_method": "Quality engineer labels",
+        "labels": [
+          {
+            "name": "Inspection label",
+            "description": "Ground-truth inspection label",
+            "percentage": 0.0
+          }
+        ],
+        "fields": [
+          {
+            "name": "inspection input",
+            "description": "Input record or image path sent to the inspection pipeline",
+            "type": "string",
+            "expected_values": "valid image path or invalid input marker",
+            "missing_values": "",
+            "special_values": "INVALID_INPUT"
+          }
+        ],
+        "rights": "",
+        "policies": ""
+      }
+    ],
+    "model": {
+      "development_compute_resources": {
+        "cpu": "2",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "8 GB",
+        "storage": "20 GB"
+      },
+      "deployment_platform": "Inspection validation service",
+      "capability_deployment_mechanism": "The model is called by a validation pipeline that records output status, diagnostic logs, and review evidence",
+      "model_source": "in-house development",
+      "input_specification": [
+        {
+          "name": "inspection input",
+          "description": "Input record or image path",
+          "type": "string",
+          "expected_values": "valid image path or invalid input marker"
+        }
+      ],
+      "output_specification": [
+        {
+          "name": "status output",
+          "description": "Pipeline status string",
+          "type": "string",
+          "expected_values": "VALID_OUTPUT, INVALID_INPUT"
+        },
+        {
+          "name": "diagnostic log",
+          "description": "Pipeline diagnostic log text",
+          "type": "string",
+          "expected_values": "a-zA-Z, 0-9, punctuation and spacing"
+        },
+        {
+          "name": "explanation image",
+          "description": "Image artifact showing the regions used by the model",
+          "type": "image",
+          "expected_values": "reviewable image artifact"
+        },
+        {
+          "name": "class error evidence",
+          "description": "Structured evidence describing class-level error patterns",
+          "type": "array",
+          "expected_values": "array-like class-level error evidence"
+        }
+      ],
+      "production_compute_resources": {
+        "cpu": "1",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "1 GB",
+        "storage": "500 MB"
+      }
+    },
+    "system_requirements": [
+      {
+        "identifier": "card.evidence_validator_profile-qas_001",
+        "quality": "Reliability",
+        "stimulus": "The pipeline receives an invalid inspection input",
+        "source": "the inspection validation service",
+        "environment": "normal operation",
+        "response": "The pipeline returns a status output",
+        "measure": "the status output is exactly INVALID_INPUT"
+      },
+      {
+        "identifier": "card.evidence_validator_profile-qas_002",
+        "quality": "Analyzability",
+        "stimulus": "The pipeline receives an invalid inspection input",
+        "source": "the inspection validation service",
+        "environment": "normal operation",
+        "response": "The pipeline records a diagnostic log entry",
+        "measure": "the diagnostic log contains the text Model - Input Validation Error"
+      },
+      {
+        "identifier": "card.evidence_validator_profile-qas_003",
+        "quality": "Explainability",
+        "stimulus": "The model receives a valid inspection image",
+        "source": "the inspection validation service",
+        "environment": "offline evaluation",
+        "response": "The pipeline provides an explanation image for human review",
+        "measure": "reviewers can inspect the image artifact to see the regions used by the model"
+      },
+      {
+        "identifier": "card.evidence_validator_profile-qas_004",
+        "quality": "Analyzability",
+        "stimulus": "The evaluation pipeline completes classification testing",
+        "source": "the evaluation pipeline",
+        "environment": "offline evaluation",
+        "response": "The pipeline provides structured class-level error evidence",
+        "measure": "reviewers can inspect the structured evidence to understand class-level error patterns"
+      }
+    ]
+  }
+}
