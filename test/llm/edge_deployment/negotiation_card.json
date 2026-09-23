@@ -1,0 +1,126 @@
+{
+  "header": {
+    "identifier": "card.edge_deployment_profile",
+    "type": "card",
+    "timestamp": 1762363735,
+    "creator": "admin",
+    "level": "model"
+  },
+  "body": {
+    "artifact_type": "card",
+    "system": {
+      "goals": [
+        {
+          "description": "Deploy an image classification model on a small edge device",
+          "metrics": [
+            {
+              "description": "Model artifact size, memory utilization, and CPU utilization stay within device limits",
+              "baseline": ""
+            }
+          ]
+        }
+      ],
+      "problem_type": "Classification",
+      "task": "Classify package condition from edge-device camera images",
+      "usage_context": "The model runs on a small warehouse intake device with limited local compute resources",
+      "risks": [
+        "The model may not fit on the deployment device",
+        "The inference process may exceed available memory",
+        "The inference process may consume too much CPU during normal operation"
+      ]
+    },
+    "data": [
+      {
+        "description": "Package condition image dataset",
+        "purpose": "Testing edge deployment resource behavior",
+        "source": "Warehouse intake camera archive",
+        "classification": "Internal",
+        "access": "Restricted to warehouse analytics team",
+        "labeling_method": "Warehouse operator labels",
+        "labels": [
+          {
+            "name": "Package condition",
+            "description": "Condition class for the package",
+            "percentage": 0.0
+          }
+        ],
+        "fields": [
+          {
+            "name": "file name",
+            "description": "Path to package image",
+            "type": "string",
+            "expected_values": "PNG or JPG image file path",
+            "missing_values": "",
+            "special_values": ""
+          }
+        ],
+        "rights": "",
+        "policies": ""
+      }
+    ],
+    "model": {
+      "development_compute_resources": {
+        "cpu": "2",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "8 GB",
+        "storage": "50 GB"
+      },
+      "deployment_platform": "Small warehouse edge device",
+      "capability_deployment_mechanism": "The model is packaged as a local artifact and called by the edge inference service",
+      "model_source": "in-house development",
+      "input_specification": [
+        {
+          "name": "file name",
+          "description": "Path to package image",
+          "type": "string",
+          "expected_values": "PNG or JPG image file path"
+        }
+      ],
+      "output_specification": [
+        {
+          "name": "Package condition",
+          "description": "Predicted package condition class",
+          "type": "string",
+          "expected_values": "normal, damaged, unreadable"
+        }
+      ],
+      "production_compute_resources": {
+        "cpu": "1",
+        "gpu": "0",
+        "gpu_memory": "0",
+        "main_memory": "512 MB",
+        "storage": "150 MB"
+      }
+    },
+    "system_requirements": [
+      {
+        "identifier": "card.edge_deployment_profile-qas_001",
+        "quality": "Resource Utilization",
+        "stimulus": "The trained model artifact is prepared for edge deployment",
+        "source": "the deployment pipeline",
+        "environment": "deployment",
+        "response": "The model artifact fits within the available local storage budget",
+        "measure": "the local model artifact size is no more than 150 MB"
+      },
+      {
+        "identifier": "card.edge_deployment_profile-qas_002",
+        "quality": "Resource Utilization",
+        "stimulus": "The local inference process runs on the edge device",
+        "source": "the edge inference service",
+        "environment": "normal operation",
+        "response": "The local inference process stays within the available memory budget",
+        "measure": "the maximum local process memory utilization is less than 512 MB"
+      },
+      {
+        "identifier": "card.edge_deployment_profile-qas_003",
+        "quality": "Resource Utilization",
+        "stimulus": "The local inference process runs on the edge device",
+        "source": "the edge inference service",
+        "environment": "normal operation",
+        "response": "The local inference process stays within the available CPU budget",
+        "measure": "the maximum local process CPU utilization is less than 75%"
+      }
+    ]
+  }
+}
