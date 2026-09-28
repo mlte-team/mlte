@@ -2,6 +2,7 @@
 
 import json
 import os
+import tempfile
 import zipfile
 from pathlib import Path
 from typing import Any
@@ -129,17 +130,18 @@ class ExportSpec:
 
 def export_to_file(
     export_spec: ExportSpec,
-    output_path: Path,
     artifact_store: ArtifactStore,
     custom_list_store: CustomListStore,
     user_store: UserStore,
     catalog_stores: CatalogStoreGroup,
-) -> None:
+    output_path: Path | None = None,
+) -> Path:
     """
     Export store data, writes the exported JSON to output_path as zip file.
 
     :param export_spec: Selection of MLTE store objects to be exported
-    :param output_path: Path to write zipped JSON to
+    :param output_path: Directory or file path to write zipped JSON to
+    :returns: Path of the exported zip file
     """
     export_json = _export(
         export_spec,
@@ -149,15 +151,27 @@ def export_to_file(
         catalog_stores,
     )
 
-    # Ensure output directory exists
-    os.makedirs(output_path, exist_ok=True)
+    if output_path is None:
+        target_dir = Path(tempfile.mkdtemp())
+        zip_file_path = target_dir / EXPORT_ZIP_FILE
+    else:
+        if output_path.is_dir() or not output_path.suffix:
+            output_path.mkdir(parents=True, exist_ok=True)
+            zip_file_path = output_path / EXPORT_ZIP_FILE
+        else:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            zip_file_path = output_path
+
+    zip_file_path = target_dir / EXPORT_ZIP_FILE
 
     with zipfile.ZipFile(
-        os.path.join(output_path, EXPORT_ZIP_FILE), "w", zipfile.ZIP_DEFLATED
+        zip_file_path, "w", zipfile.ZIP_DEFLATED
     ) as zip_export_file:
         zip_export_file.writestr(
             EXPORT_JSON_FILE, json.dumps(export_json, indent=4)
         )
+
+    return zip_file_path
 
 
 def _export(

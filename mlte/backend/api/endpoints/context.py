@@ -1,8 +1,11 @@
 """Endpoints for artifact organization context."""
 
 from __future__ import annotations
+import os
+from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi.responses import FileResponse
 
 import mlte.backend.api.codes as codes
 import mlte.store.error as errors
@@ -10,7 +13,9 @@ from mlte._private import url as url_utils
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
+from mlte.backend.core.state import state
 from mlte.context.model import Model, Version
+from mlte.store.import_export.export_store import ExportSpec
 from mlte.store.user.policy import model_policy
 
 # The router exported by this submodule
@@ -237,3 +242,36 @@ def delete_version(
             ) from None
         except Exception as ex:
             raise_http_internal_error(ex)
+
+
+def cleanup_file(file_path: str) -> None:
+    """Removes temporary file after response finishes."""
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+
+@router.post("/export")
+def export(
+    *,
+    current_user: AuthorizedUser,
+    background_tasks: BackgroundTasks,
+) -> FileResponse:
+    zip_file_path = state.stores.export_store(
+        ExportSpec(
+            state.stores.artifact_store,
+            state.stores.user_store,
+            state.stores.catalog_stores,
+            {},
+            [],
+            [],
+            [],
+        ),
+    )
+
+    background_tasks.add_task(cleanup_file, str(zip_file_path))
+
+    return FileResponse(
+        path=zip_file_path,
+        filename=zip_file_path.name,
+        media_type="application/octet-stream",
+    )
