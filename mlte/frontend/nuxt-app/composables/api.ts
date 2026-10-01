@@ -785,6 +785,56 @@ export async function deleteCustomListEntry(
 }
 
 // --------------------------------------------------------------------------------------------------------------
+// Import and Export
+// --------------------------------------------------------------------------------------------------------------
+
+export async function importStore(file: File, force: boolean) {
+  const body = new FormData()
+  body.append("import_data", file)
+  body.append("force", force as unknown as string)
+
+  const response = await useApi(
+    "/import_export/import",
+    "POST", {
+      body: body
+    }
+  )
+
+  return response
+}
+
+export async function exportStore() {
+  const file: Blob | null = await useApi(
+    "/import_export/export",
+    "POST", {
+      body: {
+        models: {},
+        custom_lists: [],
+        users: [],
+        catalogs: [],
+      },
+      responseType: "blob",
+    }
+  );
+
+  if (!file) {
+    console.error("Export failed, file not returned.");
+    return;
+  }
+
+  const filename = (file as File).name || "export.zip";
+
+  const downloadUrl = window.URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(downloadUrl);
+}
+
+// --------------------------------------------------------------------------------------------------------------
 // Util
 // --------------------------------------------------------------------------------------------------------------
 

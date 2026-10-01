@@ -1,14 +1,17 @@
 
 
+import json
 import os
 
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
+from mlte.backend.api import codes
+import mlte.store.error as errors
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
-from mlte.backend.api.models.import_model import ImportRequest
 from mlte.backend.core.state import state
+from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.import_export.export_store import ExportSpec
 
 # The router exported by this submodule
@@ -19,17 +22,30 @@ router = APIRouter()
 def import_store(
     *,
     current_user: AuthorizedUser,
-    request: ImportRequest
+    import_data: UploadFile = File(...),
+    force: bool = Form(False),
 ) -> None:
+    if not import_data.filename.endswith(".json"):
+        raise HTTPException(
+            status_code=codes.UNPROCESSABLE_ENTITY, detail="File is not of type JSON."
+        )
+    
     try:
+        file_bytes = import_data.file.read()
+        parsed_json = json.loads(file_bytes)
+
         state.stores.import_store(
-            request.import_data,
-            request.force,
+            parsed_json,
+            force=force,
+        )
+    except errors.ErrorAlreadyExists as ex:
+        raise HTTPException(
+            status_code=codes.ALREADY_EXISTS, detail=f"{ex} already exists."
         )
     except Exception as ex:
         raise_http_internal_error(ex)
 
-    return request.import_data
+    return import_data
 
 
 def cleanup_file(file_path: str) -> None:
@@ -42,6 +58,10 @@ def cleanup_file(file_path: str) -> None:
 def export(
     *,
     current_user: AuthorizedUser,
+    models: dict[str, list[str]] = {},
+    custom_lists: list[CustomListName] = [],
+    users: list[str] = [],
+    catalogs: list[str] = [],
     background_tasks: BackgroundTasks,
 ) -> FileResponse:
     try:
@@ -50,10 +70,10 @@ def export(
                 state.stores.artifact_store,
                 state.stores.user_store,
                 state.stores.catalog_stores,
-                {},
-                [],
-                [],
-                [],
+                models,
+                custom_lists,
+                users,
+                catalogs,
             ),
         )
     except Exception as ex:

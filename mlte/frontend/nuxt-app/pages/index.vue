@@ -39,9 +39,8 @@
       @toggle-visible="testSuiteModalVisible = false"
     />
 
-    <!-- <UsaBreadcrumb :items="path" /> -->
-    <div style="display: flex">
-      <div class="model-version-div">
+    <div class="inline-form-row">
+      <div class="grid-col-4">
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
@@ -52,7 +51,7 @@
         <br />
       </div>
 
-      <div class="model-version-div">
+      <div class="grid-col-4">
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
@@ -63,10 +62,67 @@
         <br />
       </div>
 
-      <div>
-        <!-- Placeholder for when the search functionality is implemented
-        <label class="usa-label" style="margin-top: 0px;">Search</label>
-        <UsaTextInput v-model="searchInput" style="width: 100%;"/> -->
+      <div class="grid-col-4 align-top-right">
+          <UsaButton v-if="userRole === 'admin'" class="secondary-button" @click="importModalVisible = true">
+            Import / Export
+          </UsaButton>
+
+          <TemplatesModalWrapper
+            :visible="importModalVisible"
+            @toggle-visible="(value) => (importModalVisible = value)"
+          >
+            <div class="usa-tabs">
+              <ul class="usa-button-group usa-button-group--segmented margin-bottom-3">
+                <li class="usa-button-group__item">
+                  <button
+                    type="button"
+                    class="usa-button"
+                    :class="{ 'usa-button--outline': activeModalTab !== 'import' }"
+                    @click="activeModalTab = 'import'"
+                  >
+                    Import Store Data
+                  </button>
+                </li>
+                <li class="usa-button-group__item">
+                  <button
+                    type="button"
+                    class="usa-button"
+                    :class="{ 'usa-button--outline': activeModalTab !== 'export' }"
+                    @click="activeModalTab = 'export'"
+                  >
+                    Export Store Data
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <div v-if="activeModalTab === 'import'">
+              <p class="usa-intro">Select a JSON file to import store settings.</p>
+              
+              <UsaCheckbox type="checkbox" v-model="forceImport">
+                Overwrite data with import
+              </UsaCheckbox>
+
+              <div v-if="forceImport" class="usa-alert usa-alert--warning margin-bottom-2">
+                <div class="usa-alert__body">
+                  <p class="usa-alert__text">Importing data will overwrite your current configuration.</p>
+                </div>
+              </div>
+
+              <UsaFileInput
+                accept=".json"
+                @change="handleImportFile"
+              />
+            </div>
+
+            <div v-if="activeModalTab === 'export'">
+              <p class="usa-intro">Download your current store configuration.</p>
+
+              <UsaButton @click="handleExportFile" class="secondary-button">
+                Export
+              </UsaButton>
+            </div>
+          </TemplatesModalWrapper>
       </div>
     </div>
 
@@ -362,6 +418,7 @@ const modelList = ref<Array<string>>([]);
 const testSuiteModalVisible = ref<boolean>(false);
 const testSuiteTemplate = ref<string>("");
 
+const userRole = useCookie("userRole");
 const selectedModel = useCookie("selectedModel", {
   default: () => "",
 });
@@ -371,6 +428,10 @@ const selectedVersion = useCookie("selectedVersion", {
   default: () => "",
 });
 selectedVersion.value = selectedVersion.value || "";
+
+const importModalVisible = ref(false);
+const activeModalTab = ref("import");
+const forceImport = ref(false);
 
 const negotiationCards = ref<Array<TableItem>>([]);
 const testSuites = ref<Array<TableItem>>([]);
@@ -591,6 +652,20 @@ async function submitNewVersion(modelName: string, versionName: string) {
     newVersionIdentifier.value = "";
     selectVersion(versionName);
   }
+}
+
+async function handleImportFile(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0 && target.files[0]) {
+    await importStore(target.files[0], forceImport.value)
+  }
+  populateModelList();
+  importModalVisible.value = false;
+}
+
+async function handleExportFile() {
+  exportStore();
+  importModalVisible.value = false;
 }
 
 /**

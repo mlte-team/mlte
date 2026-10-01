@@ -43,6 +43,12 @@
     }
 }
 
+.align-top-right {
+    align-self: flex-start;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .usa-textarea,
 .usa-input,
 .usa-select,
