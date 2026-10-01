@@ -192,8 +192,8 @@ def list_catalogs(
     current_user: AuthorizedUser,
 ) -> list[CatalogReply]:
     """
-    List MLTE catalogs, returning their ids.
-    :return: A collection of catalog ids.
+    List MLTE catalogs, returning their ids, read_only status and type.
+    :return: A collection of catalog ids with their read_only status and type.
     """
     with state_stores.catalog_stores_session() as catalog_stores:
         try:

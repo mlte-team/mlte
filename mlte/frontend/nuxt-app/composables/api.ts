@@ -223,6 +223,16 @@ export async function updateUser(user: User): Promise<User | null> {
 }
 
 /**
+ * Get list of all users
+ * 
+ * @returns {Promise<Array<string> | null>} Promise tha resolves to list of usernames
+ */
+export async function getUserList(): Promise<Array<string>> {
+  const users: Array<string> | null = await useApi("/user", "GET")
+  return users?.sort() || [];
+}
+
+/**
  * Delete User with API.
  *
  * @param {string} username Username of the User to delete
@@ -803,19 +813,16 @@ export async function importStore(file: File, force: boolean) {
   return response
 }
 
-export async function exportStore() {
+export async function exportStore(spec: ExportSpec) {
   const file: Blob | null = await useApi(
     "/import_export/export",
     "POST", {
-      body: {
-        models: {},
-        custom_lists: [],
-        users: [],
-        catalogs: [],
-      },
+      body: spec,
       responseType: "blob",
     }
   );
+
+  console.log(file)
 
   if (!file) {
     console.error("Export failed, file not returned.");
@@ -832,6 +839,7 @@ export async function exportStore() {
   link.click();
   link.remove();
   window.URL.revokeObjectURL(downloadUrl);
+  console.log("b")
 }
 
 // --------------------------------------------------------------------------------------------------------------

@@ -116,11 +116,7 @@
             </div>
 
             <div v-if="activeModalTab === 'export'">
-              <p class="usa-intro">Download your current store configuration.</p>
-
-              <UsaButton @click="handleExportFile" class="secondary-button">
-                Export
-              </UsaButton>
+              <ExportSelection @close="importModalVisible = false"/>
             </div>
           </TemplatesModalWrapper>
       </div>
@@ -660,11 +656,6 @@ async function handleImportFile(event: Event) {
     await importStore(target.files[0], forceImport.value)
   }
   populateModelList();
-  importModalVisible.value = false;
-}
-
-async function handleExportFile() {
-  exportStore();
   importModalVisible.value = false;
 }
 
