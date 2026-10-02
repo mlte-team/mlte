@@ -154,6 +154,7 @@ def export_to_file(
         catalog_stores,
     )
 
+
     if output_path is None:
         target_dir = Path(tempfile.mkdtemp())
         zip_file_path = target_dir / EXPORT_ZIP_FILE
@@ -164,8 +165,6 @@ def export_to_file(
         else:
             output_path.parent.mkdir(parents=True, exist_ok=True)
             zip_file_path = output_path
-
-    zip_file_path = target_dir / EXPORT_ZIP_FILE
 
     with zipfile.ZipFile(
         zip_file_path, "w", zipfile.ZIP_DEFLATED
