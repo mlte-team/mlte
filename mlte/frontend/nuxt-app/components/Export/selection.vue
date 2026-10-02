@@ -87,6 +87,7 @@
             class="margin-bottom-1 usa-checkbox"
           >
             <input
+              :id="`flat-${category.id}-${item}`"
               type="checkbox"
               class="usa-checkbox__input"
               v-model="exportSpec[category.id]"

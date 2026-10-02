@@ -1,3 +1,5 @@
+import { saveAs } from 'file-saver'
+
 import type { NitroFetchOptions } from "nitropack";
 
 const config = useRuntimeConfig();
@@ -822,24 +824,12 @@ export async function exportStore(spec: ExportSpec) {
     }
   );
 
-  console.log(file)
-
   if (!file) {
     console.error("Export failed, file not returned.");
     return;
   }
 
-  const filename = (file as File).name || "export.zip";
-
-  const downloadUrl = window.URL.createObjectURL(file);
-  const link = document.createElement("a");
-  link.href = downloadUrl;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  window.URL.revokeObjectURL(downloadUrl);
-  console.log("b")
+  saveAs(file, "export.zip");
 }
 
 // --------------------------------------------------------------------------------------------------------------

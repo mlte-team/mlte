@@ -168,7 +168,7 @@ def export_to_file(
         zip_file_path, "w", zipfile.ZIP_DEFLATED
     ) as zip_export_file:
         zip_export_file.writestr(
-            EXPORT_JSON_FILE, json.dumps(export_json, indent=4)
+            EXPORT_JSON_FILE, json.dumps(export_json, indent=2)
         )
 
     return zip_file_path
