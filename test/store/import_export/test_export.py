@@ -66,11 +66,11 @@ def test_export_to_file(
     )
     export_to_file(
         all_export_spec,
-        output_dir,
         stores.artifact_store,
         stores.custom_list_store,
         stores.user_store,
         stores.catalog_stores,
+        output_dir,
     )
 
     assert output_dir.exists()
@@ -160,7 +160,10 @@ def test_export_artifacts(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        models={model_id: [version_id]},
+        {model_id: [version_id]},
+        "*",
+        "*",
+        "*",
     )
     partial_export = _export_artifacts(partial_spec, stores.artifact_store)
     assert (
@@ -175,7 +178,13 @@ def test_export_artifacts(
     )
 
     none_spec = ExportSpec(
-        stores.artifact_store, stores.user_store, stores.catalog_stores
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        {},
+        [],
+        [],
+        [],
     )
     none_export = _export_artifacts(none_spec, stores.artifact_store)
     assert none_export == {}
@@ -203,7 +212,10 @@ def test_export_custom_lists(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        custom_lists=[CustomListName.TAGS],
+        {},
+        [CustomListName.TAGS],
+        [],
+        [],
     )
     partial_export = _export_custom_lists(
         partial_spec, stores.custom_list_store
@@ -211,7 +223,13 @@ def test_export_custom_lists(
     assert CustomListName.TAGS in partial_export
 
     none_spec = ExportSpec(
-        stores.artifact_store, stores.user_store, stores.catalog_stores
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        {},
+        [],
+        [],
+        [],
     )
     none_export = _export_custom_lists(none_spec, stores.custom_list_store)
     assert none_export == {}
@@ -253,14 +271,23 @@ def test_export_users(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        users=[test_user.username],
+        {},
+        [],
+        [test_user.username],
+        [],
     )
     partial_export = _export_users(partial_spec, stores.user_store)
     assert test_user.username in partial_export
     assert test_user == User(**partial_export[test_user.username])
 
     none_spec = ExportSpec(
-        stores.artifact_store, stores.user_store, stores.catalog_stores
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        {},
+        [],
+        [],
+        [],
     )
     none_export = _export_users(none_spec, stores.user_store)
     assert none_export == {}
@@ -286,14 +313,23 @@ def test_export_catalogs(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        catalogs=[LOCAL_CATALOG_STORE_ID],
+        {},
+        [],
+        [],
+        [LOCAL_CATALOG_STORE_ID],
     )
     partial_export = _export_catalogs(partial_spec, stores.catalog_stores)
     assert SAMPLE_CATALOG_STORE_ID not in partial_export
     assert LOCAL_CATALOG_STORE_ID in partial_export
 
     none_spec = ExportSpec(
-        stores.artifact_store, stores.user_store, stores.catalog_stores
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
+        {},
+        [],
+        [],
+        [],
     )
     none_export = _export_catalogs(none_spec, stores.catalog_stores)
     assert none_export == {}

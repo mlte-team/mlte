@@ -18,7 +18,7 @@ from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core.state import state
 from mlte.custom_list.custom_list_names import CustomListName
-from mlte.store.import_export.export_store import EXPORT_WILDCARD, ExportSpec
+from mlte.store.import_export.export_store import ExportSpec, ExportWildcard
 
 # The router exported by this submodule
 router = APIRouter()
@@ -31,7 +31,7 @@ def import_store(
     import_data: Annotated[UploadFile, File()],
     force: bool = Form(False),
 ) -> None:
-    if not import_data.filename.endswith(".json"):
+    if not import_data.filename or not import_data.filename.endswith(".json"):
         raise HTTPException(
             status_code=codes.UNPROCESSABLE_ENTITY,
             detail="File is not of type JSON.",
@@ -52,8 +52,6 @@ def import_store(
     except Exception as ex:
         raise_http_internal_error(ex)
 
-    return import_data
-
 
 def cleanup_file(file_path: str) -> None:
     """Removes temporary file after response finishes."""
@@ -65,10 +63,10 @@ def cleanup_file(file_path: str) -> None:
 def export(
     *,
     current_user: AuthorizedUser,
-    models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD,
-    custom_lists: list[CustomListName] | EXPORT_WILDCARD,
-    users: list[str] | EXPORT_WILDCARD,
-    catalogs: list[str] | EXPORT_WILDCARD,
+    models: dict[str, list[str] | ExportWildcard] | ExportWildcard,
+    custom_lists: list[CustomListName] | ExportWildcard,
+    users: list[str] | ExportWildcard,
+    catalogs: list[str] | ExportWildcard,
     background_tasks: BackgroundTasks,
 ) -> FileResponse:
     try:

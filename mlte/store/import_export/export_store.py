@@ -4,7 +4,7 @@ import json
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.store import ArtifactStore
@@ -24,7 +24,9 @@ from mlte.store.import_export.constants import (
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 
-EXPORT_WILDCARD = Literal["*"]
+EXPORT_WILDCARD: Final = "*"
+
+ExportWildcard = Literal["*"]
 
 
 class ExportSpec:
@@ -63,10 +65,10 @@ class ExportSpec:
         artifact_store: ArtifactStore,
         user_store: UserStore,
         catalog_stores: CatalogStoreGroup,
-        models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD = None,
-        custom_lists: list[CustomListName] | EXPORT_WILDCARD = None,
-        users: list[str] | EXPORT_WILDCARD = None,
-        catalogs: list[str] | EXPORT_WILDCARD = None,
+        models: dict[str, list[str] | ExportWildcard] | ExportWildcard,
+        custom_lists: list[CustomListName] | ExportWildcard,
+        users: list[str] | ExportWildcard,
+        catalogs: list[str] | ExportWildcard,
     ) -> None:
         self.models = self._setup_artifacts(artifact_store, models)
         self.custom_lists = self._setup_custom_lists(custom_lists)
@@ -76,16 +78,20 @@ class ExportSpec:
     def _setup_artifacts(
         self,
         artifact_store: ArtifactStore,
-        models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD,
+        models: dict[str, list[str] | ExportWildcard] | ExportWildcard,
     ) -> dict[str, list[str]]:
         """Setup artifact export, accounts for the all option."""
         resolved_models: dict[str, list[str]] = {}
 
         with ManagedArtifactSession(artifact_store.session()) as session:
+            target_models: dict[str, list[str] | ExportWildcard]
             if models == EXPORT_WILDCARD:
-                target_models = session.model_mapper.list_all()
+                target_models = {
+                    model_id: EXPORT_WILDCARD
+                    for model_id in session.model_mapper.list_all()
+                }
             else:
-                target_models = models if models else []
+                target_models = models
 
             for model_id, versions in target_models.items():
                 if versions == EXPORT_WILDCARD:
@@ -98,31 +104,31 @@ class ExportSpec:
         return resolved_models
 
     def _setup_custom_lists(
-        self, custom_lists: list[CustomListName] | EXPORT_WILDCARD
+        self, custom_lists: list[CustomListName] | ExportWildcard
     ) -> list[CustomListName]:
         """Setup custom list export, accounts for the all option."""
         if custom_lists == EXPORT_WILDCARD:
             return list(CustomListName)
-        return custom_lists if custom_lists else []
+        return custom_lists
 
     def _setup_users(
-        self, user_store: UserStore, users: list[str] | EXPORT_WILDCARD
+        self, user_store: UserStore, users: list[str] | ExportWildcard
     ) -> list[str]:
         """Setup user export, accounts for the all option."""
         if users == EXPORT_WILDCARD:
             with ManagedUserSession(user_store.session()) as session:
                 return session.user_mapper.list_all()
-        return users if users else []
+        return users
 
     def _setup_catalogs(
         self,
         catalog_stores: CatalogStoreGroup,
-        catalogs: list[str] | EXPORT_WILDCARD,
+        catalogs: list[str] | ExportWildcard,
     ) -> list[str]:
         """Setup catalog export, accounts for the all option."""
         if catalogs == EXPORT_WILDCARD:
             return list(catalog_stores.catalogs.keys())
-        return catalogs if catalogs else []
+        return catalogs
 
 
 def export_to_file(
