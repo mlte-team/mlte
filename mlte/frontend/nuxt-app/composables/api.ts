@@ -1,3 +1,5 @@
+import { saveAs } from "file-saver";
+
 import type { NitroFetchOptions } from "nitropack";
 
 const config = useRuntimeConfig();
@@ -220,6 +222,16 @@ export async function updateUser(user: User): Promise<User | null> {
     successfulSubmission("User", user.username, "updated");
   }
   return response;
+}
+
+/**
+ * Get list of all users
+ *
+ * @returns {Promise<Array<string> | null>} Promise tha resolves to list of usernames
+ */
+export async function getUserList(): Promise<Array<string>> {
+  const users: Array<string> | null = await useApi("/user", "GET");
+  return users?.sort() || [];
 }
 
 /**
@@ -782,6 +794,36 @@ export async function deleteCustomListEntry(
     successfulSubmission("Custom List Entry", entryId, "deleted");
   }
   return response;
+}
+
+// --------------------------------------------------------------------------------------------------------------
+// Import and Export
+// --------------------------------------------------------------------------------------------------------------
+
+export async function importStore(file: File, force: boolean) {
+  const body = new FormData();
+  body.append("import_data", file);
+  body.append("force", force as unknown as string);
+
+  const response = await useApi("/import_export/import", "POST", {
+    body: body,
+  });
+
+  return response;
+}
+
+export async function exportStore(spec: ExportSpec) {
+  const file: Blob | null = await useApi("/import_export/export", "POST", {
+    body: spec,
+    responseType: "blob",
+  });
+
+  if (!file) {
+    console.error("Export failed, file not returned.");
+    return;
+  }
+
+  saveAs(file, "export.zip");
 }
 
 // --------------------------------------------------------------------------------------------------------------
