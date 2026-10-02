@@ -249,7 +249,6 @@ const totalSelectedCount = computed(() => {
 });
 
 async function handleExportFile() {
-  console.log(exportSpec.value);
   await exportStore(exportSpec.value);
   emit("close");
 }
