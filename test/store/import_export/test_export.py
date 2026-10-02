@@ -261,7 +261,9 @@ def test_export_users(
         user_store_session.user_mapper.create(test_user)
 
     all_export_spec = create_all_export_spec(
-        stores.artifact_store, stores.user_store, stores.catalog_stores,
+        stores.artifact_store,
+        stores.user_store,
+        stores.catalog_stores,
     )
     full_export = _export_users(all_export_spec, stores.user_store)
     assert test_user.username in full_export
