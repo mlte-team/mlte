@@ -63,62 +63,76 @@
       </div>
 
       <div class="grid-col-4 align-top-right">
-          <UsaButton v-if="userRole === 'admin'" class="secondary-button" @click="importModalVisible = true">
-            Import / Export
-          </UsaButton>
+        <UsaButton
+          v-if="userRole === 'admin'"
+          class="secondary-button"
+          @click="importModalVisible = true"
+        >
+          Import / Export
+        </UsaButton>
 
-          <TemplatesModalWrapper
-            :visible="importModalVisible"
-            @toggle-visible="(value) => (importModalVisible = value)"
-          >
-            <div class="usa-tabs">
-              <ul class="usa-button-group usa-button-group--segmented margin-bottom-3">
-                <li class="usa-button-group__item">
-                  <button
-                    type="button"
-                    class="usa-button"
-                    :class="{ 'usa-button--outline': activeModalTab !== 'import' }"
-                    @click="activeModalTab = 'import'"
-                  >
-                    Import Store Data
-                  </button>
-                </li>
-                <li class="usa-button-group__item">
-                  <button
-                    type="button"
-                    class="usa-button"
-                    :class="{ 'usa-button--outline': activeModalTab !== 'export' }"
-                    @click="activeModalTab = 'export'"
-                  >
-                    Export Store Data
-                  </button>
-                </li>
-              </ul>
-            </div>
+        <TemplatesModalWrapper
+          :visible="importModalVisible"
+          @toggle-visible="(value) => (importModalVisible = value)"
+        >
+          <div class="usa-tabs">
+            <ul
+              class="usa-button-group usa-button-group--segmented margin-bottom-3"
+            >
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  class="usa-button"
+                  :class="{
+                    'usa-button--outline': activeModalTab !== 'import',
+                  }"
+                  @click="activeModalTab = 'import'"
+                >
+                  Import Store Data
+                </button>
+              </li>
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  class="usa-button"
+                  :class="{
+                    'usa-button--outline': activeModalTab !== 'export',
+                  }"
+                  @click="activeModalTab = 'export'"
+                >
+                  Export Store Data
+                </button>
+              </li>
+            </ul>
+          </div>
 
-            <div v-if="activeModalTab === 'import'">
-              <p class="usa-intro">Select a JSON file to import store settings.</p>
-              
-              <UsaCheckbox type="checkbox" v-model="forceImport">
-                Overwrite data with import
-              </UsaCheckbox>
+          <div v-if="activeModalTab === 'import'">
+            <p class="usa-intro">
+              Select a JSON file to import store settings.
+            </p>
 
-              <div v-if="forceImport" class="usa-alert usa-alert--warning margin-bottom-2">
-                <div class="usa-alert__body">
-                  <p class="usa-alert__text">Importing data will overwrite your current configuration.</p>
-                </div>
+            <UsaCheckbox v-model="forceImport">
+              Overwrite data with import
+            </UsaCheckbox>
+
+            <div
+              v-if="forceImport"
+              class="usa-alert usa-alert--warning margin-bottom-2"
+            >
+              <div class="usa-alert__body">
+                <p class="usa-alert__text">
+                  Importing data will overwrite your current configuration.
+                </p>
               </div>
-
-              <UsaFileInput
-                accept=".json"
-                @change="handleImportFile"
-              />
             </div>
 
-            <div v-if="activeModalTab === 'export'">
-              <ExportSelection @close="importModalVisible = false"/>
-            </div>
-          </TemplatesModalWrapper>
+            <UsaFileInput accept=".json" @change="handleImportFile" />
+          </div>
+
+          <div v-if="activeModalTab === 'export'">
+            <ExportItemSelection @close="importModalVisible = false" />
+          </div>
+        </TemplatesModalWrapper>
       </div>
     </div>
 
@@ -651,9 +665,9 @@ async function submitNewVersion(modelName: string, versionName: string) {
 }
 
 async function handleImportFile(event: Event) {
-  const target = event.target as HTMLInputElement
+  const target = event.target as HTMLInputElement;
   if (target.files && target.files.length > 0 && target.files[0]) {
-    await importStore(target.files[0], forceImport.value)
+    await importStore(target.files[0], forceImport.value);
   }
   populateModelList();
   importModalVisible.value = false;

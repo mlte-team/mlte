@@ -467,8 +467,8 @@ export class GroupCheckboxOption extends Group {
 // --------------------------------------------------------------------------------------------------------------
 
 export interface ExportSpec {
-  models: Record<string, Array<string>>
-  users: string[]
-  custom_lists: string[]
-  catalogs: string[]
+  models: Record<string, Array<string>>;
+  users: string[];
+  custom_lists: string[];
+  catalogs: string[];
 }
