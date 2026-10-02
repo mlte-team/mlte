@@ -1,13 +1,19 @@
-
-
 import json
 import os
+from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+)
 from fastapi.responses import FileResponse
 
-from mlte.backend.api import codes
 import mlte.store.error as errors
+from mlte.backend.api import codes
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core.state import state
@@ -22,14 +28,15 @@ router = APIRouter()
 def import_store(
     *,
     current_user: AuthorizedUser,
-    import_data: UploadFile = File(...),
+    import_data: Annotated[UploadFile, File()],
     force: bool = Form(False),
 ) -> None:
     if not import_data.filename.endswith(".json"):
         raise HTTPException(
-            status_code=codes.UNPROCESSABLE_ENTITY, detail="File is not of type JSON."
+            status_code=codes.UNPROCESSABLE_ENTITY,
+            detail="File is not of type JSON.",
         )
-    
+
     try:
         file_bytes = import_data.file.read()
         parsed_json = json.loads(file_bytes)
@@ -41,7 +48,7 @@ def import_store(
     except errors.ErrorAlreadyExists as ex:
         raise HTTPException(
             status_code=codes.ALREADY_EXISTS, detail=f"{ex} already exists."
-        )
+        ) from None
     except Exception as ex:
         raise_http_internal_error(ex)
 
@@ -58,10 +65,10 @@ def cleanup_file(file_path: str) -> None:
 def export(
     *,
     current_user: AuthorizedUser,
-    models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD = {},
-    custom_lists: list[CustomListName] | EXPORT_WILDCARD = [],
-    users: list[str] | EXPORT_WILDCARD = [],
-    catalogs: list[str] | EXPORT_WILDCARD = [],
+    models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD,
+    custom_lists: list[CustomListName] | EXPORT_WILDCARD,
+    users: list[str] | EXPORT_WILDCARD,
+    catalogs: list[str] | EXPORT_WILDCARD,
     background_tasks: BackgroundTasks,
 ) -> FileResponse:
     try:

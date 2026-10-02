@@ -49,7 +49,10 @@ def import_store(
 
     if MODELS_KEY in import_data and import_data[MODELS_KEY] is not None:
         _import_artifacts(import_data[MODELS_KEY], artifact_store, force)
-    if CUSTOM_LISTS_KEY in import_data and import_data[CUSTOM_LISTS_KEY] is not None:
+    if (
+        CUSTOM_LISTS_KEY in import_data
+        and import_data[CUSTOM_LISTS_KEY] is not None
+    ):
         _import_custom_lists(
             import_data[CUSTOM_LISTS_KEY], custom_list_store, force
         )

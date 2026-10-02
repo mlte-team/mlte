@@ -10,7 +10,6 @@ from mlte._private import url as url_utils
 from mlte.backend.api.auth.authorization import AuthorizedUser
 from mlte.backend.api.error_handlers import raise_http_internal_error
 from mlte.backend.core import state_stores
-from mlte.backend.core.state import state
 from mlte.context.model import Model, Version
 from mlte.store.user.policy import model_policy
 

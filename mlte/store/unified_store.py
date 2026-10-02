@@ -72,7 +72,9 @@ class UnifiedStore:
         """Adds to the the list of catalog stores."""
         self._catalog_stores.add_catalog_from_uri(id, store_uri, overwite)
 
-    def export_store(self, export_spec: ExportSpec, output_path: Path | None = None) -> Path:
+    def export_store(
+        self, export_spec: ExportSpec, output_path: Path | None = None
+    ) -> Path:
         """Export store data."""
         return export_to_file(
             export_spec,

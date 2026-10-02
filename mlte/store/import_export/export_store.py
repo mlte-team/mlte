@@ -1,7 +1,6 @@
 """Base store export class."""
 
 import json
-import os
 import tempfile
 import zipfile
 from pathlib import Path
@@ -26,6 +25,7 @@ from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 
 EXPORT_WILDCARD = Literal["*"]
+
 
 class ExportSpec:
     """Specification of MLTE store objects to be exported."""
@@ -63,10 +63,10 @@ class ExportSpec:
         artifact_store: ArtifactStore,
         user_store: UserStore,
         catalog_stores: CatalogStoreGroup,
-        models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD = {},
-        custom_lists: list[CustomListName] | EXPORT_WILDCARD = [],
-        users: list[str] | EXPORT_WILDCARD = [],
-        catalogs: list[str] | EXPORT_WILDCARD = [],
+        models: dict[str, list[str] | EXPORT_WILDCARD] | EXPORT_WILDCARD = None,
+        custom_lists: list[CustomListName] | EXPORT_WILDCARD = None,
+        users: list[str] | EXPORT_WILDCARD = None,
+        catalogs: list[str] | EXPORT_WILDCARD = None,
     ) -> None:
         self.models = self._setup_artifacts(artifact_store, models)
         self.custom_lists = self._setup_custom_lists(custom_lists)
@@ -85,11 +85,13 @@ class ExportSpec:
             if models == EXPORT_WILDCARD:
                 target_models = session.model_mapper.list_all()
             else:
-                target_models = models
+                target_models = models if models else []
 
             for model_id, versions in target_models.items():
                 if versions == EXPORT_WILDCARD:
-                    resolved_models[model_id] = session.version_mapper.list_all(model_id)
+                    resolved_models[model_id] = session.version_mapper.list_all(
+                        model_id
+                    )
                 else:
                     resolved_models[model_id] = versions
 
@@ -101,7 +103,7 @@ class ExportSpec:
         """Setup custom list export, accounts for the all option."""
         if custom_lists == EXPORT_WILDCARD:
             return list(CustomListName)
-        return custom_lists
+        return custom_lists if custom_lists else []
 
     def _setup_users(
         self, user_store: UserStore, users: list[str] | EXPORT_WILDCARD
@@ -110,15 +112,17 @@ class ExportSpec:
         if users == EXPORT_WILDCARD:
             with ManagedUserSession(user_store.session()) as session:
                 return session.user_mapper.list_all()
-        return users
+        return users if users else []
 
     def _setup_catalogs(
-        self, catalog_stores: CatalogStoreGroup, catalogs: list[str] | EXPORT_WILDCARD
+        self,
+        catalog_stores: CatalogStoreGroup,
+        catalogs: list[str] | EXPORT_WILDCARD,
     ) -> list[str]:
         """Setup catalog export, accounts for the all option."""
         if catalogs == EXPORT_WILDCARD:
             return list(catalog_stores.catalogs.keys())
-        return catalogs
+        return catalogs if catalogs else []
 
 
 def export_to_file(

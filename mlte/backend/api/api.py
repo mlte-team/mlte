@@ -49,7 +49,7 @@ api_router.include_router(
     tags=["custom_list_entry"],
 )
 api_router.include_router(
-    import_export.router, 
+    import_export.router,
     prefix=f"/{ResourceType.IMPORT_EXPORT}",
-    tags=["import_export"]
+    tags=["import_export"],
 )
