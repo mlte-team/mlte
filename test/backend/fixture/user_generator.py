@@ -1,8 +1,4 @@
-"""
-test/backend/fixture/api.py
-
-Set up for store fixtures in API state.
-"""
+"""Set up for store fixtures in API state."""
 
 from __future__ import annotations
 

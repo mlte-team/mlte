@@ -1,8 +1,4 @@
-"""
-test/backend/api/endpoints/test_custom_list.py
-
-Test the API for custom list operations.
-"""
+"""Test the API for custom list operations."""
 
 from typing import Any
 

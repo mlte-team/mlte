@@ -802,7 +802,7 @@ export async function deleteCustomListEntry(
 
 /**
  * Import store data with API.
- * 
+ *
  * @param {File} file File to be imported, must be JSON
  * @param {boolean} force Option for force the import and overwrite data
  */
@@ -811,18 +811,18 @@ export async function importStore(file: File, force: boolean) {
   body.append("import_data", file);
   body.append("force", force as unknown as string);
 
-  await useApi("/import_export/import", "POST", {
+  await useApi("/store/import", "POST", {
     body: body,
   });
 }
 
 /**
  * Export tore data with API.
- * 
+ *
  * @param {ExportSpec} spec Specification of what items need to be exported
  */
 export async function exportStore(spec: ExportSpec) {
-  const file: Blob | null = await useApi("/import_export/export", "POST", {
+  const file: Blob | null = await useApi("/store/export", "POST", {
     body: spec,
     responseType: "blob",
   });

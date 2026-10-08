@@ -1,8 +1,4 @@
-"""
-test/backend/fixture/http.py
-
-Fixtures for artifact store HTTP unit tests.
-"""
+"""Fixtures for artifact store HTTP unit tests."""
 
 from __future__ import annotations
 

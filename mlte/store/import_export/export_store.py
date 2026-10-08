@@ -51,7 +51,9 @@ class ExportSpec:
         artifact_store: ArtifactStore,
         user_store: UserStore,
         catalog_stores: CatalogStoreGroup,
-        models: dict[str, list[str] | ExportWildcard] | ExportWildcard | None = None,
+        models: dict[str, list[str] | ExportWildcard]
+        | ExportWildcard
+        | None = None,
         custom_lists: list[CustomListName] | ExportWildcard | None = None,
         users: list[str] | ExportWildcard | None = None,
         catalogs: list[str] | ExportWildcard | None = None,
@@ -96,7 +98,7 @@ class ExportSpec:
         self, custom_lists: list[CustomListName] | ExportWildcard | None
     ) -> list[CustomListName]:
         """Setup custom list export, accounts for the all option."""
-        if custom_lists == None:
+        if custom_lists is None:
             return []
         elif custom_lists == EXPORT_WILDCARD:
             return list(CustomListName)
@@ -106,7 +108,7 @@ class ExportSpec:
         self, user_store: UserStore, users: list[str] | ExportWildcard | None
     ) -> list[str]:
         """Setup user export, accounts for the all option."""
-        if users == None:
+        if users is None:
             return []
         elif users == EXPORT_WILDCARD:
             with ManagedUserSession(user_store.session()) as session:
@@ -119,7 +121,7 @@ class ExportSpec:
         catalogs: list[str] | ExportWildcard | None,
     ) -> list[str]:
         """Setup catalog export, accounts for the all option."""
-        if catalogs == None:
+        if catalogs is None:
             return []
         elif catalogs == EXPORT_WILDCARD:
             return list(catalog_stores.catalogs.keys())
