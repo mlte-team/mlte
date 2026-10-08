@@ -50,6 +50,6 @@ api_router.include_router(
 )
 api_router.include_router(
     import_export.router,
-    prefix=f"/{ResourceType.IMPORT_EXPORT}",
+    prefix=f"/{ResourceType.STORE}",
     tags=["import_export"],
 )

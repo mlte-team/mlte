@@ -181,10 +181,6 @@ def test_export_artifacts(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        {},
-        [],
-        [],
-        [],
     )
     none_export = _export_artifacts(none_spec, stores.artifact_store)
     assert none_export == {}
@@ -226,10 +222,6 @@ def test_export_custom_lists(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        {},
-        [],
-        [],
-        [],
     )
     none_export = _export_custom_lists(none_spec, stores.custom_list_store)
     assert none_export == {}
@@ -286,10 +278,6 @@ def test_export_users(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        {},
-        [],
-        [],
-        [],
     )
     none_export = _export_users(none_spec, stores.user_store)
     assert none_export == {}
@@ -328,10 +316,6 @@ def test_export_catalogs(
         stores.artifact_store,
         stores.user_store,
         stores.catalog_stores,
-        {},
-        [],
-        [],
-        [],
     )
     none_export = _export_catalogs(none_spec, stores.catalog_stores)
     assert none_export == {}

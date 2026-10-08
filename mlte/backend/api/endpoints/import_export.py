@@ -31,6 +31,10 @@ def import_store(
     import_data: Annotated[UploadFile, File()],
     force: bool = Form(False),
 ) -> None:
+    """
+    Import store information from a file.
+    :param import_data: JSON file containing store information.
+    """
     if not import_data.filename or not import_data.filename.endswith(".json"):
         raise HTTPException(
             status_code=codes.UNPROCESSABLE_ENTITY,
@@ -69,6 +73,13 @@ def export(
     catalogs: list[str] | ExportWildcard,
     background_tasks: BackgroundTasks,
 ) -> FileResponse:
+    """
+    Export store information as a zip file.
+    :param models: Dict of models, with each containing list of versions to export
+    :param custom_lists: List of custom lists to export
+    :param users: List of users to export
+    :param catalogs: List of catalogs to export
+    """
     try:
         file_path = state.stores.export_store(
             ExportSpec(

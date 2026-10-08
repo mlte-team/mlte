@@ -174,8 +174,8 @@ class ResourceType(StrEnum):
     CUSTOM_LIST = "custom_list"
     """Custom lists."""
 
-    IMPORT_EXPORT = "import_export"
-    """Store import and export."""
+    STORE = "store"
+    """Top level store operations like import and export."""
 
     @staticmethod
     def get_type_from_url(url: str) -> ResourceType | None:
