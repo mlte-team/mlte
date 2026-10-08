@@ -98,6 +98,28 @@
                       Manage Groups
                     </NuxtLink>
                   </li>
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/admin/import-store' }"
+                      :class="{
+                        'usa-current': route.name === 'admin-import-store',
+                      }"
+                      @click="$emit('nav')"
+                    >
+                      Import Store
+                    </NuxtLink>
+                  </li>
+                  <li class="usa-sidenav__item">
+                    <NuxtLink
+                      :to="{ path: '/admin/export-store' }"
+                      :class="{
+                        'usa-current': route.name === 'admin-export-store',
+                      }"
+                      @click="$emit('nav')"
+                    >
+                      Export Store
+                    </NuxtLink>
+                  </li>
                 </ul>
               </li>
               <li v-else class="usa-sidenav__item">

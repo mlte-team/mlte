@@ -39,8 +39,8 @@
       @toggle-visible="testSuiteModalVisible = false"
     />
 
-    <div class="inline-form-row">
-      <div class="grid-col-4">
+    <div style="display: flex">
+      <div class="model-version-div">
         <UsaSelect
           :options="modelOptions"
           :model-value="selectedModel"
@@ -51,7 +51,7 @@
         <br />
       </div>
 
-      <div class="grid-col-4">
+      <div class="model-version-div">
         <UsaSelect
           :options="versionOptions"
           :model-value="selectedVersion"
@@ -60,79 +60,6 @@
           <template #label>Version</template>
         </UsaSelect>
         <br />
-      </div>
-
-      <div class="grid-col-4 align-top-right">
-        <UsaButton
-          v-if="userRole === 'admin'"
-          class="secondary-button"
-          @click="importModalVisible = true"
-        >
-          Import / Export
-        </UsaButton>
-
-        <TemplatesModalWrapper
-          :visible="importModalVisible"
-          @toggle-visible="(value) => (importModalVisible = value)"
-        >
-          <div class="usa-tabs">
-            <ul
-              class="usa-button-group usa-button-group--segmented margin-bottom-3"
-            >
-              <li class="usa-button-group__item">
-                <button
-                  type="button"
-                  class="usa-button"
-                  :class="{
-                    'usa-button--outline': activeModalTab !== 'import',
-                  }"
-                  @click="activeModalTab = 'import'"
-                >
-                  Import Store Data
-                </button>
-              </li>
-              <li class="usa-button-group__item">
-                <button
-                  type="button"
-                  class="usa-button"
-                  :class="{
-                    'usa-button--outline': activeModalTab !== 'export',
-                  }"
-                  @click="activeModalTab = 'export'"
-                >
-                  Export Store Data
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <div v-if="activeModalTab === 'import'">
-            <p class="usa-intro">
-              Select a JSON file to import store settings.
-            </p>
-
-            <UsaCheckbox v-model="forceImport">
-              Overwrite data with import
-            </UsaCheckbox>
-
-            <div
-              v-if="forceImport"
-              class="usa-alert usa-alert--warning margin-bottom-2"
-            >
-              <div class="usa-alert__body">
-                <p class="usa-alert__text">
-                  Importing data will overwrite your current configuration.
-                </p>
-              </div>
-            </div>
-
-            <UsaFileInput accept=".json" @change="handleImportFile" />
-          </div>
-
-          <div v-if="activeModalTab === 'export'">
-            <ExportItemSelection @close="importModalVisible = false" />
-          </div>
-        </TemplatesModalWrapper>
       </div>
     </div>
 
@@ -428,7 +355,6 @@ const modelList = ref<Array<string>>([]);
 const testSuiteModalVisible = ref<boolean>(false);
 const testSuiteTemplate = ref<string>("");
 
-const userRole = useCookie("userRole");
 const selectedModel = useCookie("selectedModel", {
   default: () => "",
 });
@@ -438,10 +364,6 @@ const selectedVersion = useCookie("selectedVersion", {
   default: () => "",
 });
 selectedVersion.value = selectedVersion.value || "";
-
-const importModalVisible = ref(false);
-const activeModalTab = ref("import");
-const forceImport = ref(false);
 
 const negotiationCards = ref<Array<TableItem>>([]);
 const testSuites = ref<Array<TableItem>>([]);
@@ -662,15 +584,6 @@ async function submitNewVersion(modelName: string, versionName: string) {
     newVersionIdentifier.value = "";
     selectVersion(versionName);
   }
-}
-
-async function handleImportFile(event: Event) {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0 && target.files[0]) {
-    await importStore(target.files[0], forceImport.value);
-  }
-  populateModelList();
-  importModalVisible.value = false;
 }
 
 /**

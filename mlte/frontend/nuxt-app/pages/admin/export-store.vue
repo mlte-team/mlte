@@ -1,10 +1,19 @@
 <template>
-  <UsaCard>
-    <template #heading>
-      <h3>Export Store Resources</h3>
-    </template>
-
-    <p>Select the resources to include in the export.</p>
+  <NuxtLayout name="base-layout">
+    <title>Export Store</title>
+    <template #page-title>Export Store</template>
+    <div class="inline-form-row">
+      <h2 class="section-header">Select the resources to include in the export.</h2>
+      <div class="sub-header-float-button">
+        <UsaButton
+          class="secondary-button"
+          :disabled="totalSelectedCount === 0"
+          @click="handleExportFile"
+        >
+          Export Selected ({{ totalSelectedCount }})
+        </UsaButton>
+      </div>
+    </div>
 
     <div>
       <div class="grid-col-12 margin-bottom-3">
@@ -105,24 +114,10 @@
         </fieldset>
       </div>
     </div>
-
-    <template #footer>
-      <div class="display-flex flex-justify-end">
-        <UsaButton
-          class="secondary-button"
-          :disabled="totalSelectedCount === 0"
-          @click="handleExportFile"
-        >
-          Export Selected ({{ totalSelectedCount }})
-        </UsaButton>
-      </div>
-    </template>
-  </UsaCard>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["close"]);
-
 type FlatCategoryKey = "users" | "custom_lists" | "catalogs";
 
 const flatCategories = [
@@ -250,6 +245,5 @@ const totalSelectedCount = computed(() => {
 
 async function handleExportFile() {
   await exportStore(exportSpec.value);
-  emit("close");
 }
 </script>

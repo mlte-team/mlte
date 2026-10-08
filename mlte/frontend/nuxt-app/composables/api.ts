@@ -800,18 +800,27 @@ export async function deleteCustomListEntry(
 // Import and Export
 // --------------------------------------------------------------------------------------------------------------
 
+/**
+ * Import store data with API.
+ * 
+ * @param {File} file File to be imported, must be JSON
+ * @param {boolean} force Option for force the import and overwrite data
+ */
 export async function importStore(file: File, force: boolean) {
   const body = new FormData();
   body.append("import_data", file);
   body.append("force", force as unknown as string);
 
-  const response = await useApi("/import_export/import", "POST", {
+  await useApi("/import_export/import", "POST", {
     body: body,
   });
-
-  return response;
 }
 
+/**
+ * Export tore data with API.
+ * 
+ * @param {ExportSpec} spec Specification of what items need to be exported
+ */
 export async function exportStore(spec: ExportSpec) {
   const file: Blob | null = await useApi("/import_export/export", "POST", {
     body: spec,
