@@ -39,7 +39,6 @@
       @toggle-visible="testSuiteModalVisible = false"
     />
 
-    <!-- <UsaBreadcrumb :items="path" /> -->
     <div style="display: flex">
       <div class="model-version-div">
         <UsaSelect
@@ -61,12 +60,6 @@
           <template #label>Version</template>
         </UsaSelect>
         <br />
-      </div>
-
-      <div>
-        <!-- Placeholder for when the search functionality is implemented
-        <label class="usa-label" style="margin-top: 0px;">Search</label>
-        <UsaTextInput v-model="searchInput" style="width: 100%;"/> -->
       </div>
     </div>
 

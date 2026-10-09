@@ -1,10 +1,10 @@
 """Base store export class."""
 
 import json
-import os
+import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any
+from typing import Any, Final, Literal
 
 from mlte.custom_list.custom_list_names import CustomListName
 from mlte.store.artifact.store import ArtifactStore
@@ -24,122 +24,124 @@ from mlte.store.import_export.constants import (
 from mlte.store.user.store import UserStore
 from mlte.store.user.store_session import ManagedUserSession
 
+# Used to specify all for exports. Final is used for comparison with the inputs to see if they are the wildcard.
+# The literal is used to annote types. They are both needed as using one for the others purpose causes typecheck
+# or comparison errors.
+EXPORT_WILDCARD: Final = "*"
+ExportWildcard = Literal["*"]
+
 
 class ExportSpec:
     """Specification of MLTE store objects to be exported."""
 
-    models: dict[str, list[str]] | None = None
-    """
-    Dict of models to be exported. Key is model ID, value is list of versions.
+    models: dict[str, list[str]]
+    """Dict of models to be exported. Key is model ID, value is list of versions."""
 
-    An empty dict will export all models, all versions. An empty list of versions will export all versions.
-    """
+    custom_lists: list[CustomListName]
+    """List of custom lists to be exported."""
 
-    custom_lists: list[CustomListName] | None = None
-    """
-    List of custom lists to be exported.
+    users: list[str]
+    """List of user IDs for users to be exported."""
 
-    An empty list will export all custom lists.
-    """
-
-    users: list[str] | None = None
-    """
-    List of user IDs for users to be exported.
-
-    An empty list will export all users.
-    """
-
-    catalogs: list[str] | None = None
-    """
-    List of catalogs to be exported.
-
-    An empty list will export all catalogs.
-    """
+    catalogs: list[str]
+    """List of catalogs to be exported."""
 
     def __init__(
         self,
         artifact_store: ArtifactStore,
         user_store: UserStore,
         catalog_stores: CatalogStoreGroup,
-        models: dict[str, list[str]] | None = None,
-        custom_lists: list[CustomListName] | None = None,
-        users: list[str] | None = None,
-        catalogs: list[str] | None = None,
+        models: dict[str, list[str] | ExportWildcard]
+        | ExportWildcard
+        | None = None,
+        custom_lists: list[CustomListName] | ExportWildcard | None = None,
+        users: list[str] | ExportWildcard | None = None,
+        catalogs: list[str] | ExportWildcard | None = None,
     ) -> None:
-        self._setup_artifacts(artifact_store, models)
-        self._setup_custom_lists(custom_lists)
-        self._setup_users(user_store, users)
-        self._setup_catalogs(catalog_stores, catalogs)
+        self.models = self._setup_artifacts(artifact_store, models)
+        self.custom_lists = self._setup_custom_lists(custom_lists)
+        self.users = self._setup_users(user_store, users)
+        self.catalogs = self._setup_catalogs(catalog_stores, catalogs)
 
     def _setup_artifacts(
         self,
         artifact_store: ArtifactStore,
-        models: dict[str, list[str]] | None = None,
-    ) -> None:
-        """Setup artifact export, accounts for the all option of an empty dict for models, lists for versions."""
-        self.models = models
+        models: dict[str, list[str] | ExportWildcard] | ExportWildcard | None,
+    ) -> dict[str, list[str]]:
+        """Setup artifact export, accounts for the all option."""
+        resolved_models: dict[str, list[str]] = {}
 
-        if self.models is None:
-            return
+        if models is None:
+            return resolved_models
 
-        with ManagedArtifactSession(
-            artifact_store.session()
-        ) as artifact_store_session:
-            if self.models == {}:
-                for model_id in artifact_store_session.model_mapper.list_all():
-                    self.models[model_id] = []
+        with ManagedArtifactSession(artifact_store.session()) as session:
+            target_models: dict[str, list[str] | ExportWildcard]
+            if models == EXPORT_WILDCARD:
+                target_models = {
+                    model_id: EXPORT_WILDCARD
+                    for model_id in session.model_mapper.list_all()
+                }
+            else:
+                target_models = models
 
-            for model_id in self.models:
-                if self.models[model_id] == []:
-                    self.models[model_id] = (
-                        artifact_store_session.version_mapper.list_all(model_id)
+            for model_id, versions in target_models.items():
+                if versions == EXPORT_WILDCARD:
+                    resolved_models[model_id] = session.version_mapper.list_all(
+                        model_id
                     )
+                elif versions != []:
+                    resolved_models[model_id] = versions
+
+        return resolved_models
 
     def _setup_custom_lists(
-        self, custom_lists: list[CustomListName] | None = None
-    ) -> None:
-        """Setup custom list export, accounts for the all option of an empty list."""
-        self.custom_lists = custom_lists
-
-        if self.custom_lists == []:
-            for custom_list_id in CustomListName:
-                self.custom_lists.append(custom_list_id)
+        self, custom_lists: list[CustomListName] | ExportWildcard | None
+    ) -> list[CustomListName]:
+        """Setup custom list export, accounts for the all option."""
+        if custom_lists is None:
+            return []
+        elif custom_lists == EXPORT_WILDCARD:
+            return list(CustomListName)
+        return custom_lists
 
     def _setup_users(
-        self, user_store: UserStore, users: list[str] | None = None
-    ) -> None:
-        """Setup user export, accounts for the all option of an empty list."""
-        self.users = users
-
-        if self.users == []:
-            with ManagedUserSession(user_store.session()) as user_store_session:
-                self.users = user_store_session.user_mapper.list_all()
+        self, user_store: UserStore, users: list[str] | ExportWildcard | None
+    ) -> list[str]:
+        """Setup user export, accounts for the all option."""
+        if users is None:
+            return []
+        elif users == EXPORT_WILDCARD:
+            with ManagedUserSession(user_store.session()) as session:
+                return session.user_mapper.list_all()
+        return users
 
     def _setup_catalogs(
         self,
         catalog_stores: CatalogStoreGroup,
-        catalogs: list[str] | None = None,
-    ) -> None:
-        """Setup catalog export, accounts for the all option of an empty list."""
-        self.catalogs = catalogs
-
-        if self.catalogs == []:
-            self.catalogs = list(catalog_stores.catalogs.keys())
+        catalogs: list[str] | ExportWildcard | None,
+    ) -> list[str]:
+        """Setup catalog export, accounts for the all option."""
+        if catalogs is None:
+            return []
+        elif catalogs == EXPORT_WILDCARD:
+            return list(catalog_stores.catalogs.keys())
+        return catalogs
 
 
 def export_to_file(
     export_spec: ExportSpec,
-    output_path: Path,
     artifact_store: ArtifactStore,
     custom_list_store: CustomListStore,
     user_store: UserStore,
     catalog_stores: CatalogStoreGroup,
-) -> None:
+    output_path: Path | None = None,
+) -> Path:
     """
     Export store data, writes the exported JSON to output_path as zip file.
 
     :param export_spec: Selection of MLTE store objects to be exported
-    :param output_path: Path to write zipped JSON to
+    :param output_path: Directory or file path to write zipped JSON to
+    :returns: Path of the exported zip file
     """
     export_json = _export(
         export_spec,
@@ -149,15 +151,25 @@ def export_to_file(
         catalog_stores,
     )
 
-    # Ensure output directory exists
-    os.makedirs(output_path, exist_ok=True)
+    if output_path is None:
+        target_dir = Path(tempfile.mkdtemp())
+        zip_file_path = target_dir / EXPORT_ZIP_FILE
+    else:
+        if output_path.is_dir() or not output_path.suffix:
+            output_path.mkdir(parents=True, exist_ok=True)
+            zip_file_path = output_path / EXPORT_ZIP_FILE
+        else:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            zip_file_path = output_path
 
     with zipfile.ZipFile(
-        os.path.join(output_path, EXPORT_ZIP_FILE), "w", zipfile.ZIP_DEFLATED
+        zip_file_path, "w", zipfile.ZIP_DEFLATED
     ) as zip_export_file:
         zip_export_file.writestr(
-            EXPORT_JSON_FILE, json.dumps(export_json, indent=4)
+            EXPORT_JSON_FILE, json.dumps(export_json, indent=2)
         )
+
+    return zip_file_path
 
 
 def _export(
@@ -198,9 +210,6 @@ def _export_artifacts(
     """Return dict of artifacts specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
-    if export_spec.models is None:
-        return output_dict
-
     # TODO: When getting multiple versions, this exports the card under each version. Will have to be handled
     with ManagedArtifactSession(
         artifact_store.session()
@@ -229,9 +238,6 @@ def _export_custom_lists(
     """Return dict of custom lists specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
-    if export_spec.custom_lists is None:
-        return output_dict
-
     with ManagedCustomListSession(
         custom_list_store.session()
     ) as custom_list_store_session:
@@ -253,9 +259,6 @@ def _export_users(
     """Return list of users specified in export_spec."""
     output_dict: dict[str, Any] = {}
 
-    if export_spec.users is None:
-        return output_dict
-
     # TODO: Handle permissions & groups
     with ManagedUserSession(user_store.session()) as user_store_session:
         for user in export_spec.users:
@@ -271,9 +274,6 @@ def _export_catalogs(
 ) -> dict[str, Any]:
     """Return the local test catalog."""
     output_dict: dict[str, Any] = {}
-
-    if export_spec.catalogs is None:
-        return output_dict
 
     for catalog_name in export_spec.catalogs:
         with ManagedCatalogSession(

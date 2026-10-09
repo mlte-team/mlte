@@ -9,6 +9,7 @@ from mlte.backend.api.endpoints import (
     custom_list_entry,
     group,
     health,
+    import_export,
     token,
     user,
 )
@@ -46,4 +47,9 @@ api_router.include_router(
     custom_list_entry.router,
     prefix=f"/{ResourceType.CUSTOM_LIST.value}",
     tags=["custom_list_entry"],
+)
+api_router.include_router(
+    import_export.router,
+    prefix=f"/{ResourceType.STORE}",
+    tags=["import_export"],
 )

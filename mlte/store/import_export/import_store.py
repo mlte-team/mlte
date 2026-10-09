@@ -47,15 +47,18 @@ def import_store(
             catalog_stores,
         )
 
-    if MODELS_KEY in import_data:
+    if MODELS_KEY in import_data and import_data[MODELS_KEY] is not None:
         _import_artifacts(import_data[MODELS_KEY], artifact_store, force)
-    if CUSTOM_LISTS_KEY in import_data:
+    if (
+        CUSTOM_LISTS_KEY in import_data
+        and import_data[CUSTOM_LISTS_KEY] is not None
+    ):
         _import_custom_lists(
             import_data[CUSTOM_LISTS_KEY], custom_list_store, force
         )
-    if USERS_KEY in import_data:
+    if USERS_KEY in import_data and import_data[USERS_KEY] is not None:
         _import_users(import_data[USERS_KEY], user_store, force)
-    if CATALOG_KEY in import_data:
+    if CATALOG_KEY in import_data and import_data[CATALOG_KEY] is not None:
         _import_catalogs(import_data[CATALOG_KEY], catalog_stores, force)
 
 

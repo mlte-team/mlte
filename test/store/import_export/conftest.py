@@ -104,7 +104,7 @@ def create_all_export_spec(
     catalog_stores: CatalogStoreGroup,
 ) -> ExportSpec:
     return ExportSpec(
-        artifact_store, user_store, catalog_stores, {}, [], [], []
+        artifact_store, user_store, catalog_stores, "*", "*", "*", "*"
     )
 
 

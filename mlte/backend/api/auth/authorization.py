@@ -147,7 +147,7 @@ async def get_authorized_user(
             error_decription=f"Could not decode token: {ex}",
         ) from None
 
-    # Check if user in token exists.
+    # Check if username in token exists.
     user = None
     with state_stores.user_store_session() as user_store:
         user = user_store.user_mapper.read(username)
