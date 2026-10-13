@@ -174,7 +174,7 @@
                 "main_memory": "2 GB",
                 "storage": "100 GB"
             },
-            "deployment_platform": "Model will be deployed as part of from the Garden Buddy App on a small device loaned out to garden visitors.",
+            "deployment_platform": "Model will be deployed as part of the Garden Buddy App on a small device loaned out to garden visitors.",
             "capability_deployment_mechanism": "The model will expose an API that will be called from the flower identification application.",
             "model_source": "in-house development",
             "input_specification": [
@@ -370,8 +370,8 @@
                 "stimulus": "The team needs to quickly change the ML model being run by the application",
                 "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used to generate the ML component",
                 "environment": "during normal operation",
-                "response": "The model change over is made",
-                "measure": "and the total effort involved is less than 16 hours of development and operation teams time"
+                "response": "The model switchover is made",
+                "measure": "and the total effort involved is less than 16 hours of development and operation teams' time"
             },
             {
                 "identifier": "card.default-qas_020",
