@@ -371,7 +371,7 @@
                 "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used to generate the ML component",
                 "environment": "during normal operation",
                 "response": "The model switchover is made",
-                "measure": "and the total effort involved is less than 16 hours of development and operation teams' time"
+                "measure": "and the total effort involved is less than 16 hours of the development and operation teams' time"
             },
             {
                 "identifier": "card.default-qas_020",
