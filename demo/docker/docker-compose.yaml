@@ -1,0 +1,26 @@
+services:
+  backend:
+    image: ${REMOTE_PREFIX}mlte-backend-demo:latest
+    container_name: mlte_backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ENVIRONMENT=docker
+      - BACKEND_HOST=0.0.0.0
+      - BACKEND_PORT=8080
+      - ALLOWED_ORIGINS=["*"]
+      - STORE_URI=fs:///mnt/store
+      - CATALOG_URIS={}
+
+  frontend:
+    image: ${REMOTE_PREFIX}mlte-frontend:latest
+    container_name: mlte_frontend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=docker
+      - FRONTEND_HOST=0.0.0.0
+      - FRONTEND_PORT=8000
+      - NUXT_PUBLIC_API_PATH=http://localhost:8080/api
