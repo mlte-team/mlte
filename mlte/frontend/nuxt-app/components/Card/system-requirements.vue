@@ -66,9 +66,7 @@
         <p v-else><b>ID: </b> Defined after save</p>
         <p class="input-group" style="padding-top: 10px; padding-bottom: 10px">
           <b>Scenario for {{ requirement.quality }}: </b>
-          {{ requirement.stimulus }} {{ requirement.source }}
-          {{ requirement.environment }}. {{ requirement.response }}
-          {{ requirement.measure }}.
+          {{ formatRequirement(requirement) }}
         </p>
 
         <CustomListQualityAttributeSelect
@@ -259,5 +257,20 @@ function deleteRequirement(requirementIndex: number) {
   if (confirm("Are you sure you want to delete this requirement?")) {
     props.modelValue.splice(requirementIndex, 1);
   }
+}
+
+function formatRequirement(requirement: QASDescriptor) {
+  // Group fields into sentence segments and remove empty values
+  const part1 = [requirement.stimulus, requirement.source, requirement.environment]
+    .filter(Boolean)
+    .join(' ')
+
+  const part2 = [requirement.response, requirement.measure]
+    .filter(Boolean)
+    .join(' ')
+
+  // Combine sentences with proper period separation
+  const sentences = [part1, part2].filter(Boolean)
+  return sentences.length ? sentences.join('. ') + '.' : ''
 }
 </script>
