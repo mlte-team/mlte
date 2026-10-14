@@ -261,16 +261,20 @@ function deleteRequirement(requirementIndex: number) {
 
 function formatRequirement(requirement: QASDescriptor) {
   // Group fields into sentence segments and remove empty values
-  const part1 = [requirement.stimulus, requirement.source, requirement.environment]
+  const part1 = [
+    requirement.stimulus,
+    requirement.source,
+    requirement.environment,
+  ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   const part2 = [requirement.response, requirement.measure]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   // Combine sentences with proper period separation
-  const sentences = [part1, part2].filter(Boolean)
-  return sentences.length ? sentences.join('. ') + '.' : ''
+  const sentences = [part1, part2].filter(Boolean);
+  return sentences.length ? sentences.join(". ") + "." : "";
 }
 </script>
