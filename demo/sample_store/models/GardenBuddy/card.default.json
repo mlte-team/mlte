@@ -15,7 +15,7 @@
                     "metrics": [
                         {
                             "description": "Accuracy>0.9",
-                            "baseline": ""
+                            "baseline": "Reported in papers"
                         }
                     ]
                 },
@@ -313,19 +313,19 @@
             {
                 "identifier": "card.default-qas_013",
                 "quality": "Reproducibility",
-                "stimulus": "The ML component needs to be retrained due to a signal",
-                "source": "from stakeholders",
-                "environment": "during normal operation",
+                "stimulus": "Garden Buddy stakeholders want to switch to an automated retraining process",
+                "source": "and want assurances",
+                "environment": "that the results will be similar to the manual training process",
                 "response": "The ML model produces",
                 "measure": "the same results on the test data set regardless of the training data used to train the ML component"
             },
             {
                 "identifier": "card.default-qas_014",
                 "quality": "Domain Adaptability",
-                "stimulus": "The Garden Buddy application may be used in a VR environment, and as such the ML component may receive synthetic flower image",
+                "stimulus": "The Garden Buddy application may be used in a VR environment, and as such the ML component may receive a synthetic flower image",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
-                "response": "The performance of the ML model in the new VR  environment",
+                "response": "The performance of the ML model in the new VR environment",
                 "measure": "should be similar to that in the current garden environment"
             },
             {
@@ -349,47 +349,47 @@
             {
                 "identifier": "card.default-qas_017",
                 "quality": "Maintainability",
-                "stimulus": "A new flower is introduced into the garden",
-                "source": "by the garden staff updating the garden and hosting traveling botanical exhibits",
-                "environment": "during run time",
-                "response": "A new trained ML component, trained on updated training data and number of output labels,",
-                "measure": "will be available no later than 8 hours after the development team is notified"
+                "stimulus": "Given that new flowers will be added to the garden,",
+                "source": "the ML component will need to be repeatedly updated and redeployed",
+                "environment": "to keep up with changes",
+                "response": "As new flowers are added to the garden, developers can update the ML component",
+                "measure": "to recognize the new flowers in less that 1 person/day"
             },
             {
                 "identifier": "card.default-qas_018",
                 "quality": "Modifiability",
-                "stimulus": "The need for the app to run with a new input format for the ML component",
-                "source": "from the operations/maintenance team needing to change input data processing pipelines due to a new device type is being used for from the Garden Buddy app",
-                "environment": "during normal operation",
-                "response": "The new sensor's data input  processing pipeline is to replace the old input data processing pipeline",
-                "measure": "and the total effort involved is less than 4 hours of operations staff time"
+                "stimulus": "Loaned devices are replaced over time",
+                "source": "due to wear or obsolescence",
+                "environment": "",
+                "response": "Changes to the ML component to integrate new inputs or input formats",
+                "measure": "should not take more than 1/2 person/day"
             },
             {
                 "identifier": "card.default-qas_019",
                 "quality": "Replaceability",
                 "stimulus": "The team needs to quickly change the ML model being run by the application",
-                "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used to generate the ML component",
-                "environment": "during normal operation",
-                "response": "The model switchover is made",
-                "measure": "and the total effort involved is less than 16 hours of the development and operation teams' time"
+                "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used by the ML component",
+                "environment": "",
+                "response": "The effort to incorporate a new trained model",
+                "measure": "should be localized to a minimal number of modules and take no longer than 16 hours of development time"
             },
             {
                 "identifier": "card.default-qas_020",
                 "quality": "Retrainability",
-                "stimulus": "The ML component needs to be retrained",
-                "source": "as an environment necessitating a new model has occurred",
-                "environment": "during normal operation",
-                "response": "The development team kicks off the ML model retraining process",
-                "measure": "and the total personnel time devoted to kicking off, monitoring and checking the output of the retraining process is no more than 1 hour"
+                "stimulus": "Given that the ML component will need to be periodically retrained to keep pace with the shifts in appearance of the garden flowers",
+                "source": "due to growth and changes in seasons,",
+                "environment": "system stakeholders want to limit the amount of development time and resources needed to retrain the ML component",
+                "response": "The effort required to retrain the ML component on an updated flower population, while not changing the model architecture or outputs,",
+                "measure": "should be no more than 2 hours"
             },
             {
                 "identifier": "card.default-qas_021",
                 "quality": "Reusability",
-                "stimulus": "The decision to produce a new app, only changing who it is marketed to, user interface, and platform is issued",
-                "source": "by stakeholders",
-                "environment": "during development time",
-                "response": "The existing garden buddy ML component is used in the new app",
-                "measure": "with limited changes to the ML component code were needed to integrate the ML component into the new app, totaling no more than 1/2 a development day"
+                "stimulus": "System stakeholders would like to use the ML component in an upcoming mobile app version of Garden Buddy",
+                "source": "that members that are home gardeners can use to identify flowers",
+                "environment": "in their gardens",
+                "response": "Integrating the same ML component in the Garden Buddy app",
+                "measure": "should be done in 4 hours of development time"
             }
         ]
     }
