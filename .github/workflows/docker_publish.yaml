@@ -35,6 +35,9 @@ jobs:
       # Push to registry
       - name: Push Images to GHCR
         run: |
+          docker tag mlte-backend:latest ghcr.io/${{ github.repository_owner }}/mlte-backend:latest
+          docker tag mlte-frontend:latest ghcr.io/${{ github.repository_owner }}/mlte-frontend:latest
+
           docker push ghcr.io/${{ github.repository_owner }}/mlte-backend:latest
           docker push ghcr.io/${{ github.repository_owner }}/mlte-frontend:latest
 
@@ -46,4 +49,5 @@ jobs:
       # Push to registry
       - name: Push Third Service to GHCR
         run: |
+          docker tag mlte-backend-demo:latest ghcr.io/${{ github.repository_owner }}/mlte-backend-demo:latest
           docker push ghcr.io/${{ github.repository_owner }}/mlte-backend-demo:latest
