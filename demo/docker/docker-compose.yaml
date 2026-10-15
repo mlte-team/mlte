@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ${REMOTE_PREFIX}mlte-backend-demo:latest
+    image: ${LOCAL_BUILD-ghcr.io/mlte-team/}mlte-backend-demo:latest
     container_name: mlte_backend
     restart: unless-stopped
     ports:
@@ -14,7 +14,7 @@ services:
       - CATALOG_URIS={}
 
   frontend:
-    image: ${REMOTE_PREFIX}mlte-frontend:latest
+    image: ${LOCAL_BUILD-ghcr.io/mlte-team/}mlte-frontend:latest
     container_name: mlte_frontend
     restart: unless-stopped
     ports:

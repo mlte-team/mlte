@@ -1,4 +1,4 @@
-name: Manual Publish MLTE Containers
+name: Manually Publish MLTE Containers
 
 on:
   workflow_dispatch:
