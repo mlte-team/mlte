@@ -42,6 +42,15 @@ jobs:
           docker push ghcr.io/${{ github.repository_owner }}/mlte-frontend:latest
 
       # Build Backend Demo image
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Install demo dependencies
+        run: uv sync --group dev --group demo --all-extras
+      # This will run all demos, and then pacakge the results into a new container.
       - name: Execute Backend Demo Build Script
         run: |
           cd demo/docker && bash build.sh

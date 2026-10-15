@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Set up script to stop when something fails.
+set -e
+
 # Build base images (backend is the one actually needed).
 (cd ../../docker && bash build.sh)
 
