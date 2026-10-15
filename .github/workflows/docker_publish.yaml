@@ -1,0 +1,59 @@
+name: Manually Publish MLTE Containers
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and Backend and Frontend
+      - name: Execute Backend and Frontend Image Build Script
+        run: |
+          cd docker && bash build.sh
+
+      # Push to registry
+      - name: Push Images to GHCR
+        run: |
+          docker tag mlte-backend:latest ghcr.io/${{ github.repository_owner }}/mlte-backend:latest
+          docker tag mlte-frontend:latest ghcr.io/${{ github.repository_owner }}/mlte-frontend:latest
+
+          docker push ghcr.io/${{ github.repository_owner }}/mlte-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/mlte-frontend:latest
+
+      # Build Backend Demo image
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Install demo dependencies
+        run: uv sync --group dev --group demo --all-extras
+      # This will run all demos, and then pacakge the results into a new container.
+      - name: Execute Backend Demo Build Script
+        run: |
+          cd demo/docker && bash build.sh
+
+      # Push to registry
+      - name: Push Backend Demo to GHCR
+        run: |
+          docker tag mlte-backend-demo:latest ghcr.io/${{ github.repository_owner }}/mlte-backend-demo:latest
+          docker push ghcr.io/${{ github.repository_owner }}/mlte-backend-demo:latest
