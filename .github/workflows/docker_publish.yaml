@@ -47,7 +47,7 @@ jobs:
           cd demo/docker && bash build.sh
 
       # Push to registry
-      - name: Push Third Service to GHCR
+      - name: Push Backend Demo to GHCR
         run: |
           docker tag mlte-backend-demo:latest ghcr.io/${{ github.repository_owner }}/mlte-backend-demo:latest
           docker push ghcr.io/${{ github.repository_owner }}/mlte-backend-demo:latest
