@@ -31,7 +31,7 @@
 
       <UsaTextarea v-model="props.modelValue.usage_context">
         <template #label>
-          Usage Context for the Model
+          Usage Context for the ML component
           <TemplatesTooltipInfo>
             Who is intended to utilize the system/model; how the results of the
             model are <br />
@@ -53,8 +53,8 @@
       <TemplatesSubHeader :render-example="false">
         Goals
         <template #info>
-          Goals or objectives that the model is going to help satisfy as part of
-          the system.
+          Goals or objectives that the ML component is going to help satisfy as
+          part of the system.
         </template>
       </TemplatesSubHeader>
 
@@ -150,8 +150,8 @@
       <TemplatesSubHeader :render-example="false">
         Risks
         <template #info>
-          Risks to model performance such as false positives, false negatives,
-          hallucinations, or bias.
+          Risks related to model performance such as false positives, false
+          negatives, hallucinations, or bias.
         </template>
       </TemplatesSubHeader>
 
