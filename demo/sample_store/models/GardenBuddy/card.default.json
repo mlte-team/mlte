@@ -35,7 +35,7 @@
             ],
             "problem_type": "Classification",
             "task": "Identify flowers in pictures taken at the garden",
-            "usage_context": "The model will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
+            "usage_context": "The ML component will be part of an application that runs on a device loaned out by a botanical garden so that visitors can identify flowers during their visit.",
             "risks": [
                 "Poor user experience due to incorrectly identified flowers",
                 "Poor user experience due to inability to identify flowers"
@@ -174,8 +174,8 @@
                 "main_memory": "2 GB",
                 "storage": "100 GB"
             },
-            "deployment_platform": "Model will be deployed as part of the Garden Buddy App on a small device loaned out to garden visitors.",
-            "capability_deployment_mechanism": "The model will expose an API that will be called from the flower identification application.",
+            "deployment_platform": "ML component will be deployed as part of the Garden Buddy App on a small device loaned out to garden visitors.",
+            "capability_deployment_mechanism": "The ML component will expose an API that will be called from the flower identification application.",
             "model_source": "in-house development",
             "input_specification": [
                 {
@@ -205,7 +205,7 @@
             {
                 "identifier": "card.default-qas_001",
                 "quality": "Fairness",
-                "stimulus": "The model receives a picture taken at the garden",
+                "stimulus": "The ML component receives a picture taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "Regardless of the location in the garden, the model can correctly identify the correct flowers",
@@ -214,7 +214,7 @@
             {
                 "identifier": "card.default-qas_002",
                 "quality": "Robustness",
-                "stimulus": "The model receives a picture taken at the garden that is a bit blurry",
+                "stimulus": "The ML component receives a picture taken at the garden that is a bit blurry",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "The model successfully identifies flowers",
@@ -223,7 +223,7 @@
             {
                 "identifier": "card.default-qas_003",
                 "quality": "Resilience",
-                "stimulus": "The model running on the loaned device receives pictures taken at the garden",
+                "stimulus": "The ML component running on the loaned device receives pictures taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "These devices are known to sometimes lose a channel (i.e., RGB channel). The model successfully identifies flowers",
@@ -232,16 +232,16 @@
             {
                 "identifier": "card.default-qas_004",
                 "quality": "Resource Utilization",
-                "stimulus": "The model running on the loaned device receives pictures taken at the garden",
+                "stimulus": "The ML component running on the loaned device receives pictures taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "These devices are small and inexpensive with limited CPU power, as well as limited memory and disk space (512 MB and 150 MB, respectively).",
-                "measure": "The model executes on the loaned device without any errors due to unavailable resources"
+                "measure": "The ML component executes on the loaned device without any errors due to unavailable resources"
             },
             {
                 "identifier": "card.default-qas_005",
                 "quality": "Explainability",
-                "stimulus": "The model receives a picture taken at the garden",
+                "stimulus": "The ML component receives a picture taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "The application indicates the main features that were used to recognize the flower, as part of the educational experience. ",
@@ -250,7 +250,7 @@
             {
                 "identifier": "card.default-qas_006",
                 "quality": "Functional Correctness",
-                "stimulus": "The model receives a picture taken at the garden",
+                "stimulus": "The ML component receives a picture taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "The model identifies the flower correctly",
@@ -259,52 +259,52 @@
             {
                 "identifier": "card.default-qas_007",
                 "quality": "Functional Correctness",
-                "stimulus": "The model receives a picture taken at the garden",
+                "stimulus": "The ML component receives a picture taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
-                "response": "The model correctly processes inputs and produces outputs",
+                "response": "The ML component correctly processes inputs and produces outputs",
                 "measure": "according to established input and output specifications without exceptions"
             },
             {
                 "identifier": "card.default-qas_008",
                 "quality": "Reliability",
-                "stimulus": "The ML pipeline receives a picture taken at the garden that does not conform to the input specification",
+                "stimulus": "The ML component receives a picture taken at the garden that does not conform to the input specification",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "The model does not process the input",
-                "measure": "and instead the ML pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input"
+                "measure": "and instead the ML component data pipeline produces -99 as the output and creates a log entry with the tag \"Model - Input Validation Error - <Input>, where <Input> is the original input"
             },
             {
                 "identifier": "card.default-qas_009",
                 "quality": "Analyzability",
-                "stimulus": "The ML pipeline receives a picture that corresponds to an OOD input",
+                "stimulus": "The ML component receives a picture that corresponds to an out-of-distribution (OOD) input",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "The model will process the input",
-                "measure": "and the ML pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
+                "measure": "and the ML component data pipeline will create a log entry with the tag \"Model - Input OOD Error - <Input>, where <Input> is the original input"
             },
             {
                 "identifier": "card.default-qas_010",
                 "quality": "Monitorability",
-                "stimulus": "The ML pipeline detects an output distribution change",
+                "stimulus": "The ML component post-processing component detects an output distribution change",
                 "source": "from the output produced by the model",
                 "environment": "during normal operation",
-                "response": "The ML pipeline will create a log entry",
+                "response": "The post-processing component will create a log entry",
                 "measure": "with the tag \"Model - Output Confidence Error - <Output>, where <Output> is the output produced by the model that triggered the condition"
             },
             {
                 "identifier": "card.default-qas_011",
                 "quality": "Time Behavior",
-                "stimulus": "The model running on the loaned device receives a picture taken at the garden",
+                "stimulus": "The ML component running on the loaned device receives a picture taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
-                "response": "The time for the model to return an output",
+                "response": "The time for the ML component to return an output",
                 "measure": "is no more than two seconds"
             },
             {
                 "identifier": "card.default-qas_012",
                 "quality": "Repeatability",
-                "stimulus": "The model receives a picture taken at the garden",
+                "stimulus": "The ML component receives a picture taken at the garden",
                 "source": "from the Garden Buddy application",
                 "environment": "during normal operation",
                 "response": "The ML component should demonstrate consistently similar performance for pictures from the same garden from day to day",
@@ -317,7 +317,7 @@
                 "source": "and want assurances",
                 "environment": "that the results will be similar to the manual training process",
                 "response": "The ML model produces",
-                "measure": "the same results on the test data set regardless of the training data used to train the ML component"
+                "measure": "the same results on the test data set regardless of the training data used to train the model"
             },
             {
                 "identifier": "card.default-qas_014",
@@ -352,7 +352,7 @@
                 "stimulus": "Given that new flowers will be added to the garden,",
                 "source": "the ML component will need to be repeatedly updated and redeployed",
                 "environment": "to keep up with changes",
-                "response": "As new flowers are added to the garden, developers can update the ML component",
+                "response": "As new flowers are added to the garden, developers can update the ML model",
                 "measure": "to recognize the new flowers in less that 1 person/day"
             },
             {
@@ -367,8 +367,8 @@
             {
                 "identifier": "card.default-qas_019",
                 "quality": "Replaceability",
-                "stimulus": "The team needs to quickly change the ML model being run by the application",
-                "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used by the ML component",
+                "stimulus": "The team needs to quickly change the ML component being run by the application",
+                "source": "as an advancement in the field has occurred that necessitates an update in the algorithm used by the ML model",
                 "environment": "",
                 "response": "The effort to incorporate a new trained model",
                 "measure": "should be localized to a minimal number of modules and take no longer than 16 hours of development time"
@@ -376,10 +376,10 @@
             {
                 "identifier": "card.default-qas_020",
                 "quality": "Retrainability",
-                "stimulus": "Given that the ML component will need to be periodically retrained to keep pace with the shifts in appearance of the garden flowers",
+                "stimulus": "Given that the ML model will need to be periodically retrained to keep pace with the shifts in appearance of the garden flowers",
                 "source": "due to growth and changes in seasons",
                 "environment": "",
-                "response": "The effort required to retrain the ML component on an updated flower population, while not changing the model architecture or outputs,",
+                "response": "The effort required to retrain the ML model on an updated flower population, while not changing the model architecture or outputs,",
                 "measure": "should be no more than 2 hours"
             },
             {
@@ -388,7 +388,7 @@
                 "stimulus": "System stakeholders would like to use the ML component in an upcoming mobile app version of Garden Buddy",
                 "source": "that members that are home gardeners can use to identify flowers",
                 "environment": "in their gardens",
-                "response": "Integrating the same ML component in the Garden Buddy app",
+                "response": "Integrating the same ML component in the Garden Buddy mobile app",
                 "measure": "should be done in 4 hours of development time"
             }
         ]
