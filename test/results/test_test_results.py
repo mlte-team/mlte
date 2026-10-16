@@ -66,5 +66,5 @@ def test_convert_results():
     assert type(result) is Failure
     assert (
         result.message
-        == f"Manually validated: {auto_msg} (original message: {manual_msg})"
+        == f"Manually validated: {auto_msg} (Original message: {manual_msg})"
     )
