@@ -30,8 +30,11 @@
       Teams should use the negotiation card to guide an in-depth discussion for
       project scoping. The card can be completed in any order and the idea is
       that teams fill out as much as they can at the beginning of the project
-      process and revisit the card throughout as the project matures. There are
-      four sections in the Negotiation Card:
+      process and revisit the card throughout as the project matures. ML
+      component refers to the unit of deployment for the ML model, which in
+      addition to the actual model may include the Data Pipeline that performs
+      pre-processing of operational data and any Post-Processing Components.
+      There are four sections in the Negotiation Card:
     </p>
     <ul>
       <li>System Information</li>

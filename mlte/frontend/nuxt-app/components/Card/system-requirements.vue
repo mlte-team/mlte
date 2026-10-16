@@ -12,9 +12,10 @@
         <template #info>
           <p>
             These are the requirements and constraints derived from the
-            ML-enabled system that integrates the model under development. The
-            fields below correspond to parts of a quality attribute scenario,
-            which is a construct used to clearly define system requirements.
+            ML-enabled system that integrates the ML component under development
+            or evaluation. The fields below correspond to parts of a quality
+            attribute scenario, which is a construct used to clearly define
+            system requirements.
             <br />
             <br />
             As the parts of the scenario are filled in, the corresponding text

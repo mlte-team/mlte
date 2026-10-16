@@ -1,6 +1,6 @@
 <template>
   <TemplatesCollapsibleHeader v-model="displayIO" @change="displayIO = $event">
-    <template #title> Model Inputs and Outputs </template>
+    <template #title> ML Component Inputs and Outputs </template>
   </TemplatesCollapsibleHeader>
 
   <div v-if="displayIO">
@@ -256,7 +256,9 @@
     <div class="input-group">
       <TemplatesSubHeader :render-example="false">
         Deployment
-        <template #info> Operational environment of the model. </template>
+        <template #info>
+          Operational environment of the ML component.
+        </template>
       </TemplatesSubHeader>
       <UsaTextarea v-model="props.modelValue.deployment_platform">
         <template #label>

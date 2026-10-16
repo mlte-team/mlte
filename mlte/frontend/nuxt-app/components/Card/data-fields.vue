@@ -12,7 +12,7 @@
         Data
         <template #info>
           Details of the data that will be used at any point during the
-          development of the model.
+          development, fine-tuning, test, or evaluation of the model.
         </template>
       </TemplatesSubHeader>
       <div
