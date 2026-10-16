@@ -1,5 +1,5 @@
 services:
-  backend:
+  mlte_backend:
     image: ${LOCAL_BUILD-ghcr.io/mlte-team/}mlte-backend-demo:latest
     restart: unless-stopped
     ports:
@@ -12,7 +12,7 @@ services:
       - STORE_URI=fs:///mnt/store
       - CATALOG_URIS={}
 
-  frontend:
+  mlte_frontend:
     image: ${LOCAL_BUILD-ghcr.io/mlte-team/}mlte-frontend:latest
     restart: unless-stopped
     ports:
