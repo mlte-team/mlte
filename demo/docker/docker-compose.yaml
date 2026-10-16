@@ -1,3 +1,5 @@
+name: mlte-demo
+
 services:
   mlte_backend:
     image: ${LOCAL_BUILD-ghcr.io/mlte-team/}mlte-backend-demo:latest
