@@ -12,7 +12,7 @@
     <div>
       <h2 class="section-header">System Information</h2>
       <div>
-        <b>Usage Context for the Model: </b>
+        <b>Usage Context for the ML Component: </b>
         {{ reportBody.negotiation_card.system.usage_context }}
       </div>
 
@@ -168,7 +168,7 @@
     </div>
 
     <div>
-      <h2 class="section-header">Model Information</h2>
+      <h2 class="section-header">ML Component Information</h2>
       <div>
         <b>Development Compute Resources</b>
         <ul>

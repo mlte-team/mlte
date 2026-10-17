@@ -157,7 +157,7 @@ class TestResults(Artifact):
             )
 
         # Create new result based on given type.
-        new_result_msg = f"Manually validated: {message} (original message: {result.message})"
+        new_result_msg = f"Manually validated: {message} (Original message: {result.message})"
         new_result = result_type(new_result_msg)
         self.results[test_case_id] = new_result
 
