@@ -132,14 +132,24 @@ class TestCase(Serializable):
     # -------------------------------------------------------------------------
 
     def template(self):
-        (TestCase(identifier="ID", goal="GOAL", quality_scenarios=["QA"]),)
+        (
+            TestCase(
+                identifier="IDENTIFIER",
+                goal="GOAL",
+                quality_scenarios=["QA"],
+                validator=None,  # VALIDATOR
+                measurement=None,  # MEASUREMENT
+            ),
+        )
 
     def to_template_str(self) -> str:
         """Convert the test case into a template string."""
         source = get_function_code(self.template)
-        source = source.replace("ID", self.identifier)
+        source = source.replace("IDENTIFIER", self.identifier)
         source = source.replace("GOAL", self.goal)
         source = source.replace("QA", self.quality_scenarios[0])
+        source = source.replace("None, # VALIDATOR", str(self.validator))
+        source = source.replace("None, # MEASUREMENT", str(self.measurement))
         return source
 
     # -------------------------------------------------------------------------

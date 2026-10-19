@@ -21,6 +21,8 @@ def generate_suite_str(requirements: list[QASDescriptor]) -> str:
                 quality_scenarios=[
                     requirement.identifier if requirement.identifier else ""
                 ],
+                validator=None,
+                measurement=None,
             )
         )
 
