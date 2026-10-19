@@ -1,5 +1,5 @@
 <template>
-  <span v-if="props.measurement">
+  <template v-if="props.measurement">
     <b>Measurement</b>
     <ul>
       <li>
@@ -18,8 +18,8 @@
         </ul>
       </li>
     </ul>
-  </span>
-  <span v-else> <b>Measurement:</b> null </span>
+  </template>
+  <template v-else> <b>Measurement:</b> None </template>
 </template>
 
 <script setup lang="ts">
