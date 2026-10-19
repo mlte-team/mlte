@@ -1,11 +1,12 @@
 <template>
   <div>
     <h2 class="section-header">Test Cases</h2>
-    <ul>
-      <li v-for="(testCase, caseIndex) in props.testCases" :key="caseIndex">
-        <TestSuiteTestCaseDisplay :test-case="testCase" />
+    <span v-for="(testCase, caseIndex) in props.testCases" :key="caseIndex">
+      <li>
+        <b>Test Case: {{ caseIndex + 1 }}</b>
       </li>
-    </ul>
+      <TestSuiteTestCaseDisplay :test-case="testCase" />
+    </span>
   </div>
 </template>
 
