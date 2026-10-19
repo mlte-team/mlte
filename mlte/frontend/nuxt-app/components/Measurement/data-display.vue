@@ -2,7 +2,9 @@
   <span v-if="props.measurement">
     <b>Measurement</b>
     <ul>
-      <li><b>Measurement Class: </b>{{ props.measurement.measurement_class }}</li>
+      <li>
+        <b>Measurement Class: </b>{{ props.measurement.measurement_class }}
+      </li>
       <li><b>Output Class: </b>{{ props.measurement.output_class }}</li>
       <li v-if="Object.keys(props.measurement.additional_data).length !== 0">
         <b>Additional Data</b>
@@ -17,9 +19,7 @@
       </li>
     </ul>
   </span>
-  <span v-else>
-    <b>Measurement:</b> null
-  </span>
+  <span v-else> <b>Measurement:</b> null </span>
 </template>
 
 <script setup lang="ts">

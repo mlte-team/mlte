@@ -32,7 +32,7 @@ if (queryArtifactId !== undefined) {
     if (suite.header.creator) {
       creator.value = suite.header.creator;
     } else {
-      creator.value = "N/A"
+      creator.value = "N/A";
     }
     timestamp.value = timestampToString(suite.header.timestamp);
     suiteBody.value = suite.body;
