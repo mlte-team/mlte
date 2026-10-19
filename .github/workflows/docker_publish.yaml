@@ -1,7 +1,10 @@
-name: Manually Publish MLTE Containers
+name: Publish MLTE Containers
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master    
 
 env:
   REGISTRY: ghcr.io
