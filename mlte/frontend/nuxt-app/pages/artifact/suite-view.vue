@@ -29,7 +29,11 @@ if (queryArtifactId !== undefined) {
     queryArtifactId as string,
   );
   if (suite) {
-    creator.value = suite.header.creator;
+    if (suite.header.creator) {
+      creator.value = suite.header.creator;
+    } else {
+      creator.value = "N/A"
+    }
     timestamp.value = timestampToString(suite.header.timestamp);
     suiteBody.value = suite.body;
   }
