@@ -58,7 +58,7 @@
                 v-for="(arg, argIndex) in testCase.validator.creator_args"
                 :key="argIndex"
               >
-                {{ arg || 'Empty String' }}
+                {{ arg || "Empty String" }}
               </li>
             </ul>
           </li>
