@@ -256,7 +256,7 @@
                 <UsaButton
                   class="secondary-button"
                   @click="
-                    importVisible = true;
+                    activeImportIndex = dataItemIndex;
                     resetCsv();
                   "
                 >
@@ -265,8 +265,12 @@
               </template>
             </TemplatesSubHeader>
             <TemplatesModalWrapper
-              :visible="importVisible"
-              @toggle-visible="(value) => (importVisible = value)"
+              :visible="activeImportIndex == dataItemIndex"
+              @toggle-visible="
+                (value) => {
+                  if (!value) activeImportIndex = null;
+                }
+              "
             >
               <template #heading>Import data schema</template>
               <div>
@@ -450,7 +454,7 @@ const props = defineProps({
 
 const displaySection = ref<boolean>(true);
 const displayDataset = ref<Array<boolean>>([]);
-const importVisible = ref(false);
+const activeImportIndex = ref<number | null>(null);
 
 const selectedFieldIndexes = ref<Array<number>>(props.modelValue.map(() => 0));
 const schemaErrors = ref<Array<string>>(props.modelValue.map(() => ""));
@@ -601,7 +605,7 @@ const handleImport = async (event: Event, index: number) => {
     targetItem.fields = data;
     selectedFieldIndexes.value[index] = 0;
     schemaErrors.value[index] = "";
-    importVisible.value = false;
+    activeImportIndex.value = null;
   }
 };
 
