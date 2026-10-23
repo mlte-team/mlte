@@ -31,7 +31,8 @@
         },
         "data": [
             {
-                "description": "dataset is provided by a physics simulation egine",
+                "name": "Classic Control",
+                "description": "Dataset is provided by a physics simulation egine",
                 "source": "AI gymnasium (https://gymnasium.farama.org/ - loaded with import gymnasium as gym)",
                 "classification": "Unclassified",
                 "access": "must be able to access/install packages",

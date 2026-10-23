@@ -17,6 +17,18 @@
     "DataDescriptor": {
       "description": "Describes a dataset used in model development.",
       "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
         "description": {
           "anyOf": [
             {

@@ -156,6 +156,7 @@ export class FieldDescriptor {
 
 export class DataDescriptor {
   constructor(
+    public name: string = "",
     public description: string = "",
     public purpose: string = "",
     public source: string = "",

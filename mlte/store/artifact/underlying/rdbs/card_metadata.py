@@ -135,6 +135,7 @@ class DBDataDescriptor(DBBase):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
+    name: Mapped[str | None]
     description: Mapped[str | None]
     purpose: Mapped[str | None]
     source: Mapped[str | None]

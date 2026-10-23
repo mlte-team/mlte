@@ -43,6 +43,7 @@
         },
         "data": [
             {
+                "name": "Oxford Flower 102 Dataset",
                 "description": "Oxford Flower 102 Dataset",
                 "purpose": "Training and testing of ML models",
                 "source": "https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",
