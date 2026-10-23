@@ -21,7 +21,7 @@
       >
         <div class="inline-form-row">
           <div class="grid-col-auto">
-            <h3>Dataset {{ dataItemIndex + 1 }}</h3>
+            <h3>{{ dataItem.name || "Dataset " + (dataItemIndex + 1) }}</h3>
           </div>
           <div class="grid-col-auto">
             <UsaButton
@@ -42,12 +42,24 @@
               class="delete-button"
               @click="deleteDataItem(dataItemIndex)"
             >
-              Delete Dataset {{ dataItemIndex + 1 }}
+              Delete {{ dataItem.name || "Dataset " + (dataItemIndex + 1) }}
             </UsaButton>
           </div>
         </div>
         <div v-if="displayDataset[dataItemIndex]">
           <div>
+            <UsaTextInput v-model="dataItem.name">
+              <template #label>
+                Name
+                <TemplatesTooltipInfo>
+                  Name of the dataset.
+                  <br />
+                  <br />
+                  <i>Example: Iris Flower, Classic Control.</i>
+                </TemplatesTooltipInfo>
+              </template>
+            </UsaTextInput>
+
             <UsaTextarea v-model="dataItem.description">
               <template #label>
                 Dataset Description
@@ -274,13 +286,31 @@
             >
               <template #heading>Import data schema</template>
               <div>
-                Import will overwrite all information currently in the data
-                schema for this dataset.
-                <br />
-                <br />
-                <b>CSV header must be:</b> Field Name,Field Description,Field
-                Type,Expected Values,Handling Missing Values,Handling Special
-                Values
+                <p>
+                  Import will <b><i>overwrite</i></b> all information currently
+                  in the data schema for this dataset.
+                </p>
+                <p>
+                  The data file needs to be in CSV format following the data
+                  schema structure in the Negotiation Card:
+                </p>
+                <ul>
+                  <li>Field Name</li>
+                  <li>Field Description</li>
+                  <li>Field Type</li>
+                  <li>Expected Values</li>
+                  <li>Handling Missing Values</li>
+                  <li>Handling Special Values</li>
+                </ul>
+                <p>
+                  The first row of the file must be therefore be a header row
+                  with the content: Field Name,Field Description,Field
+                  Type,Expected Values,Handling Missing Values,Handling Special
+                  Values
+                </p>
+                <p>
+                  The header row will not be imported into the Negotiation Card.
+                </p>
               </div>
               <input
                 type="file"
@@ -606,6 +636,7 @@ const handleImport = async (event: Event, index: number) => {
     selectedFieldIndexes.value[index] = 0;
     schemaErrors.value[index] = "";
     activeImportIndex.value = null;
+    alert("Data schema has been imported successfully.");
   }
 };
 

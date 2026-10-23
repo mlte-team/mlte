@@ -35,6 +35,7 @@ export function parseCsv<TSchema extends z.ZodType>(schema: TSchema) {
     return new Promise((resolve) => {
       Papa.parse<Record<string, unknown>>(file, {
         header: true,
+        transformHeader: (header: string) => header.trim(),
         dynamicTyping: false,
         skipEmptyLines: true,
         complete: (results) => {

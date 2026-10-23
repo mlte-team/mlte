@@ -145,6 +145,9 @@ class FieldDescriptor(BaseModel):
 class DataDescriptor(BaseModel):
     """Describes a dataset used in model development."""
 
+    name: str | None = None
+    """The name of the dataset."""
+
     description: str | None = None
     """A description of the dataset."""
 

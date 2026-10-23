@@ -177,6 +177,7 @@ def test_data_descriptor() -> None:
 
     objects = [
         DataDescriptor(
+            name="name",
             description="description",
             purpose="purpose",
             classification="Unclassified",
