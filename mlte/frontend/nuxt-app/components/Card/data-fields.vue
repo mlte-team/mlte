@@ -52,10 +52,10 @@
               <template #label>
                 Name
                 <TemplatesTooltipInfo>
-                  Name of the dataset.
+                  Short name to easily identify dataset.
                   <br />
                   <br />
-                  <i>Example: Iris Flower, Classic Control.</i>
+                  <i>Example: Oxford Flower, Mountain Car.</i>
                 </TemplatesTooltipInfo>
               </template>
             </UsaTextInput>

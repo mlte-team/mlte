@@ -43,7 +43,7 @@
         },
         "data": [
             {
-                "name": "Oxford Flower 102 Dataset",
+                "name": "Oxford Flower",
                 "description": "A 102 category dataset, consisting of 102 flower categories",
                 "purpose": "Training and testing of ML models",
                 "source": "https://www.robots.ox.ac.uk/~vgg/data/flowers/102/",

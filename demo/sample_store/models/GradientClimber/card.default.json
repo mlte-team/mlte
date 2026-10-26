@@ -31,7 +31,7 @@
         },
         "data": [
             {
-                "name": "Classic Control",
+                "name": "Mountain Car",
                 "description": "Dataset is provided by a physics simulation egine",
                 "source": "AI gymnasium (https://gymnasium.farama.org/ - loaded with import gymnasium as gym)",
                 "classification": "Unclassified",
