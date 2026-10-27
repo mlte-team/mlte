@@ -45,6 +45,7 @@
         },
         "data": [
             {
+                "name": "Employee Evaluation",
                 "description": "EvalPro will receive as inputs manager comments, the employee's self evaluation, and goals and objectives",
                 "purpose": "",
                 "source": "",

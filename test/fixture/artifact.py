@@ -130,6 +130,7 @@ def _make_negotiation_card() -> NegotiationCardModel:
         ),
         data=[
             DataDescriptor(
+                name="name",
                 description="description",
                 purpose="purpose",
                 classification="Unclassified",

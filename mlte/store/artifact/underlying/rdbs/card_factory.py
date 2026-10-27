@@ -178,6 +178,7 @@ def _build_data_descriptor_orm(
 ) -> DBDataDescriptor:
     """Creates a DBDataDescriptor object from a DataDescriptor."""
     data_orm = DBDataDescriptor(
+        name=data_descriptor.name,
         description=data_descriptor.description,
         purpose=data_descriptor.purpose,
         source=data_descriptor.source,
@@ -252,6 +253,7 @@ def _build_data_descriptors(
     """Build a list of DataDescriptor from DBDataDescriptor."""
     return [
         DataDescriptor(
+            name=data_descriptor.name,
             description=data_descriptor.description,
             purpose=data_descriptor.purpose,
             source=data_descriptor.source,
