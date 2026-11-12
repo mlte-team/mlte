@@ -30,7 +30,24 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
-`MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
+`MLTE` uses `mise` to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise`, run the following command:
+
+```bash
+$ curl -fsSL https://mise.run | sh
+```
+
+After `mise` has been installed, it can install the project versions of uv and node with the following command:
+
+```bash
+$ mise install
+```
+
+This will install the versions of these packages in a separate `mise` installation. These can be activated to be used in the current shell with the following command:
+
+```bash
+$ eval "$(mise activate zsh)" # zsh
+$ eval "$(mise activate bash)" # bash
+```
 
 ### Python Version Support
 
@@ -224,7 +241,7 @@ $ make typecheck-frontend
 
 ## Front End
 
-Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
+Front end development requires Node.js. The front end uses the node version found in `mise.toml`; which can be installed with `mise` as described in the setup section.
 
 To initialize the development environment for the front end, run the following make command:
 
