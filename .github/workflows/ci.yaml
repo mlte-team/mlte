@@ -96,6 +96,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install tools from mise.toml
         uses: jdx/mise-action@v5
+        id: mise
       - name: Build Docker backend and frontend images
         run: cd docker && bash build.sh
       - name: Build Docker dist build image
@@ -103,4 +104,6 @@ jobs:
       - name: Build Docker python ops image
         run: docker build -t mlte-python-ops . -f docker/Dockerfile.python_ops
       - name: Build Docker frontend ops image
+        env:
+          NODE_VERSION: ${{ steps.mise.outputs.node }}
         run: docker build -t mlte-frontend-ops . -f docker/Dockerfile.frontend_ops --build-arg NODE_VERSION="$NODE_VERSION"
