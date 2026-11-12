@@ -103,4 +103,4 @@ jobs:
       - name: Build Docker python ops image
         run: docker build -t mlte-python-ops . -f docker/Dockerfile.python_ops
       - name: Build Docker frontend ops image
-        run: docker build -t mlte-frontend-ops . -f docker/Dockerfile.frontend_ops
+        run: docker build -t mlte-frontend-ops . -f docker/Dockerfile.frontend_ops --build-arg NODE_VERSION="$NODE_VERSION"
