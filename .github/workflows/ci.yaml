@@ -94,6 +94,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install tools from mise.toml
+        uses: jdx/mise-action@v5
       - name: Build Docker backend and frontend images
         run: cd docker && bash build.sh
       - name: Build Docker dist build image
