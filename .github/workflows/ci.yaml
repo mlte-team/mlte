@@ -81,6 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mise
       - name: Install frontend dependencies
         run: make frontend-env
       - name: Lint frontend
