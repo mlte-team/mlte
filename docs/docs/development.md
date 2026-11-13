@@ -30,23 +30,30 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
-`MLTE` uses `mise` to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise`, run the following command:
+`MLTE` uses `mise` version to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise`, `node`, and `uv` run the following command:
 
 ```bash
-$ curl -fsSL https://mise.run | sh
+$ make mise-install
 ```
 
-After `mise` has been installed, it can install the project versions of uv and node with the following command:
+This will install the versions of these packages in a separate `mise` installation. These can be used by running the `uv` and `node` commands with `mise exec`. To run the frontend, you would use the following command:
 
 ```bash
-$ mise install
+$ mise exec -- npm run dev
 ```
 
-This will install the versions of these packages in a separate `mise` installation. These can be activated to be used in the current shell with the following command:
+Alternatively, `mise` can be activated in the shell to use avoid having to use `mise exec`. This can be done by adding these to `zshrc` or `bashrc`:
 
 ```bash
-$ eval "$(mise activate zsh)" # zsh
-$ eval "$(mise activate bash)" # bash
+$ make mise-zsh # zsh
+$ make mise-bash # bash
+```
+
+Alternatively, they can be activated for the current shell with these make comamnds:
+
+```bash
+$ make mise-temp-zsh # zsh
+$ make mise-temp-bash # bash
 ```
 
 ### Python Version Support

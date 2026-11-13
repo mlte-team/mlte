@@ -1,6 +1,32 @@
 # Automation of various common tasks.
 
 # -----------------------------------------------------------------------------
+# Mise
+# -----------------------------------------------------------------------------
+
+.PHONY: mise-install
+mise-install:
+	@version="$$(bash mise_version.sh)" && \
+	curl -fsSL https://mise.run | MISE_VERSION="v$$version" sh && \
+	mise install
+
+.PHONY: mise-temp-zsh
+mise-temp-zsh:
+	eval "$(mise activate zsh)"
+
+.PHONY: mise-zsh
+mise-zsh:
+	echo 'eval "$$(~/.local/bin/mise activate zsh)"' >> "$${ZDOTDIR:-$HOME}/.zshrc"
+
+.PHONY: mise-temp-bash
+mise-temp-bash:
+	eval "$(mise activate bash)"
+
+.PHONY: mise-bash
+mise-bash:
+	echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
+
+# -----------------------------------------------------------------------------
 # Python Venv and Cache
 # -----------------------------------------------------------------------------
 
@@ -12,8 +38,8 @@ python-venv-remove:
 # Create venv through uv, with all dependencies.
 .PHONY: python-venv
 python-venv:
-	uv lock && \
-	uv sync --group dev --group demo --all-extras
+	mise exec -- uv lock && \
+	mise exec -- uv sync --group dev --group demo --all-extras
 
 # Delete and recreate venv.
 .PHONY: python-venv-redo
@@ -31,12 +57,12 @@ python-env-clean:
 # Create updated schemas.
 .PHONY: schema
 schema:
-	uv run python tools/schema.py generate mlte --verbose
+	mise exec -- uv run python tools/schema.py generate mlte --verbose
 
 # Check if schemas are up to date.
 .PHONY: check-schema
 check-schema:
-	uv run python tools/schema.py vet mlte --verbose
+	mise exec -- uv run python tools/schema.py vet mlte --verbose
 
 # -----------------------------------------------------------------------------
 # Doc Building/Serving
@@ -45,12 +71,12 @@ check-schema:
 # Doc generation.
 .PHONY: docs
 docs:
-	cd docs && uv run properdocs build --strict
+	cd docs && mise exec -- uv run properdocs build --strict
 
 # Local doc serving.
 .PHONY: docs-serve
 docs-serve:
-	cd docs && uv run properdocs serve
+	cd docs && mise exec -- uv run properdocs serve
 
 # -----------------------------------------------------------------------------
 # Python Lowl-Level QA and Testing
@@ -59,30 +85,30 @@ docs-serve:
 # Lint/check all source code.
 .PHONY: lint
 lint:
-	uv run ruff check --fix .
+	mise exec -- uv run ruff check --fix .
 
 .PHONY: check-lint 
 check-lint:
-	uv run ruff check .
+	mise exec -- uv run ruff check .
 
 # Format/check all source code.
 .PHONY: format
 format:
-	uv run ruff format .
+	mise exec -- uv run ruff format .
 
 .PHONY: check-format 
 check-format:
-	uv run ruff format --check .
+	mise exec -- uv run ruff format --check .
 
 # Typecheck all source code (except for demo).
 .PHONY: typecheck
 typecheck:
-	uv run mypy . --exclude "demo/"
+	mise exec -- uv run mypy . --exclude "demo/"
 
 # Run unit tests with pytest.
 .PHONY: test
 test:
-	uv run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
+	mise exec -- uv run pytest --cov=mlte -W ignore::pytest.PytestCollectionWarning test 
 
 # -----------------------------------------------------------------------------
 # Demo and Sample Catalog QA and Generation
@@ -96,7 +122,7 @@ demo-clean:
 # Typecheck demo code.
 .PHONY: demo-typecheck
 demo-typecheck:
-	uv run mypy demo/
+	mise exec -- uv run mypy demo/
 
 # Demo Jupyter Notebook tests.
 .PHONY: demo-test
@@ -147,7 +173,7 @@ ci-python-docker:
 .PHONY: frontend-env
 frontend-env:
 	cd mlte/frontend/nuxt-app && \
-	npm install && \
+	mise exec -- npm install && \
 	npx gulp init
 
 # Delete frontend env (basically cached folders).
@@ -161,16 +187,16 @@ frontend-env-remove:
 # Lint/check frontend source code.
 .PHONY: lint-frontend
 lint-frontend:
-	cd mlte/frontend/nuxt-app && npx eslint --fix .
+	cd mlte/frontend/nuxt-app && mise exec -- npx eslint --fix .
 
 .PHONY: check-lint-frontend
 check-lint-frontend:
-	cd mlte/frontend/nuxt-app && npx eslint .
+	cd mlte/frontend/nuxt-app && mise exec -- npx eslint .
 
 # Typecheck frontend source code.
 .PHONY: typecheck-frontend
 typecheck-frontend:
-	cd mlte/frontend/nuxt-app && npx vue-tsc
+	cd mlte/frontend/nuxt-app && mise exec -- npx vue-tsc
 
 # -----------------------------------------------------------------------------
 # Frontend High-level QA and CI
@@ -224,17 +250,17 @@ ci: ci-python ci-frontend
 
 .PHONY: bump-patch
 bump-patch:
-	uv run bumpversion patch --allow-dirty
+	mise exec -- uv run bumpversion patch --allow-dirty
 	$(MAKE) frontend-env
 
 .PHONY: bump-minor
 bump-minor:
-	uv run bumpversion minor --allow-dirty
+	mise exec -- uv run bumpversion minor --allow-dirty
 	$(MAKE) frontend-env
 
 .PHONY: bump-major
 bump-major:
-	uv run bumpversion major --allow-dirty
+	mise exec -- uv run bumpversion major --allow-dirty
 	$(MAKE) frontend-env
 
 # -----------------------------------------------------------------------------
