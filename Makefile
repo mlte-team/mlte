@@ -7,8 +7,7 @@
 .PHONY: mise-install
 mise-install:
 	@version="$$(bash mise_version.sh)" && \
-	curl -fsSL https://mise.run | MISE_VERSION="v$$version" sh && \
-	mise install
+	curl -fsSL https://mise.run | MISE_VERSION="v$$version" sh
 
 .PHONY: mise-temp-zsh
 mise-temp-zsh:

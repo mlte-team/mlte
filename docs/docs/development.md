@@ -30,13 +30,34 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
-`MLTE` uses `mise` version to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise`, `node`, and `uv` run the following command:
+`MLTE` requires `mise` to handle project dependencies. Instructions for setting up `mise` can be found in [Dev Environment Setup](#dev-environment-setup)
+
+### Python Version Support
+
+Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included. If you want to specify a specific version to use when running commands in yout environment, while inside the root repository folder, run the following command (replacing `3.12` with whatever version you want to test):
+
+```bash
+$ uv python pin 3.12
+```
+
+This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `uv run python --version` to check if it worked.
+
+
+### Dev Environment Setup
+
+`MLTE` uses `mise` version to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise` run the following command:
 
 ```bash
 $ make mise-install
 ```
 
-This will install the versions of these packages in a separate `mise` installation. These can be used by running the `uv` and `node` commands with `mise exec`. To run the frontend, you would use the following command:
+Then to install the `node` and `uv` dependencies in a shared `mise` installation that can be used for this project, run:
+
+```bash
+$ mise install
+```
+
+This will create a shared `mise` installation of `uv` and `node`. These can be used by running the `uv` and `node` commands with `mise exec` prepended. To run the frontend, you would use the following command:
 
 ```bash
 $ mise exec -- npm run dev
@@ -56,19 +77,6 @@ $ make mise-temp-zsh # zsh
 $ make mise-temp-bash # bash
 ```
 
-### Python Version Support
-
-Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included. If you want to specify a specific version to use when running commands in yout environment, while inside the root repository folder, run the following command (replacing `3.12` with whatever version you want to test):
-
-```bash
-$ uv python pin 3.12
-```
-
-This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `uv run python --version` to check if it worked.
-
-
-### Dev Environment Setup
-
 You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
@@ -78,7 +86,7 @@ $ make python-venv
 If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
 
 ```bash
-$ uv sync --group dev --all-extras
+$ mise exec -- uv sync --group dev --all-extras
 ```
 
 If you want to also develop for the Frontend, run the following command:
