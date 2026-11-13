@@ -30,7 +30,7 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
-`MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
+`MLTE` requires `mise` to handle project dependencies. Instructions for setting up `mise` can be found in [Dev Environment Setup](#dev-environment-setup)
 
 ### Python Version Support
 
@@ -45,6 +45,44 @@ This will create a local `.python-version` file with the specified version. You 
 
 ### Dev Environment Setup
 
+`MLTE` uses `mise` version to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise` run the following command:
+
+```bash
+$ make mise-install
+```
+
+Then to install the `node` and `uv` dependencies in a shared `mise` installation that can be used for this project, run:
+
+```bash
+$ mise install
+```
+
+To only install `node` or only `uv`, simply append the name of the tool you want to install like so:
+
+```bash
+$ mise install uv
+```
+
+This will create a shared `mise` installation of `uv` and `node`. These can be used by running the `uv` and `node` commands with `mise exec` prepended. To run the frontend, you would use the following command:
+
+```bash
+$ mise exec -- npm run dev
+```
+
+Alternatively, `mise` can be activated in the shell to use avoid having to use `mise exec`. This can be done by adding these to `zshrc` or `bashrc`:
+
+```bash
+$ make mise-zsh # zsh
+$ make mise-bash # bash
+```
+
+Alternatively, they can be activated for the current shell with these make comamnds:
+
+```bash
+$ make mise-temp-zsh # zsh
+$ make mise-temp-bash # bash
+```
+
 You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
@@ -54,7 +92,7 @@ $ make python-venv
 If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
 
 ```bash
-$ uv sync --group dev --all-extras
+$ mise exec -- uv sync --group dev --all-extras
 ```
 
 If you want to also develop for the Frontend, run the following command:
@@ -224,7 +262,7 @@ $ make typecheck-frontend
 
 ## Front End
 
-Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
+Front end development requires Node.js. The front end uses the node version found in `mise.toml`; which can be installed with `mise` as described in the setup section.
 
 To initialize the development environment for the front end, run the following make command:
 

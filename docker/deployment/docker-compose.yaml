@@ -4,6 +4,7 @@ services:
       context: ../../
       args:
         MLTE_COMMAND: backend
+        UV_VERSION: ${UV_VERSION}
       dockerfile: ${BACKEND_DOCKERFILE}
     image: mlte-backend
     container_name: mlte_backend
@@ -24,7 +25,8 @@ services:
     build:
       context: ../../
       args:
-        MLTE_COMMAND: ui      
+        MLTE_COMMAND: ui
+        NODE_VERSION: ${NODE_VERSION}
       dockerfile: ${FRONTEND_DOCKERFILE}
     image: mlte-frontend
     container_name: mlte_ui

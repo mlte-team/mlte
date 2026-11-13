@@ -1,0 +1,18 @@
+name: Setup mise
+description: Install mise and project tools using the version in mise.toml
+
+runs:
+  using: composite
+  steps:
+    - name: Read mise version
+      id: mise-version
+      shell: bash
+      run: |
+        VERSION="$(sed -n 's/^min_version = "\([^"]*\)".*/\1/p' mise.toml)"
+        test -n "$VERSION"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Install mise and project tools
+      uses: jdx/mise-action@v5
+      with:
+        version: ${{ steps.mise-version.outputs.version }}
