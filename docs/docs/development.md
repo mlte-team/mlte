@@ -57,6 +57,12 @@ Then to install the `node` and `uv` dependencies in a shared `mise` installation
 $ mise install
 ```
 
+To only install `node` or only `uv`, simply append the name of the tool you want to install like so:
+
+```bash
+$ mise install uv
+```
+
 This will create a shared `mise` installation of `uv` and `node`. These can be used by running the `uv` and `node` commands with `mise exec` prepended. To run the frontend, you would use the following command:
 
 ```bash
