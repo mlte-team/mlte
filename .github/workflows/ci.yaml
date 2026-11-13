@@ -32,12 +32,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mise
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install tools from mise.toml
-        uses: jdx/mise-action@v5
       - name: Install dependencies
         run: uv sync --group dev --all-extras
       - name: Vet schemas
@@ -64,12 +63,11 @@ jobs:
       - name: Clear space from tools folder, not needed because this runs in docker
         run: rm -rf /opt/hostedtoolcache
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-mise
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install tools from mise.toml
-        uses: jdx/mise-action@v5
       - name: Install demo dependencies
         run: uv sync --group dev --group demo --all-extras        
       - name: Typecheck demo with mypy
@@ -94,9 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install tools from mise.toml
-        uses: jdx/mise-action@v5
-        id: mise
+      - uses: ./.github/actions/setup-mise
       - name: Build Docker backend and frontend images
         run: cd docker && bash build.sh
       - name: Build Docker dist build image
