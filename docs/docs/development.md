@@ -262,6 +262,13 @@ You can preview the documentation accessing <a href="http://127.0.0.1:8000/" tar
 
 ## Versioning and Publishing
 
+### Release Process
+
+The release process currently being followed is this:
+1. Internal version numbers are updated (see [Versioning](#versioning) below for details).
+2. A Release is created in Github for the version defined, containing the details of all features, fixes, and internal improvements
+3. The package is built and published in PyPi (see [Publishing](#publishing) below for details).
+
 ### Versioning
 
 We follow semantic versioning when versioning the `MLTE` package. We use <a href="https://github.com/c4urself/bump2version" target="_blank">`bump2version`</a> to consistently update versions across the project. A configuration file is provided in `.bumpversion.cfg` at the root of the project.
