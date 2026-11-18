@@ -9,17 +9,9 @@ mise-install:
 	@version="$$(bash mise_version.sh)" && \
 	curl -fsSL https://mise.run | MISE_VERSION="v$$version" sh
 
-.PHONY: mise-temp-zsh
-mise-temp-zsh:
-	eval "$(mise activate zsh)"
-
 .PHONY: mise-zsh
 mise-zsh:
 	echo 'eval "$$(~/.local/bin/mise activate zsh)"' >> "$${ZDOTDIR:-$HOME}/.zshrc"
-
-.PHONY: mise-temp-bash
-mise-temp-bash:
-	eval "$(mise activate bash)"
 
 .PHONY: mise-bash
 mise-bash:
