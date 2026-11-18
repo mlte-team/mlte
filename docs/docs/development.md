@@ -30,7 +30,40 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
-`MLTE` uses `uv` to handle the required runtime and development packages. You can install `uv` on your system with the instructions available here: https://docs.astral.sh/uv/getting-started/installation/
+`MLTE` requires `mise` to handle project dependencies. Instructions for setting up `mise` can be found in [Dev Environment Setup](#dev-environment-setup).
+
+### Dev Tool Setup
+
+`MLTE` uses `mise` version to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise` run the following command:
+
+```bash
+$ make mise-install
+```
+
+Then to install the `node` and `uv` dependencies in a shared `mise` installation that can be used for this project, run:
+
+```bash
+$ mise install
+```
+
+To only install `node` or only `uv`, simply append the name of the tool you want to install like so:
+
+```bash
+$ mise install uv
+```
+
+This will create a shared `mise` installation of `uv` and/or `node`. The installed packages can be used by running the `uv` and `node` commands with `mise exec` prepended. For example, to run the frontend, you would use the following command:
+
+```bash
+$ mise exec -- npm run dev
+```
+
+Alternatively, `mise` can be activated in the shell to use avoid having to use `mise exec`. These will add the mise eval to your `.zshrc` or `.bashrc` and can be done with the following commands:
+
+```bash
+$ make mise-zsh # zsh
+$ make mise-bash # bash
+```
 
 ### Python Version Support
 
@@ -42,7 +75,6 @@ $ uv python pin 3.12
 
 This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `uv run python --version` to check if it worked.
 
-
 ### Dev Environment Setup
 
 You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
@@ -51,10 +83,10 @@ You will need to set up a virtual Python environment where `uv` will work, and i
 $ make python-venv
 ```
 
-If you want more control over what is being installed, you can do it manually instead. While inside the root of the repository, execute these commands (which do not install the demo dependencies):
+If you want more control over what is being installed, you can do it manually instead. For example, to avoid installing the demo dependencies, execute these commands while inside the root of the repository::
 
 ```bash
-$ uv sync --group dev --all-extras
+$ mise exec -- uv sync --group dev --all-extras
 ```
 
 If you want to also develop for the Frontend, run the following command:
@@ -70,7 +102,7 @@ Now you are ready to start working on `MLTE`!
 There are several demos available in the `demo/` folder, as Jupyter notebooks. To run them, you need to install their dependencies first if you created the environment manually; otherwise they have already been installed for you. To install them manually. run:
 
 ```bash
-$ uv sync --group demo
+$ mise exec -- uv sync --group demo
 ```
 
 You can go to the Jupyter notebooks in the subfolders inside the `demo/` folder and try them out in order to see how MLTE works. This assumes you are running the Jupyter notebooks from the same virtual environment that was just set up in the step above.
@@ -88,7 +120,7 @@ Information relating to creating a new demo can be found [here](new_demo.md).
 
 You can run most project commands (e.g., format sources, lint) in two ways: using the commands in the included Makefile, or running things manually. Using the Makefile works on UNIX-like systems (or anywhere `make` is available), and is shorter to type. Alternatively, you can run each command manually. The sections below describe how to run commands in both ways.
 
-Also, the commands below do not assume that you have your virtual environment enabled. Calling `uv run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `uv run` prefix. 
+Also, the commands below do not assume that you have your virtual environment enabled. Calling `mise exec -- uv run` ensures things run in the current virtual environment even if it is not activated. If you manually activate your virtual environment you can run all the commands below without the `mise exec -- uv run` prefix. 
 
 To manually activate your environment, run:
 
@@ -224,7 +256,7 @@ $ make typecheck-frontend
 
 ## Front End
 
-Front end development requires Node.js. The front end was developed using v20.11.0; the latest LTS version can be found <a href="https://nodejs.org/en" target="_blank">here</a>.
+Front end development requires Node.js. The front end uses the node version found in `mise.toml`; which can be installed with `mise` as described in the setup section.
 
 To initialize the development environment for the front end, run the following make command:
 
