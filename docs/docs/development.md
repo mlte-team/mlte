@@ -56,12 +56,14 @@ Running the `install` command will create a shared `mise` installation of `uv` a
 $ mise exec -- npm run dev
 ```
 
-Alternatively, `mise` can be activated in the shell to use avoid having to use `mise exec`. These will add the mise eval to your `.zshrc` or `.bashrc` and can be done with the following commands:
+Alternatively, `mise` can be activated in the shell to use avoid having to use `mise exec`. If you wish to do so, these commands will add the `mise` eval to your `.zshrc` or `.bashrc` bash config files permanently (so they should be run only once after installing `mise`):
 
 ```bash
 $ make mise-zsh # zsh
 $ make mise-bash # bash
 ```
+
+After doing this, any new instances of your shell will use this project's configured environment tools when executing them from inside this project's folder, without having to prepend `mise exec`. Note that this will only affect commands run inside this project's folder or subfolders, and will not affect commands run on other folders. If you run any of these commands, then you can ignore the `mise exec --` prefix on all commands in the rest of this document (though adding the prefix will also still work).
 
 ### Python Version Support
 
