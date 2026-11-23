@@ -30,29 +30,27 @@ Once changes have been made, `make qa` and `make test` should be ran to ensure t
 
 ### Requirements
 
-`MLTE` requires `mise` to handle project dependencies. Instructions for setting up `mise` can be found in [Dev Environment Setup](#dev-environment-setup).
+`MLTE` requires `mise` to handle this project's environment tools, particularly `uv` and `node` (which are used for the Python and Node.js environments, respectively - see details in the [Dev Environment Steup](#dev-environment-setup) section). The versions of these tools are set in `mise.toml`. 
 
-### Dev Tool Setup
-
-`MLTE` uses `mise` version to handle `uv` and `node` versioning. These versions can be found in `mise.toml`. To install `mise` run the following command:
+Before setting up any environments, `mise` has to be installed, followed by the environment tools. To install `mise` run the following command:
 
 ```bash
 $ make mise-install
 ```
 
-Then to install the `node` and `uv` dependencies in a shared `mise` installation that can be used for this project, run:
+Then to install the `node` and `uv` tools in a shared `mise` installation that can be used for this project, run:
 
 ```bash
 $ mise install
 ```
 
-To only install `node` or only `uv`, simply append the name of the tool you want to install like so:
+If you only want to install `node` or `uv`, simply append the name of the tool you want to install, like so:
 
 ```bash
 $ mise install uv
 ```
 
-This will create a shared `mise` installation of `uv` and/or `node`. The installed packages can be used by running the `uv` and `node` commands with `mise exec` prepended. For example, to run the frontend, you would use the following command:
+Running the `install` command will create a shared `mise` installation of `uv` and/or `node`. The installed tools can then be used by running the `uv` and `node` commands with `mise exec` prepended. For example, to run the frontend, you would use the following command:
 
 ```bash
 $ mise exec -- npm run dev
@@ -70,26 +68,28 @@ $ make mise-bash # bash
 Currently, `MLTE` supports Python versions between `3.10` and `3.13`, both included. If you want to specify a specific version to use when running commands in yout environment, while inside the root repository folder, run the following command (replacing `3.12` with whatever version you want to test):
 
 ```bash
-$ uv python pin 3.12
+$ mise exec -- uv python pin 3.12
 ```
 
-This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `uv run python --version` to check if it worked.
+This will create a local `.python-version` file with the specified version. You can change it with the same command as often as needed. You can use `mise exec -- uv run python --version` to check if it worked.
 
 ### Dev Environment Setup
 
-You will need to set up a virtual Python environment where `uv` will work, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
+MLTE contains two different development environments: a Python-based one to work with the library and the backend, and a Node.js-based one to work on the frontend web application. If you will only work on the library or backend, you don't need to setup the Node.js environment. If you want to work on the frontend, or build the whole package, you will need to set up both environments.
+
+For Python you will need to set up a virtual environment where `uv` will run, and install all dependencies there. The easiest way to do this, installing all dependencies, is to run this command:
 
 ```bash
 $ make python-venv
 ```
 
-If you want more control over what is being installed, you can do it manually instead. For example, to avoid installing the demo dependencies, execute these commands while inside the root of the repository::
+If you want more control over what is being installed, you can do it manually instead. For example, to avoid installing the demo dependencies, execute these commands while inside the root of the repository:
 
 ```bash
 $ mise exec -- uv sync --group dev --all-extras
 ```
 
-If you want to also develop for the Frontend, run the following command:
+To set up the Node.js environment, run the following command:
 
 ```bash
 $ make frontend-env
