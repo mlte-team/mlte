@@ -91,11 +91,15 @@ If you want more control over what is being installed, you can do it manually in
 $ mise exec -- uv sync --group dev --all-extras
 ```
 
+You can also use the commands `make python-venv-remove` and `make python-venv-redo` to either remove the Python dev environment, or remove and recreate it, respectively.
+
 To set up the Node.js environment, run the following command:
 
 ```bash
 $ make frontend-env
 ```
+
+You can also use the command `make frontend-env-remove` to remove the Node.js dev environment.
 
 Now you are ready to start working on `MLTE`!
 
